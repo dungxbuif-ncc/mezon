@@ -122,7 +122,7 @@ jobs:
           NODE_ENV=development
           API_URL=http://127.0.0.1:${{ env.MEZON_PORT }}/api
           SKIP_LOGIN=true
-          WORKERS=4
+          WORKERS=6
           EOF
 
       - name: Run automation tests
@@ -146,6 +146,38 @@ jobs:
             mezon-automation/test-results/
             mezon-automation/playwright-report/
           retention-days: 7
+
+      - name: Generate test summary
+        if: always()
+        working-directory: ./mezon-automation
+        run: |
+          echo "## 🧪 PR Automation Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🎯 **Test Environment:** http://127.0.0.1:${{ env.MEZON_PORT }}/" >> $GITHUB_STEP_SUMMARY
+          echo "🔧 **Workers:** 6" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Check if test results exist
+          if [ -d "test-results" ]; then
+            FAILED_TESTS=$(find test-results -name "*.json" -exec grep -l '"status":"failed"' {} \; 2>/dev/null | wc -l)
+            PASSED_TESTS=$(find test-results -name "*.json" -exec grep -l '"status":"passed"' {} \; 2>/dev/null | wc -l)
+            TOTAL_TESTS=$((FAILED_TESTS + PASSED_TESTS))
+            
+            if [ $FAILED_TESTS -eq 0 ]; then
+              echo "✅ **Status:** All tests passed ($TOTAL_TESTS tests)" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ **Status:** $FAILED_TESTS test(s) failed out of $TOTAL_TESTS" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "⚠️ **Status:** No test results found" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ -d "playwright-report" ]; then
+            echo "📊 **Playwright Report:** Available in artifacts" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🕐 **Completed:** $(date)" >> $GITHUB_STEP_SUMMARY
 
       - name: Stop mezon dev server
         if: always()
