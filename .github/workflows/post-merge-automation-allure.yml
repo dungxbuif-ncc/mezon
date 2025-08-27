@@ -52,21 +52,21 @@ jobs:
           }
           echo "✅ Dev environment is accessible!"
 
-      # - name: Prepare Allure history
-      #   working-directory: ./mezon-automation
-      #   run: |
-      #     # Copy previous allure-results from global allure directory to preserve history
-      #     if [ -d "/home/dungxbuif/allure/allure-results" ]; then
-      #       echo "📂 Copying previous allure-results for history preservation..."
-      #       cp -r /home/dungxbuif/allure/allure-results ./ || true
-      #     fi
+      - name: Prepare Allure history
+        working-directory: ./mezon-automation
+        run: |
+          # Copy previous allure-results from global allure directory to preserve history
+          if [ -d "/home/dungxbuif/allure/allure-results" ]; then
+            echo "📂 Copying previous allure-results for history preservation..."
+            cp -r /home/dungxbuif/allure/allure-results ./ || true
+          fi
           
-      #     # Copy previous history from global allure-report to allure-results (as per Allure docs)
-      #     if [ -d "/home/dungxbuif/allure/allure-report/history" ]; then
-      #       echo "📜 Preserving test history..."
-      #       mkdir -p allure-results
-      #       cp -r /home/dungxbuif/allure/allure-report/history allure-results/ || true
-      #     fi
+          # Copy previous history from global allure-report to allure-results (as per Allure docs)
+          if [ -d "/home/dungxbuif/allure/allure-report/history" ]; then
+            echo "📜 Preserving test history..."
+            mkdir -p allure-results
+            cp -r /home/dungxbuif/allure/allure-report/history allure-results/ || true
+          fi
 
       - name: Run automation tests with Allure
         working-directory: ./mezon-automation

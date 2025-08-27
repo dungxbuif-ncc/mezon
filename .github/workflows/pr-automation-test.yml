@@ -9,7 +9,7 @@ on:
 
 jobs:
   automation-tests:
-    runs-on: mezon-e2e
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout mezon repository
@@ -24,17 +24,21 @@ jobs:
           path: mezon-automation
           token: ${{ secrets.PERSONAL_TOKEN }}
 
-      - name: Generate unique port
-        id: port
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+          cache-dependency-path: |
+            mezon/yarn.lock
+            mezon-e2e/yarn.lock
+
+      - name: Install system dependencies
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            PORT=$((4200 + RANDOM % 100))
-          else
-            PORT=$((4200 + ${{ github.event.number }} % 100))
-          fi
-          echo "MEZON_PORT=$PORT" >> $GITHUB_ENV
-          echo "port=$PORT" >> $GITHUB_OUTPUT
-          echo "Using port: $PORT"
+          npm install -g node-gyp
+          node-gyp install 20.19.4
+          sudo apt update
+          sudo apt install libx11-dev libxss-dev libxext-dev
 
       - name: Install mezon dependencies
         working-directory: ./mezon
@@ -51,7 +55,7 @@ jobs:
       - name: Start mezon dev server
         working-directory: ./mezon
         run: |
-          echo "🚀 Starting mezon dev server on port ${{ env.MEZON_PORT }}..."
+          echo "🚀 Starting mezon dev server on port 4200..."
           echo "📋 Current directory: $(pwd)"
           echo "📁 Directory contents:"
           ls -la
@@ -61,11 +65,11 @@ jobs:
           node --version
           npm --version
           yarn --version
-          echo "🌐 Checking if port ${{ env.MEZON_PORT }} is available:"
-          netstat -tuln | grep ":${{ env.MEZON_PORT }}" || echo "Port ${{ env.MEZON_PORT }} is available"
+          echo "🌐 Checking if port 4200 is available:"
+          netstat -tuln | grep ":4200" || echo "Port 4200 is available"
           
           echo "🏃 Starting server..."
-          nohup nx run chat:serve --host=127.0.0.1 --port=${{ env.MEZON_PORT }} > mezon-dev.log 2>&1 &
+          nohup nx run chat:serve --host=127.0.0.1 --port=4200 > mezon-dev.log 2>&1 &
           SERVER_PID=$!
           echo $SERVER_PID > mezon-dev.pid
           echo "📋 Server PID: $SERVER_PID"
@@ -87,7 +91,7 @@ jobs:
           
       - name: Wait for mezon server to be ready
         run: |
-          echo "⏳ Waiting for mezon server to be ready on port ${{ env.MEZON_PORT }}..."
+          echo "⏳ Waiting for mezon server to be ready on port 4200..."
           
           # Check if PID file exists
           if [ ! -f ./mezon/mezon-dev.pid ]; then
@@ -118,11 +122,11 @@ jobs:
         working-directory: ./mezon-automation
         run: |
           cat > .env << EOF
-          BASE_URL=http://127.0.0.1:${{ env.MEZON_PORT }}/
-          NODE_ENV=development
-          API_URL=http://127.0.0.1:${{ env.MEZON_PORT }}/api
+          BASE_URL=http://127.0.0.1:4200/
+          API_URL=http://127.0.0.1:4200/api
           SKIP_LOGIN=true
-          WORKERS=4
+          WORKERS=1
+          CI-true
           EOF
 
       - name: Run automation tests
@@ -141,11 +145,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-results-pr-${{ github.event.number }}
-          path: |
-            mezon-automation/test-results/
-            mezon-automation/playwright-report/
+          name: playwright-report
+          path: mezon-automation/playwright-report/
           retention-days: 7
+
 
       - name: Stop mezon dev server
         if: always()
