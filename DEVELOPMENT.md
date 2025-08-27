@@ -2,18 +2,7 @@
 
 > This guide is for developers who want to contribute to Mezon, build integrations, or understand the technical architecture.
 
-## Table of Contents
 
-- [Prerequisites](#prerequisites)
-- [Getting Started](#getting-started)
-- [Architecture Overview](#architecture-overview)
-- [Development Setup](#development-setup)
-- [Project Structure](#project-structure)
-- [Development Workflow](#development-workflow)
-- [Testing](#testing)
-- [Contributing](#contributing)
-- [API Documentation](#api-documentation)
-- [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
 
