@@ -58,6 +58,7 @@ const IncomingHomeScreen = memo((props: any) => {
 	const onKillApp = () => {
 		try {
 			if (Platform.OS === 'android') {
+				notifee.cancelNotification('incoming-call', 'incoming-call');
 				NativeModules?.DeviceUtils?.killApp();
 				BackHandler.exitApp();
 			} else {
@@ -69,6 +70,15 @@ const IncomingHomeScreen = memo((props: any) => {
 		}
 	};
 
+	const getDataNotifyObject = async (data) => {
+		try {
+			const dataObj = safeJSONParse(data?.offer || '{}');
+			return dataObj || {};
+		} catch (e) {
+			console.error('log  => getDataNotiObject', e);
+			return {};
+		}
+	};
 	const getDataCall = async () => {
 		try {
 			const notificationData = await NotificationPreferences.getValue('notificationDataCalling');
@@ -76,7 +86,7 @@ const IncomingHomeScreen = memo((props: any) => {
 
 			const notificationDataParse = safeJSONParse(notificationData || '{}');
 			const data = safeJSONParse(notificationDataParse?.offer || '{}');
-			const dataObj = safeJSONParse(data?.offer || '{}');
+			const dataObj = await getDataNotifyObject(data);
 			if (dataObj?.isGroupCall) {
 				setDataCallGroup(dataObj);
 				await NotificationPreferences.clearValue('notificationDataCalling');
@@ -241,11 +251,7 @@ const IncomingHomeScreen = memo((props: any) => {
 	};
 
 	const playVibration = () => {
-		const pattern = Platform.select({
-			ios: [0, 1000, 2000, 1000, 2000],
-			android: [0, 1000, 1000, 1000, 1000]
-		});
-		Vibration.vibrate(pattern, true);
+		Vibration.vibrate([300, 500, 300, 500], true);
 	};
 
 	const stopAndReleaseSound = () => {

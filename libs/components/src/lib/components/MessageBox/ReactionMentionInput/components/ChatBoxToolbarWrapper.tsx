@@ -21,7 +21,6 @@ interface ChatBoxToolbarWrapperProps {
 	isTopic: boolean;
 	isThreadbox?: boolean;
 	onEmojiSelect?: (emojiId: string, emojiShortname: string) => void;
-	dataE2E?: EmojiActionToolbarE2E;
 }
 
 const ChatBoxToolbarWrapper: React.FC<ChatBoxToolbarWrapperProps> = ({
@@ -33,7 +32,6 @@ const ChatBoxToolbarWrapper: React.FC<ChatBoxToolbarWrapperProps> = ({
 	isTopic = false,
 	isThreadbox = false,
 	onEmojiSelect,
-	dataE2E
 }) => {
 	const [isEmojiPopupVisible, setIsEmojiPopupVisible] = useState<boolean>(false);
 	const popupRef = useRef<HTMLDivElement | null>(null);
@@ -60,7 +58,6 @@ const ChatBoxToolbarWrapper: React.FC<ChatBoxToolbarWrapperProps> = ({
 				isEmojiPopupVisible={isEmojiPopupVisible}
 				isTopic={isTopic}
 				isThreadbox={isThreadbox}
-				dataE2E={dataE2E}
 			/>
 		)
 	);

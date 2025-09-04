@@ -207,7 +207,7 @@ const ChannelLinkComponent = ({
 				handleCancel={closeDeleteModal}
 				channelId={channel.channel_id as string}
 				clanId={clanId as string}
-				modalName={`${channel.channel_label}`}
+				modalName={`${channel?.channel_label || 'Unknown Channel'}`}
 			/>
 		);
 	}, [channel.channel_id]);

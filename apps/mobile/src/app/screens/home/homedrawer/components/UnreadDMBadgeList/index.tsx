@@ -1,26 +1,18 @@
-import { size, useTheme } from '@mezon/mobile-ui';
-import {
-	DirectEntity,
-	directActions,
-	selectDirectById,
-	selectDirectsUnreadlist,
-	selectIsLoadDMData,
-	useAppDispatch,
-	useAppSelector
-} from '@mezon/store-mobile';
+import { useTheme } from '@mezon/mobile-ui';
+import { DirectEntity, directActions, selectDirectById, selectDirectsUnreadlist, useAppDispatch, useAppSelector } from '@mezon/store-mobile';
 import { createImgproxyUrl } from '@mezon/utils';
 import { useNavigation } from '@react-navigation/native';
 import ImageNative from 'apps/mobile/src/app/components/ImageNative';
 import { ChannelType } from 'mezon-js';
 import React, { memo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { Flow } from 'react-native-animated-spinkit';
 import FastImage from 'react-native-fast-image';
 import { useSelector } from 'react-redux';
 import MezonIconCDN from '../../../../../../../src/app/componentUI/MezonIconCDN';
 import { IconCDN } from '../../../../../../../src/app/constants/icon_cdn';
 import { APP_SCREEN } from '../../../../../../app/navigation/ScreenTypes';
 import useTabletLandscape from '../../../../../hooks/useTabletLandscape';
+import { UnreadDMLoading } from './UnreadDMLoading';
 import { style } from './styles';
 
 const UnreadDMBadgeItem = memo(({ dmId, numUnread }: { dmId: string; numUnread: number }) => {
@@ -105,14 +97,9 @@ export const UnreadDMBadgeList = React.memo(() => {
 	const styles = style(themeValue);
 
 	const unReadDM = useSelector(selectDirectsUnreadlist);
-	const isLoading = useSelector(selectIsLoadDMData);
 	return (
 		<View style={[styles.container, !!unReadDM?.length && styles.containerBottom]}>
-			{!isLoading && (
-				<View style={{ paddingVertical: size.s_20 }}>
-					<Flow color={themeValue.textDisabled} size={size.s_30} />
-				</View>
-			)}
+			<UnreadDMLoading />
 			{!!unReadDM?.length &&
 				unReadDM?.map((dm: DirectEntity, index) => {
 					return <UnreadDMBadgeItem key={`${dm?.id}_${index}`} dmId={dm?.id} numUnread={dm?.count_mess_unread || 0} />;

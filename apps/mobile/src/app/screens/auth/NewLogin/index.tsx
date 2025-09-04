@@ -8,11 +8,14 @@ import * as Sentry from '@sentry/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { View } from 'react-native';
 import Toast from 'react-native-toast-message';
-import WebView from 'react-native-webview';
+import WebviewBase from '../../../components/WebviewBase';
 import useTabletLandscape from '../../../hooks/useTabletLandscape';
+import { APP_SCREEN } from '../../../navigation/ScreenTypes';
 import { style } from './styles';
 
-const NewLoginScreen = () => {
+const HELP_URL = 'https://mezon.ai/docs';
+
+const NewLoginScreen = ({ navigation }) => {
 	const { themeValue } = useTheme();
 	const isTabletLandscape = useTabletLandscape();
 	const styles = style(themeValue, isTabletLandscape);
@@ -63,6 +66,10 @@ const NewLoginScreen = () => {
 	};
 
 	const handleShouldNavigationStateChange = (newNavState) => {
+		if (newNavState?.url?.startsWith(HELP_URL)) {
+			navigation.navigate(APP_SCREEN.APP_BROWSER, { url: newNavState?.url, title: newNavState?.title });
+			return false;
+		}
 		if (newNavState?.url?.includes('code') && newNavState?.url?.includes('state')) {
 			const code = new URLSearchParams(newNavState?.url?.split('?')[1]).get('code');
 			if (code) {
@@ -84,11 +91,11 @@ const NewLoginScreen = () => {
 		<View style={styles.supperContainer}>
 			{authUri && (
 				<View style={styles.webView}>
-					<WebView
+					<WebviewBase
+						url={authUri}
 						incognito={true}
-						originWhitelist={['*']}
 						style={styles.supperContainer}
-						source={{ uri: authUri }}
+						setSupportMultipleWindows={false}
 						onShouldStartLoadWithRequest={handleShouldNavigationStateChange}
 						startInLoadingState={true}
 						onError={(error) => {

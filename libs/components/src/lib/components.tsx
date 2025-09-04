@@ -23,10 +23,9 @@ export { default as ModalInvite } from './components/ListMemberInvite/modalInvit
 export { default as EmojiMarkup } from './components/MarkdownFormatText/EmojiMarkup';
 export { default as MarkdownContent } from './components/MarkdownFormatText/MarkdownContent';
 export { default as PlainText } from './components/MarkdownFormatText/PlainText';
+export { default as PreClass } from './components/MarkdownFormatText/PreClass';
 export { default as StreamInfo } from './components/StreamInfo';
 export { default as UpdateButton } from './components/UpdateButton/UpdateButton';
-
-export { default as PreClass } from './components/MarkdownFormatText/PreClass';
 
 export * from './components/AvatarImage/AvatarImage';
 export { default as AppDirectoryList } from './components/ClanSettings/AppDirectory/AppDirectoryList';

@@ -72,28 +72,24 @@ export function OnBoardWelcome({ nextMessageId }: OnBoardWelcomeProps) {
 						title="Invite your friends"
 						tick={numberMemberClan > 1}
 						onClick={openInviteClanModal}
-						dataE2E={generateE2eId('onboarding.chat.container.invite_member')}
 					/>
 					<Onboarditem
 						icon={<Icons.Sent />}
 						title="Send your first message"
 						tick={checkLastMessage}
 						onClick={handleSendMessage}
-						dataE2E={generateE2eId('onboarding.chat.container.send_first_message')}
 					/>
 					<Onboarditem
 						icon={<Icons.Download />}
 						title="Download the Mezon App"
 						tick={true}
 						onClick={handleSendMessage}
-						dataE2E={generateE2eId('onboarding.chat.container.download_app')}
 					/>
 					<Onboarditem
 						icon={<Icons.Hashtag />}
 						title="Create your channel"
 						tick={numberChannel.length > 1}
 						onClick={handleCreateChannel}
-						dataE2E={generateE2eId('onboarding.chat.container.create_channel')}
 					/>
 				</>
 			)}
@@ -102,7 +98,7 @@ export function OnBoardWelcome({ nextMessageId }: OnBoardWelcomeProps) {
 }
 
 const Onboarditem = memo(
-	({ icon, title, tick, onClick, dataE2E }: { icon: ReactNode; title: string; tick: boolean; onClick: () => void; dataE2E?: string }) => {
+	({ icon, title, tick, onClick }: { icon: ReactNode; title: string; tick: boolean; onClick: () => void }) => {
 		const handleOnClickItem = () => {
 			if (!tick) {
 				onClick();
@@ -112,7 +108,7 @@ const Onboarditem = memo(
 			<div
 				className="w-[400px] gap-4 h-[72px] items-center flex p-4 text-sm font-semibold text-theme-primary-active text-theme-primary-hover bg-item-hover bg-item-theme rounded-lg hover:cursor-pointer"
 				onClick={handleOnClickItem}
-				data-e2e={dataE2E}
+				data-e2e={generateE2eId('onboarding.chat.guide_sections')}
 			>
 				{icon}
 				<div className="flex-1 ">{title}</div>

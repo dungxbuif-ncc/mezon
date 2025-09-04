@@ -47,6 +47,9 @@ const ChannelSettingItem = (props: ChannelSettingItemProps) => {
 	const handleDeleteChannel = () => {
 		handleConfirmDeleteChannel(channel.channel_id as string, channel.clan_id as string);
 		handleCloseModalShow();
+		if (props.onCloseModal) {
+			props.onCloseModal();
+		}
 	};
 
 	const renderIcon = () => {
@@ -88,7 +91,7 @@ const ChannelSettingItem = (props: ChannelSettingItemProps) => {
 				<div className="flex justify-start max-w-[170px]">
 					{renderIcon()} &nbsp;
 					<p className="text-[#84ADFF] font-bold text-sm tracking-wider max-w-[160px] overflow-x-hidden text-ellipsis uppercase one-line">
-						{displayChannelLabel ?? currentChannel.channel_label}
+						{displayChannelLabel ?? currentChannel?.channel_label ?? 'Unknown Channel'}
 					</p>
 				</div>
 
@@ -143,7 +146,7 @@ const ChannelSettingItem = (props: ChannelSettingItemProps) => {
 					handleCancel={handleCloseModalShow}
 					handleConfirm={handleDeleteChannel}
 					title="delete"
-					modalName={`${channel.channel_label}`}
+					modalName={`${channel?.channel_label || 'Unknown Channel'}`}
 					message="This cannot be undone"
 				/>
 			)}

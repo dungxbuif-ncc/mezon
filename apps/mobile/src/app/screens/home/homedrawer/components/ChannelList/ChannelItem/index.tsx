@@ -42,51 +42,58 @@ function ChannelItem({ data, isUnRead, isActive }: IChannelItemProps) {
 	}
 
 	return (
-		<TouchableOpacity
-			activeOpacity={0.7}
-			onPress={onPress}
-			onLongPress={onLongPress}
+		<View
 			style={[
-				styles.channelListLink,
-				isActive && styles.channelListItemActive,
-				isActive && {
-					backgroundColor: themeBasic === ThemeModeBase.LIGHT ? themeValue.secondaryWeight : themeValue.secondaryLight,
-					shadowColor: themeValue.primary,
-					shadowOffset: { width: 0, height: 2 },
-					shadowOpacity: 0.25,
-					shadowRadius: 3.84,
-					elevation: 5,
-					zIndex: 1
-				}
+				{ backgroundColor: themeBasic === ThemeModeBase.LIGHT ? themeValue.secondaryWeight : themeValue.secondaryLight },
+				isActive && styles.channelListItemActive
 			]}
 		>
-			{!isActive && (
-				<LinearGradient
-					start={{ x: 1, y: 0 }}
-					end={{ x: 0, y: 0 }}
-					colors={[themeValue.secondary, themeValue?.primaryGradiant || themeValue.secondary]}
-					style={[StyleSheet.absoluteFillObject]}
-				/>
-			)}
-			<View style={[styles.channelListItem]}>
-				{(isUnRead || Number(numberNotification || 0) > 0) && <View style={styles.dotIsNew} />}
+			<TouchableOpacity
+				activeOpacity={0.7}
+				onPress={onPress}
+				onLongPress={onLongPress}
+				style={[
+					styles.channelListLink,
+					isActive && styles.channelListItemActive,
+					isActive && {
+						backgroundColor: themeBasic === ThemeModeBase.LIGHT ? themeValue.secondaryWeight : themeValue.secondaryLight,
+						shadowColor: themeValue.primary,
+						shadowOffset: { width: 0, height: 2 },
+						shadowOpacity: 0.25,
+						shadowRadius: 3.84,
+						elevation: 5,
+						zIndex: 1
+					}
+				]}
+			>
+				{!isActive && (
+					<LinearGradient
+						start={{ x: 1, y: 0 }}
+						end={{ x: 0, y: 0 }}
+						colors={[themeValue.secondary, themeValue?.primaryGradiant || themeValue.secondary]}
+						style={[StyleSheet.absoluteFillObject]}
+					/>
+				)}
+				<View style={[styles.channelListItem]}>
+					{(isUnRead || Number(numberNotification || 0) > 0) && <View style={styles.dotIsNew} />}
 
-				<ChannelStatusIcon channel={data} isUnRead={isUnRead || Number(numberNotification || 0) > 0} />
-				<EventBadge clanId={data?.clan_id} channelId={data?.channel_id} />
-				<Text
-					style={[styles.channelListItemTitle, (isUnRead || Number(numberNotification || 0) > 0) && styles.channelListItemTitleActive]}
-					numberOfLines={1}
-				>
-					{data?.channel_label}
-				</Text>
-			</View>
-			{(data?.type === ChannelType.CHANNEL_TYPE_GMEET_VOICE || data?.type === ChannelType.CHANNEL_TYPE_MEZON_VOICE) &&
-				data?.status === StatusVoiceChannel.No_Active && <ActivityIndicator color={themeValue.white} />}
+					<ChannelStatusIcon channel={data} isUnRead={isUnRead || Number(numberNotification || 0) > 0} />
+					<EventBadge clanId={data?.clan_id} channelId={data?.channel_id} />
+					<Text
+						style={[styles.channelListItemTitle, (isUnRead || Number(numberNotification || 0) > 0) && styles.channelListItemTitleActive]}
+						numberOfLines={1}
+					>
+						{data?.channel_label}
+					</Text>
+				</View>
+				{(data?.type === ChannelType.CHANNEL_TYPE_GMEET_VOICE || data?.type === ChannelType.CHANNEL_TYPE_MEZON_VOICE) &&
+					data?.status === StatusVoiceChannel.No_Active && <ActivityIndicator color={themeValue.white} />}
 
-			<BuzzBadge channelId={data?.channel_id as string} clanId={data?.clan_id as string} mode={ChannelStreamMode.STREAM_MODE_CHANNEL} />
+				<BuzzBadge channelId={data?.channel_id as string} clanId={data?.clan_id as string} mode={ChannelStreamMode.STREAM_MODE_CHANNEL} />
 
-			{Number(numberNotification || 0) > 0 && <ChannelBadgeUnread countMessageUnread={Number(numberNotification || 0)} />}
-		</TouchableOpacity>
+				{Number(numberNotification || 0) > 0 && <ChannelBadgeUnread countMessageUnread={Number(numberNotification || 0)} />}
+			</TouchableOpacity>
+		</View>
 	);
 }
 export default React.memo(ChannelItem, (prevProps, nextProps) => {

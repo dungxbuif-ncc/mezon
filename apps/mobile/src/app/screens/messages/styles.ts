@@ -269,7 +269,9 @@ export const style = (colors: Attributes, isTablet?: boolean) =>
 			height: size.s_36,
 			borderRadius: size.s_36,
 			alignItems: 'center',
-			justifyContent: 'center'
+			justifyContent: 'center',
+			borderWidth: 1,
+			borderColor: colors.border
 		},
 		wrapperItemActivity: {
 			flexDirection: 'row',

@@ -22,7 +22,6 @@ import { APP_SCREEN } from '../../navigation/ScreenTypes';
 import { style } from './styles';
 
 interface IRenderFooterModalProps {
-	onClose?: () => void;
 	imageSelected?: AttachmentEntity & { channelId?: string };
 	onImageSaved?: () => void;
 	onLoading?: (isLoading: boolean) => void;
@@ -30,13 +29,17 @@ interface IRenderFooterModalProps {
 	onImageShare?: (error?: string) => void;
 }
 
-export const RenderHeaderModal = React.memo(({ onClose, imageSelected, onImageSaved, onLoading, onImageCopy, onImageShare }: IRenderFooterModalProps) => {
+export const RenderHeaderModal = React.memo(({ imageSelected, onImageSaved, onLoading, onImageCopy, onImageShare }: IRenderFooterModalProps) => {
 	const { themeValue } = useTheme();
 	const styles = style(themeValue);
 	const uploader = useAppSelector((state) => selectMemberClanByUserId2(state, imageSelected?.uploader || ''));
 	const { downloadImage, saveImageToCameraRoll, getImageAsBase64OrFile } = useImage();
 	const currentDirectId = useSelector(selectDmGroupCurrentId);
 	const navigation = useNavigation<any>();
+
+	const onClose = () => {
+		DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_MODAL, { isDismiss: true });
+	};
 	const handleDownloadImage = async () => {
 		if (!imageSelected?.url) {
 			return;
@@ -99,7 +102,7 @@ export const RenderHeaderModal = React.memo(({ onClose, imageSelected, onImageSa
 			const shareOptions = {
 				url: `file://${imageData.filePath}`,
 				type: filetype || 'image/png',
-				filename: filenameToUse,
+				filename: filenameToUse
 			};
 
 			await Share.open(shareOptions);

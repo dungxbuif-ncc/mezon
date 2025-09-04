@@ -140,7 +140,7 @@ const ThreadItem = ({ thread, setIsShowThread, isPublicThread = false, isHasCont
 				}}
 				handleConfirm={handleDeleteThread}
 				title="delete"
-				modalName={`${channelThread?.channel_label}`}
+				modalName={`${channelThread?.channel_label || 'Unknown Thread'}`}
 			/>
 		);
 	}, [channelThread?.id]);

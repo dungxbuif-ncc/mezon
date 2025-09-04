@@ -3,6 +3,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Platform } from 'react-native';
 import { useCheckUpdatedVersion } from '../../hooks/useCheckUpdatedVersion';
+import AppBrowser from '../../screens/auth/AppBrowser';
 import NewLoginScreen from '../../screens/auth/NewLogin';
 import { APP_SCREEN } from '../ScreenTypes';
 
@@ -15,6 +16,7 @@ export const UnAuthentication = () => {
 	return (
 		<Stack.Navigator initialRouteName={getInitialRouteName} screenOptions={{ headerShown: false, gestureEnabled: Platform.OS === 'ios' }}>
 			<Stack.Screen name={APP_SCREEN.LOGIN} component={NewLoginScreen} />
+			<Stack.Screen name={APP_SCREEN.APP_BROWSER} component={AppBrowser} />
 			{/*<Stack.Screen name={APP_SCREEN.REGISTER} component={RegisterScreen} />*/}
 		</Stack.Navigator>
 	);

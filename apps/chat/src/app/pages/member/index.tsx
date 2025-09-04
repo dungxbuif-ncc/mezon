@@ -41,8 +41,8 @@ const MemberClan = () => {
 
 				<TableMember dataMember={filteredMembers} currentPage={currentPage} pageSize={pageSize} />
 
-				<div className="flex flex-row justify-between items-center px-4 h-[54px] my-2">
-					<div className={'flex flex-row items-center'}>
+				<div className="flex flex-row justify-center lg:justify-between items-center px-4 h-[54px] my-2">
+					<div className={'hidden lg:flex flex-row items-center'}>
 						Show
 						<Menu menu={menu}>
 							<div className={'flex flex-row items-center justify-center text-center rounded mx-1 px-3 w-12'}>

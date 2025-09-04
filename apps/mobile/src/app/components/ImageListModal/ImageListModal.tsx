@@ -5,7 +5,7 @@ import { Snowflake } from '@theinternetfolks/snowflake';
 import { ApiMessageAttachment } from 'mezon-js/api.gen';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DeviceEventEmitter, Dimensions, Text, useWindowDimensions, View } from 'react-native';
+import { DeviceEventEmitter, Dimensions, Text, View, useWindowDimensions } from 'react-native';
 import GalleryAwesome, { GalleryRef, RenderItemInfo } from 'react-native-awesome-gallery';
 import Toast from 'react-native-toast-message';
 import { useSelector } from 'react-redux';
@@ -67,7 +67,7 @@ export const ImageListModal = React.memo((props: IImageListModalProps) => {
 	}, [attachments, imageSelected]);
 
 	const onClose = () => {
-		DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_MODAL, { isDismiss: true });
+		if (currentScale === 1) DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_MODAL, { isDismiss: true });
 	};
 
 	const updateToolbarConfig = useCallback(
@@ -239,7 +239,6 @@ export const ImageListModal = React.memo((props: IImageListModalProps) => {
 		<View style={{ flex: 1 }}>
 			{visibleToolbarConfig.showHeader && (
 				<RenderHeaderModal
-					onClose={onClose}
 					imageSelected={currentImage}
 					onImageSaved={onImageSaved}
 					onLoading={onLoading}

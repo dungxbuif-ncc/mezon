@@ -90,7 +90,6 @@ const SettingRightUser = ({
 					setImageObject={setImageObject}
 					onClose={closeModalEditor}
 					imageSource={imageObject}
-					dataE2E={generateE2eId('', 'edit_avatar_profile')}
 				/>
 			) : null,
 		[imageObject]

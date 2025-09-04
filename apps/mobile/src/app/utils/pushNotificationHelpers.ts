@@ -560,8 +560,7 @@ export const displayNativeCalling = async (data: any) => {
 	const notificationId = 'incoming-call';
 	try {
 		const dataObj = safeJSONParse(data?.offer || '{}');
-
-		if (dataObj?.offer === 'CANCEL_CALL') {
+		if (dataObj?.offer === 'CANCEL_CALL' || !dataObj?.callerName) {
 			await notifee.cancelNotification(notificationId, notificationId);
 			return;
 		}
@@ -571,7 +570,8 @@ export const displayNativeCalling = async (data: any) => {
 			importance: AndroidImportance.HIGH,
 			visibility: AndroidVisibility.PUBLIC,
 			sound: 'ringing',
-			vibration: true
+			vibration: true,
+			bypassDnd: true
 		});
 		await notifee.displayNotification({
 			id: notificationId,
@@ -603,7 +603,7 @@ export const displayNativeCalling = async (data: any) => {
 					launchActivityFlags: [
 						AndroidLaunchActivityFlag.SINGLE_TOP,
 						AndroidLaunchActivityFlag.NEW_TASK,
-						AndroidLaunchActivityFlag.CLEAR_TASK
+						AndroidLaunchActivityFlag.CLEAR_TOP
 					],
 					mainComponent: 'ComingCallApp'
 				},
@@ -616,7 +616,8 @@ export const displayNativeCalling = async (data: any) => {
 							launchActivityFlags: [
 								AndroidLaunchActivityFlag.SINGLE_TOP,
 								AndroidLaunchActivityFlag.NEW_TASK,
-								AndroidLaunchActivityFlag.CLEAR_TASK
+								AndroidLaunchActivityFlag.CLEAR_TASK,
+								AndroidLaunchActivityFlag.TASK_ON_HOME
 							],
 							mainComponent: 'ComingCallApp'
 						},
@@ -630,7 +631,8 @@ export const displayNativeCalling = async (data: any) => {
 							launchActivityFlags: [
 								AndroidLaunchActivityFlag.SINGLE_TOP,
 								AndroidLaunchActivityFlag.NEW_TASK,
-								AndroidLaunchActivityFlag.CLEAR_TASK
+								AndroidLaunchActivityFlag.CLEAR_TASK,
+								AndroidLaunchActivityFlag.TASK_ON_HOME
 							],
 							mainComponent: 'ComingCallApp'
 						},
@@ -638,18 +640,20 @@ export const displayNativeCalling = async (data: any) => {
 					}
 				],
 				fullScreenAction: {
-					id: 'default',
+					id: `incoming_call_fullscreen`,
 					launchActivity: 'com.mezon.mobile.CallActivity',
 					launchActivityFlags: [
 						AndroidLaunchActivityFlag.SINGLE_TOP,
 						AndroidLaunchActivityFlag.NEW_TASK,
-						AndroidLaunchActivityFlag.CLEAR_TASK
+						AndroidLaunchActivityFlag.CLEAR_TASK,
+						AndroidLaunchActivityFlag.TASK_ON_HOME
 					],
 					mainComponent: 'ComingCallApp'
 				}
 			}
 		});
 	} catch (e) {
-		console.error('log  => e displayCalling', e);
+		await notifee.cancelNotification(notificationId, notificationId);
+		console.error('log => e displayCalling', e);
 	}
 };

@@ -887,7 +887,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({ children }) =
 
 		const clanMemberStore = selectClanMemberByClanId(store.getState() as unknown as RootState, userJoinClan.clan_id);
 		if (userJoinClan?.user && clanMemberStore) {
-			const createTime = new Date(userJoinClan.user.create_time_second * 1000).toISOString();
+			const createTime = userJoinClan.user.create_time_second ? new Date(userJoinClan.user.create_time_second * 1000).toISOString() : undefined;
 			dispatch(
 				usersClanActions.add({
 					user: {

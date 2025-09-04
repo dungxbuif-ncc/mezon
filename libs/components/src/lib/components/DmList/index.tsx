@@ -1,6 +1,7 @@
 import { useFriends } from '@mezon/core';
 import { appActions, selectDirectsOpenlistOrder, useAppDispatch } from '@mezon/store';
 import { Icons } from '@mezon/ui';
+import { generateE2eId } from '@mezon/utils';
 import { memo, useEffect, useRef } from 'react';
 import { useModal } from 'react-modal-hook';
 import { useSelector } from 'react-redux';
@@ -63,6 +64,7 @@ const CreateMessageGroupModal = memo(
 				ref={buttonPlusRef}
 				onClick={openCreateMessageGroup}
 				className="relative cursor-pointer flex flex-row justify-end ml-0 dark:hover:bg-bgSecondary hover:bg-bgLightMode rounded-full whitespace-nowrap"
+				data-e2e={generateE2eId('chat.direct_message.button.button_plus')}
 			>
 				<span title="Create DM">
 					<Icons.Plus className="w-4 h-4" />

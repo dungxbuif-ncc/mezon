@@ -55,14 +55,12 @@ const ModalPanel: React.FC<ModalPanelProps> = ({
 						onClick={handleShowCreateCategory}
 						children="Create Category"
 						endIcon={<Icons.CreateCategoryIcon />}
-						dataE2E={generateE2eId(`clan_page.header.modal_panel.create_category`)}
 					/>
 				)}
 				<ItemModal
 					className="text-theme-primary-hover bg-item-theme-hover"
 					onClick={statusMarkAsReadClan === 'pending' ? undefined : () => handleMarkAsReadClan(currentClanId as string)}
 					disabled={statusMarkAsReadClan === 'pending'}
-					dataE2E={generateE2eId(`clan_page.header.modal_panel.mark_as_read`)}
 				>
 					{statusMarkAsReadClan === 'pending' ? 'Processing...' : 'Mark As Read'}
 				</ItemModal>
@@ -72,26 +70,23 @@ const ModalPanel: React.FC<ModalPanelProps> = ({
 					onClick={handleShowInviteClanModal}
 					children="Invite People"
 					endIcon={<Icons.AddPerson />}
-					dataE2E={generateE2eId(`clan_page.header.modal_panel.invite_people`)}
 				/>
 				<ItemModal
 					className="text-theme-primary-hover bg-item-theme-hover"
 					onClick={handleShowServerSettings}
 					children="Clan Settings"
 					endIcon={<Icons.SettingProfile className="text-theme-primary-hover" />}
-					dataE2E={generateE2eId(`clan_page.header.modal_panel.clan_settings`)}
 				/>
 				<ItemModal
 					className="text-theme-primary-hover bg-item-theme-hover"
 					onClick={handleShowNotificationSetting}
 					children="Notification Settings"
 					endIcon={<Icons.Bell className=" text-theme-primary-hover" />}
-					dataE2E={generateE2eId(`clan_page.header.modal_panel.notification_setting`)}
 				/>
 				<button
 					onClick={toggleShowEmptyCategory}
 					className="flex items-center w-full justify-between rounded-sm  text-theme-primary-hover bg-item-hover pr-2"
-					data-e2e={generateE2eId(`clan_page.header.modal_panel.show_empty_category`)}
+					data-e2e={generateE2eId(`clan_page.header.modal_panel.item`)}
 				>
 					<li className="text-[14px] font-medium flex-1 py-[6px] px-[8px] text-left cursor-pointer list-none">Show Empty Categories</li>
 					<input

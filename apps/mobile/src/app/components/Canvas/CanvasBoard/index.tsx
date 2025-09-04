@@ -4,13 +4,13 @@ import { sleep } from '@mezon/utils';
 import { useState } from 'react';
 import { StatusBar, View } from 'react-native';
 import { Chase } from 'react-native-animated-spinkit';
-import WebView from 'react-native-webview';
 import { useSelector } from 'react-redux';
 import { APP_SCREEN, MenuChannelScreenProps } from '../../../navigation/ScreenTypes';
+import WebviewBase from '../../WebviewBase';
 import { style } from './styles';
 
 type ScreenChannelCanvas = typeof APP_SCREEN.MENU_CHANNEL.CANVAS;
-export function CanvasScreen({ route }: MenuChannelScreenProps<ScreenChannelCanvas>) {
+export function CanvasScreen({ navigation, route }: MenuChannelScreenProps<ScreenChannelCanvas>) {
 	const { themeValue, themeBasic } = useTheme();
 	const styles = style(themeValue);
 	const { clanId, channelId, canvasId } = route.params;
@@ -105,12 +105,13 @@ export function CanvasScreen({ route }: MenuChannelScreenProps<ScreenChannelCanv
 					<Chase color={'#cdcdcd'} />
 				</View>
 			)}
-			<StatusBar barStyle={themeBasic === ThemeModeBase.LIGHT ? 'dark-content' : 'light-content'} backgroundColor={themeValue.charcoal} />
-			<WebView
-				source={{
-					uri: uri
-				}}
-				originWhitelist={['*']}
+			<StatusBar
+				barStyle={themeBasic === ThemeModeBase.LIGHT ? 'dark-content' : 'light-content'}
+				backgroundColor={themeValue?.primaryGradiant || themeValue.charcoal}
+			/>
+			<WebviewBase
+				url={uri}
+				incognito={true}
 				style={styles.container}
 				injectedJavaScriptBeforeContentLoaded={injectedJS}
 				injectedJavaScript={injectedDataJS}
@@ -121,6 +122,7 @@ export function CanvasScreen({ route }: MenuChannelScreenProps<ScreenChannelCanv
 					await sleep(1000);
 					setLoading(false);
 				}}
+				onGoBack={() => navigation.goBack()}
 			/>
 		</View>
 	);

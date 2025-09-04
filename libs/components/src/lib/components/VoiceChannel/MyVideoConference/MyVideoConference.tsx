@@ -109,8 +109,12 @@ export function MyVideoConference({
 
 	useEffect(() => {
 		const handleDisconnected = async (reason?: DisconnectReason) => {
-			if (reason === DisconnectReason.SERVER_SHUTDOWN || reason === DisconnectReason.CLIENT_INITIATED) {
-				await onLeaveRoom();
+			if (
+				reason === DisconnectReason.SERVER_SHUTDOWN ||
+				reason === DisconnectReason.DUPLICATE_IDENTITY ||
+				reason === DisconnectReason.CLIENT_INITIATED
+			) {
+				onLeaveRoom();
 			} else {
 				if (!url) return;
 				const maxAttempts = 3;
@@ -140,9 +144,9 @@ export function MyVideoConference({
 				layoutContext.pin.dispatch?.({ msg: 'clear_pin' });
 			}
 		};
-		const handleReconnectedRoom = async () => {
+		const handleReconnectedRoom = () => {
 			if (onJoinRoom) {
-				await onJoinRoom();
+				onJoinRoom();
 			}
 		};
 
@@ -152,7 +156,7 @@ export function MyVideoConference({
 			}
 		};
 		const handleTrackUnpublish = async (publication: RemoteTrackPublication, participant: RemoteParticipant) => {
-			if (focusTrack.publication?.trackSid === publication.trackSid) {
+			if (focusTrack?.publication?.trackSid === publication?.trackSid) {
 				await document.exitPictureInPicture();
 			}
 		};

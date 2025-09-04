@@ -180,8 +180,8 @@ export default function PreJoinCalling() {
 		setError(null);
 		setAvatar(avatar as string);
 		const fullStringNameAndAvatar = isUser
-			? JSON.stringify({ extName: getDisplayName, extAvatar: getAvatar })
-			: JSON.stringify({ extName: username });
+			? JSON.stringify({ extName: getDisplayName || username, extAvatar: getAvatar })
+			: JSON.stringify({ extName: getDisplayName || username });
 
 		await dispatch(generateMeetTokenExternal({ token: code as string, displayName: fullStringNameAndAvatar, isGuest: !isUser as boolean }));
 	}, [dispatch, username, getDisplayName, code]);

@@ -45,17 +45,18 @@ const SettingItem = ({ onItemClick, initSetting }: { onItemClick?: (settingName:
 						handleButtonClick('Account');
 						onItemClick && onItemClick('Account');
 					}}
+					data-e2e={generateE2eId(`user_setting.account.tab_account`)}
 				>
 					{t('setting:accountSettings.account')}
 				</button>
 				<br />
 				<button
-					data-e2e={generateE2eId(`user_setting.profile.tab_profile`)}
 					className={`p-2 pl-2 ml-[-8px] font-medium ${selectedButton === 'Profiles' ? 'bg-button-secondary text-theme-primary-active' : 'text-theme-primary'} mt-1 w-[170px] text-left rounded-[5px]`}
 					onClick={() => {
 						handleButtonClick('Profiles');
 						onItemClick && onItemClick('Profiles');
 					}}
+					data-e2e={generateE2eId(`user_setting.profile.tab_profile`)}
 				>
 					{t('setting:accountSettings.profiles')}
 				</button>

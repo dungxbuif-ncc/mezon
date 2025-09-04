@@ -2,7 +2,7 @@ import { size, useTheme } from '@mezon/mobile-ui';
 import { acitvitiesActions, directActions, useAppDispatch } from '@mezon/store-mobile';
 import { sleep } from '@mezon/utils';
 import { useNavigation } from '@react-navigation/native';
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useRef } from 'react';
 import { FlatList, Keyboard, Platform, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import MezonIconCDN from '../../componentUI/MezonIconCDN';
@@ -27,7 +27,7 @@ const MessagesScreenRender = memo(({ chatList }: { chatList: string }) => {
 			return [];
 		}
 	}, [chatList]);
-	const [refreshing, setRefreshing] = useState(false);
+	const refreshingRef = useRef<boolean>(false);
 	const navigation = useNavigation<any>();
 	const { themeValue } = useTheme();
 	const styles = style(themeValue);
@@ -38,11 +38,11 @@ const MessagesScreenRender = memo(({ chatList }: { chatList: string }) => {
 	};
 
 	const handleRefresh = async () => {
-		setRefreshing(true);
+		refreshingRef.current = true;
 		dispatch(directActions.fetchDirectMessage({ noCache: true }));
 		dispatch(acitvitiesActions.listActivities({ noCache: true }));
 		await sleep(500);
-		setRefreshing(false);
+		refreshingRef.current = false;
 	};
 
 	const renderItem = useCallback(({ item }: { item: string }) => {
@@ -75,7 +75,7 @@ const MessagesScreenRender = memo(({ chatList }: { chatList: string }) => {
 					return <MessageActivity />;
 				}}
 				keyboardShouldPersistTaps={'handled'}
-				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+				refreshControl={<RefreshControl refreshing={refreshingRef?.current} onRefresh={handleRefresh} />}
 				disableVirtualization
 				ListEmptyComponent={() => <MessagesScreenEmpty />}
 			/>

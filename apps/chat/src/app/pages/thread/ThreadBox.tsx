@@ -357,7 +357,10 @@ const ThreadBox = () => {
 	};
 
 	return (
-		<div className="flex flex-col flex-1 justify-end border-l border-color-primary bg-theme-chat pt-4" data-e2e={generateE2eId('discussion.box.thread')}>
+		<div
+			className="flex flex-col flex-1 justify-end border-l border-color-primary bg-theme-chat pt-4"
+			data-e2e={generateE2eId('discussion.box.thread')}
+		>
 			{threadCurrentChannel && (
 				<div className={`overflow-y-auto  max-w-widthMessageViewChat overflow-x-hidden flex-1`}>
 					<MemoizedChannelMessages

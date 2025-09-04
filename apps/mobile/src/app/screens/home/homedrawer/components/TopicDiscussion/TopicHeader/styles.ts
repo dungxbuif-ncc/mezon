@@ -27,7 +27,7 @@ export const style = (colors: Attributes) =>
 			flexDirection: 'row',
 			justifyContent: 'center',
 			alignItems: 'flex-end',
-			height: size.s_20,
+			height: size.s_24,
 			gap: size.s_6
 		},
 		userInfo: {
@@ -39,7 +39,8 @@ export const style = (colors: Attributes) =>
 		headerPannel: {
 			flexDirection: 'row',
 			justifyContent: 'space-between',
-			alignItems: 'center'
+			alignItems: 'center',
+			paddingVertical: size.s_6
 		},
 		backButton: {
 			width: size.s_50,

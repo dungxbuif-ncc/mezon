@@ -10,6 +10,7 @@ export const APP_SCREEN = {
 	UN_AUTHORIZE: 'UN_AUTHORIZE',
 	LOGIN: 'LOGIN',
 	REGISTER: 'REGISTER',
+	APP_BROWSER: 'APP_BROWSER',
 
 	AUTHORIZE: 'AUTHORIZE',
 	BOTTOM_BAR: 'BOTTOM_BAR',
@@ -313,6 +314,7 @@ export type AppStackParamList = {
 	[APP_SCREEN.UN_AUTHORIZE]: undefined;
 	[APP_SCREEN.LOGIN]: undefined;
 	[APP_SCREEN.REGISTER]: undefined;
+	[APP_SCREEN.APP_BROWSER]: { url: string; title?: string };
 	[APP_SCREEN.AUTHORIZE]: undefined;
 	[APP_SCREEN.BOTTOM_BAR]: undefined;
 	[APP_SCREEN.DRAWER_BAR]: undefined;

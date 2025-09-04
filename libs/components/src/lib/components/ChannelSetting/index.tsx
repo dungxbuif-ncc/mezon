@@ -27,14 +27,13 @@ export enum EChannelSettingTab {
 }
 const SettingChannel = (props: ModalSettingProps) => {
 	const { onClose, channel } = props;
-
 	const channelId = (channel?.channel_id || (channel as any)?.id || '') as string;
 	const channelFromStore = useAppSelector((state) => selectChannelById(state, channelId));
 	const currentChannel = (channelFromStore || channel) as IChannel;
 
 	const [currentSetting, setCurrentSetting] = useState<string>(EChannelSettingTab.OVERVIEW);
 	const [menu, setMenu] = useState(true);
-	const [displayChannelLabel, setDisplayChannelLabel] = useState<string>(currentChannel.channel_label || '');
+	const [displayChannelLabel, setDisplayChannelLabel] = useState<string>(currentChannel?.channel_label || '');
 
 	const handleSettingItemClick = (settingName: string) => {
 		setCurrentSetting(settingName);
@@ -64,8 +63,8 @@ const SettingChannel = (props: ModalSettingProps) => {
 	useOnClickOutside(modalRef, handleClose);
 
 	useEffect(() => {
-		setDisplayChannelLabel(currentChannel.channel_label || '');
-	}, [currentChannel.channel_id, currentChannel.channel_label]);
+		setDisplayChannelLabel(currentChannel?.channel_label || '');
+	}, [currentChannel?.channel_id, currentChannel?.channel_label]);
 
 	return (
 		<div

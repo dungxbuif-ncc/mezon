@@ -70,7 +70,6 @@ const AvatarProfile = ({
 					src={avatar}
 					isAnonymous={isAnonymous}
 					classNameText="!text-5xl"
-					dataE2E={identifierE2E}
 				/>
 				<div className="absolute bottom-1 right-2">
 					<UserStatusIcon status={statusOnline} />

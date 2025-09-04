@@ -1,19 +1,20 @@
 import { size, useTheme } from '@mezon/mobile-ui';
 import { getStore, selectAllActivities, selectAllFriends, selectAllUserDM } from '@mezon/store-mobile';
 import { createImgproxyUrl } from '@mezon/utils';
-import React, { useMemo } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { Animated, FlatList, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import ImageNative from '../../components/ImageNative';
 import { style } from './styles';
 
 function MessageActivity() {
 	const { themeValue } = useTheme();
+	console.log('log  => MessageActivity');
 	const styles = style(themeValue);
 	const store = getStore();
 	const friends = useSelector(selectAllFriends);
 	const activities = useSelector(selectAllActivities);
-
+	const animatedHeight = useRef(new Animated.Value(0)).current;
 	const mergeListFriendAndListUserDM = useMemo(() => {
 		try {
 			const dmUsers = selectAllUserDM(store.getState());
@@ -74,6 +75,18 @@ function MessageActivity() {
 		}
 	}, [mergeListFriendAndListUserDM?.length, activityMap]);
 
+	useEffect(() => {
+		if (data.length > 0) {
+			Animated.timing(animatedHeight, {
+				toValue: size.s_60,
+				duration: 300,
+				useNativeDriver: false
+			}).start();
+		} else {
+			animatedHeight.setValue(0);
+		}
+	}, [animatedHeight, data?.length]);
+
 	const renderItem = ({ item }) => {
 		return (
 			<View style={styles.wrapperItemActivity}>
@@ -97,22 +110,28 @@ function MessageActivity() {
 	};
 
 	return (
-		<FlatList
-			data={data || []}
-			renderItem={renderItem}
-			horizontal
-			keyExtractor={(item, index) => `activity_${item?.name}_${index}`}
-			showsVerticalScrollIndicator={false}
-			removeClippedSubviews={true}
-			maxToRenderPerBatch={2}
-			windowSize={2}
-			initialNumToRender={2}
-			contentContainerStyle={{ paddingLeft: size.s_18 }}
-			pagingEnabled={false}
-			decelerationRate="fast"
-			showsHorizontalScrollIndicator={false}
-			snapToInterval={size.s_220}
-		/>
+		<Animated.View
+			style={{
+				height: animatedHeight
+			}}
+		>
+			<FlatList
+				data={data || []}
+				renderItem={renderItem}
+				horizontal
+				keyExtractor={(item, index) => `activity_${item?.name}_${index}`}
+				showsVerticalScrollIndicator={false}
+				removeClippedSubviews={true}
+				maxToRenderPerBatch={2}
+				windowSize={2}
+				initialNumToRender={2}
+				contentContainerStyle={{ paddingLeft: size.s_18 }}
+				pagingEnabled={false}
+				decelerationRate="fast"
+				showsHorizontalScrollIndicator={false}
+				snapToInterval={size.s_220}
+			/>
+		</Animated.View>
 	);
 }
 

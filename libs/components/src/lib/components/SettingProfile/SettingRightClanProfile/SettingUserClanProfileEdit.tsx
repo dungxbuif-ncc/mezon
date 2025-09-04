@@ -75,7 +75,6 @@ const SettingUserClanProfileEdit: React.FC<SettingUserClanProfileEditProps> = ({
 					setImageObject={setImageObject}
 					onClose={closeModalEditor}
 					imageSource={imageObject}
-					dataE2E={generateE2eId('', 'edit_avatar_clan_profile')}
 				/>
 			) : null,
 		[imageObject]

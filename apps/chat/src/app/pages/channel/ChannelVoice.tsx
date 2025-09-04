@@ -73,10 +73,6 @@ const ChannelVoice = memo(
 				).unwrap();
 
 				if (result) {
-					if (isJoined && voiceInfo) {
-						await handleLeaveRoom();
-					}
-
 					await participantMeetState(ParticipantMeetState.JOIN, currentChannel?.clan_id as string, currentChannel?.channel_id as string);
 					dispatch(voiceActions.setJoined(true));
 					dispatch(voiceActions.setToken(result));

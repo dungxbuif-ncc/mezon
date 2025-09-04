@@ -97,7 +97,7 @@ export const DmListItem = React.memo((props: { id: string }) => {
 						style={[
 							styles.defaultText,
 							styles.lastMessage,
-							{ color: isUnReadChannel && !isYourAccount ? themeValue.white : themeValue.textDisabled }
+							{ color: isUnReadChannel && !isYourAccount ? themeValue.textStrong : themeValue.textDisabled }
 						]}
 						numberOfLines={1}
 					>
@@ -116,7 +116,7 @@ export const DmListItem = React.memo((props: { id: string }) => {
 						style={[
 							styles.defaultText,
 							styles.lastMessage,
-							{ color: isUnReadChannel && !isYourAccount ? themeValue.white : themeValue.textDisabled }
+							{ color: isUnReadChannel && !isYourAccount ? themeValue.textStrong : themeValue.textDisabled }
 						]}
 					>
 						{renderLastMessageContent}
@@ -125,7 +125,7 @@ export const DmListItem = React.memo((props: { id: string }) => {
 				{!!content && (
 					<DmListItemLastMessage
 						content={typeof content === 'object' ? content : safeJSONParse(content || '{}')}
-						styleText={{ color: isUnReadChannel && !isYourAccount ? themeValue.white : themeValue.textDisabled }}
+						styleText={{ color: isUnReadChannel && !isYourAccount ? themeValue.textStrong : themeValue.textDisabled }}
 					/>
 				)}
 			</View>
@@ -221,7 +221,7 @@ export const DmListItem = React.memo((props: { id: string }) => {
 							style={[
 								styles.defaultText,
 								styles.dateTime,
-								{ color: isUnReadChannel && !isYourAccount ? themeValue.white : themeValue.textDisabled }
+								{ color: isUnReadChannel && !isYourAccount ? themeValue.textStrong : themeValue.textDisabled }
 							]}
 						>
 							{lastMessageTime}

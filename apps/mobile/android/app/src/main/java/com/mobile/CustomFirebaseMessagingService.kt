@@ -17,7 +17,6 @@ import android.app.Notification
 import android.view.View
 import org.json.JSONArray
 import android.app.ActivityManager
-import android.os.PowerManager
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
 
@@ -28,12 +27,10 @@ class CustomFirebaseMessagingService : ReactNativeFirebaseMessagingService() {
         private const val PREF_NAME = "NotificationPrefs"
         private const val CHANNEL_ID = "calling_channel"
     }
-    private var wakeLock: PowerManager.WakeLock? = null
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         val data = remoteMessage.data
-        Log.d(TAG, "Received data: $data")
         if (data.isNotEmpty()) {
             val offer = data["offer"]
             if (offer != null) {
@@ -84,33 +81,6 @@ class CustomFirebaseMessagingService : ReactNativeFirebaseMessagingService() {
         }
     }
 
-    private fun acquireWakeLock() {
-        try {
-            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-            wakeLock = powerManager.newWakeLock(
-                PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
-                "$packageName:WAKE_LOCK"
-            )
-            wakeLock?.acquire(30 * 1000L /* 30s timeout */)
-            Log.d(TAG, "WakeLock acquired")
-        } catch (e: Exception) {
-            Log.e(TAG, "Error acquiring WakeLock: ${e.message}")
-        }
-    }
-
-    private fun releaseWakeLock() {
-        try {
-            wakeLock?.let {
-                if (it.isHeld) {
-                    it.release()
-                    Log.d(TAG, "WakeLock released")
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error releasing WakeLock: ${e.message}")
-        }
-    }
-
     private fun cancelCallNotification() {
         val isInCall = CallStateModule.getIsInCall()
         if (isInCall) {
@@ -118,6 +88,5 @@ class CustomFirebaseMessagingService : ReactNativeFirebaseMessagingService() {
             return // Do nothing if user is currently in a call
         }
         removeNotificationData()
-        releaseWakeLock()
     }
 }
