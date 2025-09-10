@@ -42,13 +42,12 @@ const AttachmentPreview = memo(({ channelId }: IProps) => {
 			{attachmentFilteredByChannelId.files.map((attachment, index) => {
 				const isFile = !attachment?.filetype?.includes?.('video') && !attachment?.filetype?.includes?.('image');
 				const isVideo = attachment?.filetype?.includes?.('video');
-
 				return (
 					<View key={index + attachment.filename} style={styles.attachmentItem}>
 						{isFile ? (
 							<AttachmentFilePreview attachment={attachment} />
 						) : (
-							<Image source={{ uri: attachment.url }} style={styles.attachmentItemImage} />
+							<Image source={{ uri: attachment?.thumbnail ?? attachment?.url }} style={styles.attachmentItemImage} />
 						)}
 
 						<TouchableOpacity style={styles.iconClose} activeOpacity={0.8} onPress={() => handleRemoveAttachment(index)}>

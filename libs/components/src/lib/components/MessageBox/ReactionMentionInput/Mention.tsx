@@ -41,6 +41,7 @@ export interface MentionProps {
 	onAdd?: (id: string, display: string, startPos: number, endPos: number) => void;
 	appendSpaceOnAdd?: boolean;
 	allowSpaceInQuery?: boolean;
+	allowedCharacters?: string;
 	style?: React.CSSProperties;
 	className?: string;
 	mentionState?: MentionState;

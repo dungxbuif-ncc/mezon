@@ -16,6 +16,7 @@
         "incomingFriendRequest": "Yêu cầu kết bạn được nhận",
         "findYourFriend": "Tìm bạn bè",
         "addByUserName": "Thêm bằng tên người dùng",
+        "addByUsername": "Thêm bởi {{username}}",
         "searchUsernamePlaceholder": "Nhập tên người dùng",
         "whoYouWantToAddFriend": "Bạn muốn thêm ai làm bạn bè",
         "byTheWay": "À nhân tiện, tên người dùng của bạn là",
@@ -27,5 +28,6 @@
     "toast": {
         "sendAddFriendSuccess": "Yêu cầu kết bạn đã được gửi",
         "sendAddFriendFail": "Không có ID hoặc tên người dùng hợp lệ được cung cấp."
-    }
+    },
+    "you": "bạn"
 }

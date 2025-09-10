@@ -17,5 +17,15 @@
     },
     "noChannelVoice": "No channel voice available",
     "chat": "Chat",
-    "noDisplay": "No display channel voice"
+    "noDisplay": "No display channel voice",
+    "muteModal": {
+        "title": "Mute member",
+        "content": "Are you sure you want to mute \"{{userName}}\"?",
+        "mute": "Mute"
+    },
+    "kickModal": {
+        "title": "Kick member",
+        "content": "Are you sure you want to kick \"{{userName}}\"?",
+        "kick": "Kick"
+    }
 }

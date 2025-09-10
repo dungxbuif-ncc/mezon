@@ -16,5 +16,7 @@
     "addMembers": "Add Members",
     "copyImage": "Copied Image",
     "copyImageFailed": "Failed to copy image: {{error}}",
-    "enable": "Enable"
+    "enable": "Enable",
+    "poorConnection": "Poor connection",
+    "descPoorConnection": "Try moving to get better signal"
 }

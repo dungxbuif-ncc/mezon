@@ -556,7 +556,7 @@ export const RenderTextMarkdownContent = ({
 							const videoId = extractYoutubeVideoId(contentInElement);
 							markdownBlackParts.push(
 								<RenderYoutubeVideo
-									videoKey={`youtube-${index}`}
+									videoKey={`youtube-link-${videoId}-${index}`}
 									videoId={videoId}
 									contentInElement={contentInElement}
 									onPress={() => openUrl(contentInElement, null)}
@@ -658,7 +658,7 @@ export const RenderTextMarkdownContent = ({
 
 							markdownBlackParts.push(
 								<RenderYoutubeVideo
-									videoKey={`youtube-${index}`}
+									videoKey={`youtube-linkyoutube-${videoId}-${index}`}
 									videoId={videoId}
 									contentInElement={contentInElement}
 									onPress={() => openUrl(contentInElement, null)}
@@ -743,7 +743,11 @@ export const RenderTextMarkdownContent = ({
 			<View style={{ flexDirection: 'row', gap: size.s_6, flexWrap: 'wrap', alignItems: 'flex-end' }}>
 				<View style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
 					{textParts?.length > 0 && <Text key={`textParts${t}_${lastIndex}`}>{textParts}</Text>}
-					{markdownBlackParts?.length > 0 && markdownBlackParts.map((item) => item)}
+					{markdownBlackParts?.length > 0 && markdownBlackParts.map((item, index) => (
+						<View key={`markdown-black-part-${index}`}>
+							{item}
+						</View>
+					))}
 				</View>
 				{isEdited && markdownBlackParts?.length > 0 && (
 					<View>

@@ -16,5 +16,7 @@
     "addMembers": "Thêm thành viên",
     "copyImage": "Đã sao chép ảnh",
     "copyImageFailed": "Sao chép không thành công: {{error}}",
-    "enable": "Bật"
+    "enable": "Bật",
+    "poorConnection": "Kết nối kém",
+    "descPoorConnection": "Hãy thử di chuyển để có tín hiệu tốt hơn"
 }

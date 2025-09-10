@@ -8,7 +8,6 @@ export const style = (colors: Attributes) =>
 			borderBottomWidth: 0.5,
 			paddingHorizontal: 10,
 			paddingVertical: 10,
-			backgroundColor: colors.primary,
 			alignItems: 'center',
 			justifyContent: 'space-between'
 		},

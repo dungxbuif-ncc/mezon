@@ -1,10 +1,12 @@
 import { getNewColorRole, setColorRoleNew } from '@mezon/store';
 import { DEFAULT_ROLE_COLOR } from '@mezon/utils';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { colorArray } from '../index';
 
 const RoleColor = () => {
+	const { t } = useTranslation('clanRoles');
 	const colorInputRef = useRef<HTMLInputElement>(null);
 	const colorRole = useSelector(getNewColorRole);
 	const dispatch = useDispatch();
@@ -35,9 +37,9 @@ const RoleColor = () => {
 		<div className="w-full flex flex-col text-[15px] dark:text-textSecondary text-textSecondary800 pr-5">
 			<div className="border-t-[1px] h-4 dark:border-borderDividerLight"></div>
 			<div className="text-xs font-bold uppercase mb-2">
-				Role colour <b className="text-red-600">*</b>
+				{t('roleManagement.roleColour')} <b className="text-red-600">*</b>
 			</div>
-			<div className="text-xs mb-2">Members use the colour of the highest role they have on the roles list.</div>
+			<div className="text-xs mb-2">{t('roleManagement.membersUseColour')}</div>
 			<div className="w-full grid grid-cols-10 gap-2">
 				<button
 					className="col-span-2 h-[50px] rounded relative"

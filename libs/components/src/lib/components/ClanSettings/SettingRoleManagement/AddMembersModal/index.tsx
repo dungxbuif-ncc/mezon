@@ -12,6 +12,7 @@ import {
 import { ButtonLoading, Icons, InputField } from '@mezon/ui';
 import { ThemeApp, createImgproxyUrl, getAvatarForPrioritize, getNameForPrioritize } from '@mezon/utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { AvatarImage } from '../../../AvatarImage/AvatarImage';
 interface ModalProps {
@@ -21,6 +22,7 @@ interface ModalProps {
 }
 
 export const AddMembersModal: React.FC<ModalProps> = ({ isOpen, RolesClan, onClose }) => {
+	const { t } = useTranslation('clanRoles');
 	const dispatch = useDispatch();
 	const appearanceTheme = useSelector(selectTheme);
 	const currentClan = useSelector(selectCurrentClan);
@@ -77,7 +79,7 @@ export const AddMembersModal: React.FC<ModalProps> = ({ isOpen, RolesClan, onClo
 	const handleUpdateRole = useCallback(async () => {
 		const userIds = Object.keys(selectedUserIds);
 
-		if (selectedRoleId === 'New Role') {
+		if (selectedRoleId === t('roleManagement.newRoleDefault')) {
 			dispatch(setAddMemberRoles(userIds));
 		} else {
 			await updateRole(
@@ -115,7 +117,7 @@ export const AddMembersModal: React.FC<ModalProps> = ({ isOpen, RolesClan, onClo
 				<div className="fixed inset-0 bg-black opacity-80"></div>
 				<div className=" bg-theme-setting-primary text-theme-primary relative z-10 p-6 rounded-[5px] text-center w-[440px] flex flex-col justify-between gap-y-2">
 					<div>
-						<h2 className="text-2xl font-semibold text-theme-primary-active">Add members</h2>
+						<h2 className="text-2xl font-semibold text-theme-primary-active">{t('setupMember.addMember')}</h2>
 						<p className=" text-[16px] mb-4 font-light inline-flex gap-x-2 items-center">
 							<Icons.RoleIcon defaultSize="w-5 h-[30px] min-w-5" />
 							{selectedRole?.title}
@@ -124,12 +126,12 @@ export const AddMembersModal: React.FC<ModalProps> = ({ isOpen, RolesClan, onClo
 							<InputField
 								className="flex-grow rounded w-full p-2 focus:outline-none  text-base"
 								type="text"
-								placeholder="Search Permissions"
+								placeholder={t('setupMember.searchMembers')}
 								value={searchTerm}
 								onChange={(e) => setSearchTerm(e.target.value)}
 							/>
 						</div>
-						<p className="text-xs font-bold uppercase mb-2 text-left">Members</p>
+						<p className="text-xs font-bold uppercase mb-2 text-left">{t('members')}</p>
 						<div className="overflow-y-auto thread-scroll">
 							<ul className="flex flex-col gap-y-[5px] max-h-[200px] font-light text-sm ">
 								{displayUsers.map((user) => (
@@ -149,15 +151,11 @@ export const AddMembersModal: React.FC<ModalProps> = ({ isOpen, RolesClan, onClo
 						</div>
 					</div>
 					<div className="flex justify-center text-[14px] gap-x-7">
-						<button
-							color="gray"
-							onClick={onClose}
-							className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 "
-						>
-							Cancel
+						<button color="gray" onClick={onClose} className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 ">
+							{t('roleDetail.doNotSave')}
 						</button>
 						<ButtonLoading
-							label="Add"
+							label={t('setupMember.add')}
 							className="px-4 py-2 btn-primary-hover btn-primary  rounded-lg "
 							onClick={handleUpdateRole}
 						/>

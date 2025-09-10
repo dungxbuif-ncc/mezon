@@ -1,6 +1,7 @@
 import { ActionEmitEvent } from '@mezon/mobile-components';
 import { baseColor, size, useTheme } from '@mezon/mobile-ui';
 import { memo, useCallback, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DeviceEventEmitter, View } from 'react-native';
 import { useMixImageColor } from '../../../../../../../app/hooks/useMixImageColor';
 import MezonImagePicker, { IMezonImagePickerHandler } from '../../../../../../componentUI/MezonImagePicker';
@@ -19,6 +20,7 @@ export default memo(function BannerAvatar({ avatar, onLoad, alt, defaultAvatar }
 	const styles = style(themeValue);
 	const { color } = useMixImageColor(avatar);
 	const avatarPickerRef = useRef<IMezonImagePickerHandler>();
+	const { t } = useTranslation(['profile']);
 
 	const handleOnload = useCallback(
 		async (url: string) => {
@@ -42,11 +44,11 @@ export default memo(function BannerAvatar({ avatar, onLoad, alt, defaultAvatar }
 			({
 				items: [
 					{
-						title: 'Change Avatar',
+						title: t('changeAvatar'),
 						onPress: () => pickAvatar()
 					},
 					{
-						title: 'Remove Avatar',
+						title: t('removeAvatar'),
 						textStyle: { color: baseColor.redStrong },
 						onPress: () => removeAvatar()
 					}

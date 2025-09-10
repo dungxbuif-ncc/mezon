@@ -85,7 +85,10 @@
     "actions": {
         "next": "Tiếp theo",
         "create": "Tạo sự kiện",
-        "edit": "Cập nhật sự kiện"
+        "edit": "Cập nhật sự kiện",
+        "event_one": "1 Sự kiện",
+        "event_other": "{{count}} Sự kiện",
+        "noEvent": "Sự kiện"
     },
     "notify": {
         "locationBlank": "Cần có một địa điểm",
@@ -95,7 +98,7 @@
     },
     "eventDetail": {
         "eventIsTaking": "Sự kiện đang diễn ra!",
-        "tenMinutesLeft": "Còn 10 phút. Tham gia ngay!"
+        "tenMinutesLeft": "Còn {{minutes}} phút. Tham gia ngay!"
     },
     "selectUser": "Chọn channel để tạo sự kiện"
 }

@@ -1,6 +1,7 @@
 import { size, useTheme } from '@mezon/mobile-ui';
 import { RootState, selectAllAccount, selectUserAddedByUserId } from '@mezon/store-mobile';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text } from 'react-native';
 import { useSelector } from 'react-redux';
 export type AddedByUserProps = {
@@ -11,11 +12,12 @@ export function AddedByUser({ groupId, userId }: AddedByUserProps) {
 	const userProfile = useSelector(selectAllAccount);
 	const addedByUser = useSelector((state: RootState) => selectUserAddedByUserId(state, groupId, userId));
 	const { themeValue } = useTheme();
+	const { t } = useTranslation('friends');
 
 	const nameUserAdded = useMemo(() => {
-		if (addedByUser?.id === userProfile?.user?.id) return 'you';
+		if (addedByUser?.id === userProfile?.user?.id) return t('you');
 		return addedByUser?.display_name || addedByUser?.username;
-	}, [addedByUser?.display_name, addedByUser?.id, addedByUser?.username, userProfile?.user?.id]);
+	}, [addedByUser?.display_name, addedByUser?.id, addedByUser?.username, userProfile?.user?.id, t]);
 
 	if (!nameUserAdded) return;
 	return (
@@ -28,7 +30,7 @@ export function AddedByUser({ groupId, userId }: AddedByUserProps) {
 			}}
 			numberOfLines={1}
 		>
-			Add By {nameUserAdded}
+			{t('addFriend.addByUsername', { username: nameUserAdded })}
 		</Text>
 	);
 }

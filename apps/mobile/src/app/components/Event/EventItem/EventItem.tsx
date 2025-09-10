@@ -34,27 +34,28 @@ export function EventItem({ event, onPress, showActions = true, start }: IEventI
 	const [isInterested, setIsInterested] = useState<boolean>(false);
 	const dispatch = useAppDispatch();
 
+	const leftTimeSeconds = useMemo(() => {
+		if (!start) return 0;
+		const currentTime = Date.now();
+		const startTimeLocal = new Date(start).getTime();
+		return Math.ceil((startTimeLocal - currentTime) / 1000);
+	}, [start]);
+
+	const calculateMinutesRemaining = useMemo(() => {
+		if (!start) return 0;
+		if (leftTimeSeconds > 0 && leftTimeSeconds <= 60 * 10) {
+			return Math.ceil(leftTimeSeconds / 60);
+		}
+		return 0;
+	}, [leftTimeSeconds, start]);
+
 	const eventStatus = useMemo(() => {
-		if (event?.event_status) {
-			return event.event_status;
-		}
-		if (start) {
-			const currentTime = Date.now();
-			const startTimeLocal = new Date(start);
-			const startTimeUTC = startTimeLocal.getTime() - startTimeLocal.getTimezoneOffset() * 60000;
-			const leftTime = startTimeUTC - currentTime;
-
-			if (leftTime > 0 && leftTime <= 1000 * 60 * 10) {
-				return EEventStatus.UPCOMING;
-			}
-
-			if (leftTime <= 0) {
-				return EEventStatus.ONGOING;
-			}
-		}
-
+		if (event?.event_status) return event.event_status;
+		if (!start) return EEventStatus.CREATED;
+		if (leftTimeSeconds <= 0) return EEventStatus.ONGOING;
+		if (leftTimeSeconds <= 60 * 10) return EEventStatus.UPCOMING;
 		return EEventStatus.CREATED;
-	}, [start, event?.event_status]);
+	}, [event?.event_status, leftTimeSeconds, start]);
 
 	function handlePress() {
 		onPress && onPress();
@@ -96,7 +97,7 @@ export function EventItem({ event, onPress, showActions = true, start }: IEventI
 		<Pressable onPress={handlePress}>
 			<View style={styles.container}>
 				<View style={styles.infoSection}>
-					<EventTime eventStatus={eventStatus} event={event} />
+					<EventTime eventStatus={eventStatus} event={event} minutes={calculateMinutesRemaining} />
 					<View style={[styles.inline, styles.infoRight]}>
 						<View style={styles.avatar}>
 							<FastImage

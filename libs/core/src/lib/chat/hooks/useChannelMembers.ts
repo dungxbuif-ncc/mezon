@@ -1,13 +1,14 @@
 import {
-    channelMembersActions,
-    channelMetaActions,
-    ChannelsEntity,
-    channelUsersActions,
-    selectAllChannelMembers,
-    selectChannelById,
-    ThreadsEntity,
-    useAppDispatch,
-    useAppSelector
+	channelMembersActions,
+	channelMetaActions,
+	ChannelsEntity,
+	channelUsersActions,
+	selectAllAccount,
+	selectAllChannelMembers,
+	selectChannelById,
+	ThreadsEntity,
+	useAppDispatch,
+	useAppSelector
 } from '@mezon/store';
 import { ChannelStreamMode } from 'mezon-js';
 import { useCallback, useMemo } from 'react';
@@ -19,6 +20,7 @@ export type useChannelMembersOptions = {
 
 export function useChannelMembers({ channelId, mode }: useChannelMembersOptions) {
 	const channel = useAppSelector((state) => selectChannelById(state, channelId ?? '')) || {};
+	const userProfile = useAppSelector(selectAllAccount);
 
 	const membersOfChild = useAppSelector((state) => (channelId ? selectAllChannelMembers(state, channelId as string) : null));
 	const membersOfParent = useAppSelector((state) => (channel?.parent_id ? selectAllChannelMembers(state, channel.parent_id as string) : null));
@@ -57,9 +59,15 @@ export function useChannelMembers({ channelId, mode }: useChannelMembersOptions)
 
 	const addMemberToThread = useCallback(
 		async (currentChannel: ChannelsEntity | null, notExistingUserIds: string[]) => {
-			await updateChannelUsers(currentChannel, notExistingUserIds, currentChannel?.clan_id as string);
+			const currentUserId = userProfile?.user?.id;
+			const filteredUserIds = currentUserId
+				? notExistingUserIds.filter(userId => userId !== currentUserId)
+				: notExistingUserIds;
+			if (filteredUserIds.length > 0) {
+				await updateChannelUsers(currentChannel, filteredUserIds, currentChannel?.clan_id as string);
+			}
 		},
-		[dispatch, membersOfChild]
+		[dispatch, membersOfChild, userProfile?.user?.id]
 	);
 
 	const joinningToThread = useCallback(

@@ -1,4 +1,4 @@
-import { Attributes, size } from '@mezon/mobile-ui';
+import { Attributes, baseColor, size } from '@mezon/mobile-ui';
 import { StyleSheet } from 'react-native';
 
 export const style = (colors: Attributes) =>
@@ -26,10 +26,21 @@ export const style = (colors: Attributes) =>
 			borderRadius: size.s_6
 		},
 		videoOverlay: {
-			...StyleSheet.absoluteFillObject,
-			backgroundColor: 'rgba(0, 0, 0, 0.5)',
-			alignItems: 'center',
-			justifyContent: 'center'
+			position: 'absolute',
+			left: size.s_4,
+			bottom: size.s_4,
+			backgroundColor: 'rgba(0,0,0,0.55)',
+			borderRadius: size.s_6,
+			paddingHorizontal: size.s_6,
+			paddingVertical: size.s_2,
+			flexDirection: 'row',
+			alignItems: 'center'
+		},
+		videoDuration: {
+			color: baseColor.white,
+			marginLeft: size.s_4,
+			fontSize: size.s_12,
+			fontWeight: '600'
 		},
 		iconSelected: {
 			position: 'absolute',

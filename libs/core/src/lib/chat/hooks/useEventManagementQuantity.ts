@@ -1,5 +1,4 @@
 import { selectAllAccount, selectAllTextChannel, selectCurrentClanId, selectEventsByClanId, useAppSelector } from '@mezon/store';
-import { EEventStatus } from '@mezon/utils';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -25,7 +24,16 @@ export const useEventManagementQuantity = () => {
 	const numberEventManagement = eventsByUser.length;
 
 	const eventUpcoming = useMemo(
-		() => eventsByUser.filter((event) => event.event_status === EEventStatus.UPCOMING || event.event_status === EEventStatus.ONGOING),
+		() => eventsByUser.filter((event) => {
+			if (!event.start_time) {
+				return false;
+			}
+			const startTime = new Date(event.start_time).getTime();
+			const currentTime = Date.now();
+			const timeDiff = startTime - currentTime;
+			const minutesLeft = Math.ceil(timeDiff / (1000 * 60));
+			return minutesLeft <= 10;
+		}),
 		[eventsByUser]
 	);
 	const numberEventUpcoming = eventUpcoming.length;

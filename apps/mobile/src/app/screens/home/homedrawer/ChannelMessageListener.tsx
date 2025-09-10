@@ -81,7 +81,7 @@ const ChannelMessageListener = React.memo(() => {
 					await Linking.openURL(urlVoice);
 				} else if (type === ChannelType.CHANNEL_TYPE_MEZON_VOICE) {
 					const data = {
-						snapPoints: ['45%'],
+						heightFitContent: true,
 						children: <JoinChannelVoiceBS channel={channel} />
 					};
 					DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_BOTTOM_SHEET, { isDismiss: false, data });

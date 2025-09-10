@@ -35,7 +35,7 @@ const NotificationItem = React.memo(({ notify, onLongPressNotify, onPressNotify 
 			{isNotificationMentionItem ? (
 				<NotificationMentionItem onPressNotify={onPressNotify} notify={notify} onLongPressNotify={onLongPressNotify} />
 			) : null}
-			{isNotificationWebhookClan && <NotificationWebhookClan notify={notify}></NotificationWebhookClan>}
+			{isNotificationWebhookClan && <NotificationWebhookClan notify={notify} onLongPressNotify={onLongPressNotify}></NotificationWebhookClan>}
 			{!notify?.code && <NotificationTopicItem onPressNotify={onPressNotify} notify={notify} />}
 		</View>
 	);

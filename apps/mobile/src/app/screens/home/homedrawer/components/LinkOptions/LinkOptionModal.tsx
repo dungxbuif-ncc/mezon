@@ -69,7 +69,7 @@ const LinkOptionModal: React.FC<LinkOptionModalProps> = ({ visible, link }) => {
 					<Text style={styles.actionText}>{t('actions.copyLink', 'Copy Link')}</Text>
 				</Pressable>
 				<Pressable android_ripple={{ color: themeValue.secondaryLight }} style={styles.actionItem} onPress={handleShare}>
-					<Text style={styles.actionText}>{t('share.share', 'Share Link')}</Text>
+					<Text style={styles.actionText}>{t('actions.shareLink', 'Share Link')}</Text>
 				</Pressable>
 			</View>
 		</BottomSheetView>

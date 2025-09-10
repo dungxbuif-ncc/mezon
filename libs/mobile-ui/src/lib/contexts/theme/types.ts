@@ -4,7 +4,10 @@ export enum ThemeModeBase {
 	LIGHT = 'light',
 	DARK = 'dark',
 	SUNRISE = 'sunrise',
-	REDDARK = 'redDark'
+	REDDARK = 'redDark',
+	PURPLE_HAZE = 'purpleHaze',
+	ABYSS_DARK = 'abyssDark',
+	SUNSET = 'sunset'
 }
 
 export enum ThemeModeAuto {

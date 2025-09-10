@@ -167,5 +167,19 @@ export const style = (colors: Attributes) =>
 			padding: size.s_6,
 			borderRadius: size.s_20,
 			backgroundColor: colors.bgViolet
+		},
+		muteIcon: {
+			padding: size.s_4,
+			borderRadius: size.s_20,
+			borderWidth: 1,
+			borderColor: colors.border
+		},
+		muteOptions: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			gap: size.s_8,
+			position: 'absolute',
+			right: size.s_4,
+			top: size.s_4
 		}
 	});

@@ -44,15 +44,7 @@ export const RecentEmojiMessageAction = React.memo((props: IRecentEmojiMessageAc
 	const handleShowPicker = () => {
 		const data = {
 			snapPoints: ['75%'],
-			disableScrollView: true,
-			children: (
-				<ContainerMessageActionModal
-					message={message}
-					mode={mode}
-					senderDisplayName={senderDisplayName}
-					isOnlyEmojiPicker={true}
-				/>
-			)
+			children: <ContainerMessageActionModal message={message} mode={mode} senderDisplayName={senderDisplayName} isOnlyEmojiPicker={true} />
 		};
 		DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_BOTTOM_SHEET, { isDismiss: false, data });
 	};

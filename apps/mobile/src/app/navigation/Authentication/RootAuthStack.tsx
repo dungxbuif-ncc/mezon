@@ -8,7 +8,6 @@ import CallingModalWrapper from '../../components/CallingModalWrapper';
 import ModalRootListener from '../../components/ModalRootListener';
 import ChannelAppScreen from '../../screens/home/homedrawer/ChannelApp';
 import ChannelRouterListener from '../../screens/home/homedrawer/components/ChannelList/ChannelRouterListener';
-import { RenderVideoDetail } from '../../screens/home/homedrawer/components/RenderVideoDetail';
 import HomeDefaultWrapper from '../../screens/home/homedrawer/HomeDefaultWrapper';
 import HomeScreenTablet from '../../screens/home/HomeScreenTablet';
 import InviteClanScreen from '../../screens/inviteClan/InviteClanScreen';

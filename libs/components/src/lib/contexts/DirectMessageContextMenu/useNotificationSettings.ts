@@ -16,17 +16,23 @@ export function useNotificationSettings({ channelId, notificationSettings, getCh
 	const [nameChildren, setNameChildren] = useState<string>('');
 
 	const muteOrUnMuteChannel = useCallback(
-		(channelId: string, active: number) => {
+		(channelId: string, active: number, channelType?: number) => {
 			if (!channelId) return;
+			dispatch(notificationSettingActions.updateNotiState({ channelId, active }));
+			const now = new Date();
+			const unmuteTimeISO = now.toISOString();
 
 			const body = {
 				channel_id: channelId,
 				notification_type: 0,
 				clan_id: '',
 				active: active,
-				is_current_channel: true
+				time_mute: active === EMuteState.UN_MUTE ? undefined : unmuteTimeISO,
+				is_current_channel: true,
+				is_direct: channelType === ChannelType.CHANNEL_TYPE_DM || channelType === ChannelType.CHANNEL_TYPE_GROUP
 			};
 			dispatch(notificationSettingActions.setMuteNotificationSetting(body));
+			dispatch(notificationSettingActions.setNotificationSetting(body));
 		},
 		[dispatch]
 	);
@@ -36,8 +42,9 @@ export function useNotificationSettings({ channelId, notificationSettings, getCh
 			if (!channelId) return;
 
 			if (duration !== Infinity) {
+				dispatch(notificationSettingActions.updateNotiState({ channelId, active: EMuteState.MUTED }));
 				const now = new Date();
-				const unmuteTime = new Date(now.getTime() + 5000);
+				const unmuteTime = new Date(now.getTime() + duration);
 				const unmuteTimeISO = unmuteTime.toISOString();
 
 				const body: SetNotificationPayload = {
@@ -50,6 +57,7 @@ export function useNotificationSettings({ channelId, notificationSettings, getCh
 				};
 				dispatch(notificationSettingActions.setNotificationSetting(body));
 			} else {
+				dispatch(notificationSettingActions.updateNotiState({ channelId, active: EMuteState.MUTED }));
 				const body: SetMuteNotificationPayload = {
 					channel_id: channelId,
 					notification_type: 0,
@@ -77,24 +85,19 @@ export function useNotificationSettings({ channelId, notificationSettings, getCh
 	);
 
 	useEffect(() => {
-		const checkUnMute = notificationSettings?.active !== EMuteState.MUTED || notificationSettings?.id === '0';
-		const checkMuteTime = notificationSettings?.time_mute ? new Date(notificationSettings?.time_mute) > new Date() : false;
+		const isDefaultSetting = !notificationSettings?.id || notificationSettings?.id === '0';
+		const isCurrentlyMuted = !isDefaultSetting && notificationSettings?.active === EMuteState.MUTED;
+		const hasActiveMuteTime =
+			!isDefaultSetting && notificationSettings?.time_mute ? new Date(notificationSettings.time_mute) > new Date() : false;
+		const shouldShowUnmute = isCurrentlyMuted || hasActiveMuteTime;
 
-		if (checkUnMute && !checkMuteTime) {
-			setNameChildren(`Mute`);
-			setMutedUntilText('');
-		} else {
-			setNameChildren(`UnMute`);
-		}
+		setNameChildren(shouldShowUnmute ? `UnMute` : `Mute`);
 
-		if (notificationSettings?.time_mute && checkUnMute) {
-			const timeMute = new Date(notificationSettings.time_mute);
-			const currentTime = new Date();
-			if (timeMute > currentTime) {
-				const formattedDate = format(timeMute, 'dd/MM, HH:mm');
-				setMutedUntilText(`Muted until ${formattedDate}`);
-			}
-		}
+		setMutedUntilText(
+			hasActiveMuteTime && notificationSettings?.time_mute
+				? `Muted until ${format(new Date(notificationSettings.time_mute), 'dd/MM, HH:mm')}`
+				: ''
+		);
 	}, [notificationSettings, dispatch, getChannelId]);
 
 	return {

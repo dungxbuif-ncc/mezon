@@ -1,4 +1,3 @@
-import { useNotification } from '@mezon/core';
 import { ActionEmitEvent, getUpdateOrAddClanChannelCache, save, STORAGE_CLAN_ID, STORAGE_DATA_CLAN_CHANNEL_CACHE } from '@mezon/mobile-components';
 import { size, useTheme } from '@mezon/mobile-ui';
 import {
@@ -41,7 +40,7 @@ import { style } from './Notifications.styles';
 import SkeletonNotification from './SkeletonNotification';
 import { ENotifyBsToShow } from './types';
 
-const InboxType = {
+export const InboxType = {
 	INDIVIDUAL: 'individual',
 	MESSAGES: 'messages',
 	MENTIONS: 'mentions',
@@ -51,8 +50,6 @@ const InboxType = {
 const Notifications = () => {
 	const { themeValue } = useTheme();
 	const styles = style(themeValue);
-	const { deleteNotify } = useNotification();
-	const [notify, setNotify] = useState<INotification>();
 	const currentClanId = useSelector(selectCurrentClanId);
 	const loadingStatus = useSelector((state: RootState) => state?.notification?.loadingStatus);
 	const isLoading = useMemo(() => ['loading']?.includes(loadingStatus), [loadingStatus]);
@@ -147,29 +144,6 @@ const Notifications = () => {
 		};
 	}, []);
 
-	const openBottomSheet = useCallback(
-		(type: ENotifyBsToShow, notify?: INotification) => {
-			switch (type) {
-				case ENotifyBsToShow.notification:
-					triggerBottomSheetOption();
-					break;
-				case ENotifyBsToShow.removeNotification:
-					triggerRemoveBottomSheet();
-					setNotify(notify);
-					break;
-				default:
-					triggerBottomSheetOption();
-					break;
-			}
-		},
-		[selectedTabs]
-	);
-
-	const handleDeleteNotify = (notify?: INotification) => {
-		notify && deleteNotify(notify.id, NotificationCategory.FOR_YOU);
-		closeBottomSheet();
-	};
-
 	const handleNotification = (notify: INotification, currentClanId: string, store: any, navigation: any) => {
 		return new Promise<void>((resolve) => {
 			requestAnimationFrame(async () => {
@@ -263,10 +237,6 @@ const Notifications = () => {
 		[currentClanId, navigation]
 	);
 
-	const closeBottomSheet = () => {
-		DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_BOTTOM_SHEET, { isDismiss: true });
-	};
-
 	const handleGoback = () => {
 		navigation.goBack();
 	};
@@ -314,13 +284,44 @@ const Notifications = () => {
 		DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_BOTTOM_SHEET, { isDismiss: false, data });
 	}, [handleTabChange, selectedTabs, t]);
 
-	const triggerRemoveBottomSheet = () => {
-		const data = {
-			heightFitContent: true,
-			children: <NotificationItemOption onDelete={() => handleDeleteNotify(notify)} />
-		};
-		DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_BOTTOM_SHEET, { isDismiss: false, data });
-	};
+	const triggerRemoveBottomSheet = useCallback(
+		(currentNotify: INotification) => {
+			const data = {
+				heightFitContent: true,
+				children: <NotificationItemOption currentNotify={currentNotify} currentCategory={selectedTabs} />
+			};
+			DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_BOTTOM_SHEET, { isDismiss: false, data });
+		},
+		[selectedTabs]
+	);
+
+	const openBottomSheet = useCallback(
+		(type: ENotifyBsToShow, notify?: INotification) => {
+			switch (type) {
+				case ENotifyBsToShow.notification:
+					triggerBottomSheetOption();
+					break;
+				case ENotifyBsToShow.removeNotification:
+					triggerRemoveBottomSheet(notify);
+					break;
+				default:
+					triggerBottomSheetOption();
+					break;
+			}
+		},
+		[triggerBottomSheetOption, triggerRemoveBottomSheet]
+	);
+
+	const renderItem = useCallback(
+		({ item }) => {
+			return <NotificationItem notify={item} onLongPressNotify={openBottomSheet} onPressNotify={handleOnPressNotify} />;
+		},
+		[openBottomSheet, handleOnPressNotify]
+	);
+
+	const keyExtractor = useCallback((item, index) => `${item.id}_${index}_item_noti`, []);
+
+	// console.log('re-render3');
 
 	return (
 		<View style={styles.notifications}>
@@ -351,14 +352,12 @@ const Notifications = () => {
 				<FlashList
 					showsVerticalScrollIndicator={false}
 					data={notificationsFilter}
-					renderItem={({ item }) => {
-						return <NotificationItem notify={item} onLongPressNotify={openBottomSheet} onPressNotify={handleOnPressNotify} />;
-					}}
+					renderItem={renderItem}
 					contentContainerStyle={{
 						paddingBottom: size.s_100 * 2
 					}}
 					estimatedItemSize={200}
-					keyExtractor={(item, index) => `${item.id}_${index}_item_noti`}
+					keyExtractor={keyExtractor}
 					onEndReached={fetchMoreData}
 					onEndReachedThreshold={0.5}
 					ListFooterComponent={isLoadMore && <ViewLoadMore />}

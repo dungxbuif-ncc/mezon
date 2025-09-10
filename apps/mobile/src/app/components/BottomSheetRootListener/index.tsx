@@ -4,7 +4,6 @@ import { useTheme } from '@mezon/mobile-ui';
 import { sleep } from '@mezon/utils';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BackHandler, DeviceEventEmitter, Keyboard, NativeEventSubscription, StyleProp, Text, View, ViewStyle } from 'react-native';
-import useFitContentSnapPoints from '../../hooks/useFitContentSnapPoints';
 import useTabletLandscape from '../../hooks/useTabletLandscape';
 import Backdrop from './backdrop';
 import { style } from './styles';
@@ -41,8 +40,6 @@ type BottomSheetState = {
 	maxHeightPercent: string;
 	containerStyle: StyleProp<ViewStyle>;
 	backdropStyle: StyleProp<ViewStyle>;
-	snapPointsWithFitContent: boolean;
-	disableScrollView: boolean;
 };
 
 const initialBottomSheetState: BottomSheetState = {
@@ -56,9 +53,7 @@ const initialBottomSheetState: BottomSheetState = {
 	hiddenHeaderIndicator: false,
 	maxHeightPercent: null,
 	containerStyle: null,
-	backdropStyle: null,
-	snapPointsWithFitContent: false,
-	disableScrollView: false
+	backdropStyle: null
 };
 
 const useBottomSheetState = () => {
@@ -70,8 +65,7 @@ const useBottomSheetState = () => {
 
 	return {
 		...state,
-		setAll: (updates: Partial<BottomSheetState>) =>
-			setState((prev) => ({ ...prev, ...updates })),
+		setAll: (updates: Partial<BottomSheetState>) => setState((prev) => ({ ...prev, ...updates })),
 		clearDataBottomSheet
 	};
 };
@@ -88,10 +82,6 @@ const BottomSheetRootListener = () => {
 		hiddenHeaderIndicator,
 		containerStyle,
 		backdropStyle,
-		maxHeightPercent,
-		snapPointsWithFitContent,
-		disableScrollView,
-
 		setAll,
 		clearDataBottomSheet
 	} = useBottomSheetState();
@@ -118,16 +108,9 @@ const BottomSheetRootListener = () => {
 		if (data?.containerStyle) updates.containerStyle = data.containerStyle;
 		if (data?.backdropStyle) updates.backdropStyle = data.backdropStyle;
 		if (data?.maxHeightPercent) updates.maxHeightPercent = data.maxHeightPercent;
-		if (data?.snapPointsWithFitContent !== undefined) updates.snapPointsWithFitContent = data.snapPointsWithFitContent;
-		if (data?.disableScrollView !== undefined) updates.disableScrollView = data.disableScrollView;
 		setAll(updates);
 		ref?.current?.present();
 	};
-
-	const {
-		percentSnapPoints,
-		onContentLayout,
-	} = useFitContentSnapPoints({ snapPoints, maxHeightPercent, snapPointsWithFitContent });
 
 	useEffect(() => {
 		const bottomSheetListener = DeviceEventEmitter.addListener(ActionEmitEvent.ON_TRIGGER_BOTTOM_SHEET, ({ isDismiss, data }) => {
@@ -164,7 +147,7 @@ const BottomSheetRootListener = () => {
 	return (
 		<OriginalBottomSheet
 			ref={ref}
-			snapPoints={heightFitContent ? null : percentSnapPoints}
+			snapPoints={heightFitContent ? null : snapPoints}
 			index={0}
 			animateOnMount
 			backgroundStyle={styles.backgroundStyle}
@@ -181,20 +164,12 @@ const BottomSheetRootListener = () => {
 				hiddenHeaderIndicator
 					? null
 					: () => {
-						return <View style={styles.handleIndicator} />;
-					}
+							return <View style={styles.handleIndicator} />;
+						}
 			}
 		>
 			{renderHeader()}
-			{children && (
-				disableScrollView ? (
-					<View onLayout={onContentLayout}>{children}</View>
-				) : (
-					<BottomSheetScrollView>
-						<View onLayout={onContentLayout}>{children}</View>
-					</BottomSheetScrollView>
-				)
-			)}
+			{children && <BottomSheetScrollView bounces={false}>{children}</BottomSheetScrollView>}
 		</OriginalBottomSheet>
 	);
 };

@@ -21,7 +21,9 @@
         "filterByUser": "Filter By User",
         "filterByAction": "Filter By Action",
         "sound": "Sound Effect",
-        "createSound": "Create Sound Effect"
+        "createSound": "Create Sound Effect",
+        "transferOwnership": "Transfer Ownership",
+        "manageUser": "Manage User"
     },
     "menuChannelStack": {
         "channelSetting": "Channel Settings",
@@ -42,6 +44,7 @@
         "quit": "Quit",
         "menu": "Menu",
         "walletManagement": "Wallet Management",
-        "setPassword": "Set Password"
+        "setPassword": "Set Password",
+        "myQRCode": "My QR Code"
     }
 }

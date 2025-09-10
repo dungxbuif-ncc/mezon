@@ -50,13 +50,16 @@
       "kickMemberSuccess": "Đã khai trừ thành viên thành công",
       "kickMemberFailed": "Không thể khai trừ thành viên",
       "removeMemberThreadSuccess": "Đã xóa thành viên thành công",
-      "removeMemberThreadFailed": "Không thể xóa thành viên"
+      "removeMemberThreadFailed": "Không thể xóa thành viên",
+      "transferOwnershipSuccess": "Chuyển quyền sở hữu thành công",
+      "transferOwnershipFailed": "Chuyển quyền sở hữu thất bại"
     }
   },
   "action": {
     "kick": "Khai trừ",
     "removeFromThread": "Xóa khỏi chủ đề",
-    "manage": "Quản lý"
+    "manage": "Quản lý",
+    "transferOwnership": "Chuyển quyền sở hữu"
   },
   "threadRemoveModal": {
     "title": "Xóa khỏi chủ đề?",

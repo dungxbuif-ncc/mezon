@@ -12,7 +12,6 @@ import { TYPING_DARK_MODE, TYPING_LIGHT_MODE } from '../../../assets/lottie';
 import MezonIconCDN from '../../componentUI/MezonIconCDN';
 import { IconCDN } from '../../constants/icon_cdn';
 import { DirectMessageCallMain } from '../../screens/messages/DirectMessageCall';
-import NotificationPreferences from '../../utils/NotificationPreferences';
 import { style } from './styles';
 
 const CallingModal = () => {

@@ -151,5 +151,6 @@
         "yourLocation": "Your location",
         "sender": "Sender",
         "locationOf": "{{name}}'s location"
-    }
+    },
+    "sharedBy": "Shared by {{username}}"
 }

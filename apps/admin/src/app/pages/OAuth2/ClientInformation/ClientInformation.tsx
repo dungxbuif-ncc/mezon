@@ -1,6 +1,7 @@
 import { IApplicationEntity, editMezonOauthClient, fetchMezonOauthClient, useAppDispatch } from '@mezon/store';
 import { ApiMezonOauthClient } from 'mezon-js/api.gen';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 interface IClientInformationProps {
 	currentApp: IApplicationEntity;
@@ -17,6 +18,11 @@ const ClientInformation = ({ currentApp }: IClientInformationProps) => {
 	}, [currentApp?.id, dispatch]);
 
 	const toggleResetSecretePopup = () => {
+		const redirectUris = currentApp?.oAuthClient?.redirect_uris;
+		if (!redirectUris || redirectUris.length === 0 || redirectUris.every(uri => !uri || uri.trim() === '')) {
+			toast.warning('Please add at least one redirect URI before resetting the secret key!');
+			return;
+		}
 		setIsShowSecretPO(!isShowResetSecretPO);
 	};
 

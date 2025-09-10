@@ -2,6 +2,7 @@ import { size, useTheme } from '@mezon/mobile-ui';
 import { selectMemberClanByUserId2, useAppSelector } from '@mezon/store-mobile';
 import { IAttachmentEntity, convertTimeString } from '@mezon/utils';
 import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Linking, Text, TouchableOpacity, View } from 'react-native';
 import MezonIconCDN from '../../../componentUI/MezonIconCDN';
 import { IconCDN } from '../../../constants/icon_cdn';
@@ -16,6 +17,7 @@ const ChannelFileItem = memo(({ file }: ChannelFileItemProps) => {
 	const styles = style(themeValue);
 	const userSendAttachment = useAppSelector((state) => selectMemberClanByUserId2(state, file?.uploader ?? ''));
 	const username = userSendAttachment?.user?.username;
+	const { t } = useTranslation('message');
 	const attachmentSendTime = convertTimeString(file?.create_time as string);
 
 	const onPressItem = () => {
@@ -31,7 +33,7 @@ const ChannelFileItem = memo(({ file }: ChannelFileItemProps) => {
 				</Text>
 				<View style={styles.footer}>
 					<Text style={styles.footerTitle} numberOfLines={1} ellipsizeMode="tail">
-						shared by {username}
+						{t('sharedBy', { username: username })}
 					</Text>
 					<Text style={styles.footerTime} numberOfLines={1}>
 						{attachmentSendTime}

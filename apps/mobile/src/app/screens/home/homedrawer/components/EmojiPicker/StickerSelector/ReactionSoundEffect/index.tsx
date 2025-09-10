@@ -81,7 +81,7 @@ const StickerSelector = ({ onSelected }: StickerSelectorProps) => {
 
 	return (
 		<ScrollView style={{ paddingHorizontal: size.s_10, paddingBottom: size.s_10 }}>
-			<ScrollView horizontal contentContainerStyle={styles.btnWrap}>
+			<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.btnWrap}>
 				{categoryLogo?.length > 0 &&
 					categoryLogo.map((item) => (
 						<TouchableOpacity

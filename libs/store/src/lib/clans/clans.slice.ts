@@ -16,6 +16,7 @@ import { policiesActions } from '../policies/policies.slice';
 import { rolesClanActions } from '../roleclan/roleclan.slice';
 import { RootState } from '../store';
 import { usersStreamActions } from '../stream/usersStream.slice';
+import { toastActions } from '../toasts/toasts.slice';
 import { voiceActions } from '../voice/voice.slice';
 
 export const CLANS_FEATURE_KEY = 'clans';
@@ -280,8 +281,24 @@ export const removeClanUsers = createAsyncThunk('clans/removeClanUsers', async (
 		const response = await mezon.client.removeClanUsers(mezon.session, clanId, userIds);
 		if (!response) {
 			return thunkAPI.rejectWithValue([]);
+			thunkAPI.dispatch(
+				toastActions.addToast({
+					message: 'Failed to remove member',
+					type: 'error',
+					autoClose: 3000
+				})
+			);
 		}
 		thunkAPI.dispatch(fetchClans({ noCache: true }));
+
+		thunkAPI.dispatch(
+			toastActions.addToast({
+				message: 'Member removed successfully',
+				type: 'success',
+				autoClose: 3000
+			})
+		);
+
 		return response;
 	} catch (error) {
 		captureSentryError(error, 'clans/removeClanUsers');

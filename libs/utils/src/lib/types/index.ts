@@ -1353,8 +1353,8 @@ export type IUserItemActivity = {
 };
 
 export type UserStatus = {
-	user_id: string;
 	status: string;
+	user_status: string;
 };
 
 export type UserStatusUpdate = {

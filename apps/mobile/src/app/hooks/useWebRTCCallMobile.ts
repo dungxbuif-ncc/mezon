@@ -7,7 +7,7 @@ import { IMessageSendPayload, IMessageTypeCallLog, sleep } from '@mezon/utils';
 import { ChannelStreamMode, ChannelType, WebrtcSignalingType, safeJSONParse } from 'mezon-js';
 import { ApiMessageAttachment, ApiMessageMention, ApiMessageRef } from 'mezon-js/api.gen';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { BackHandler, DeviceEventEmitter, NativeModules, Platform } from 'react-native';
+import { Alert, BackHandler, DeviceEventEmitter, Linking, NativeModules, Platform } from 'react-native';
 import RNCallKeep from 'react-native-callkeep';
 import { deflate, inflate } from 'react-native-gzip';
 import InCallManager from 'react-native-incall-manager';
@@ -212,10 +212,27 @@ export function useWebRTCCallMobile({ dmUserId, channelId, userId, isVideoCall, 
 		let haveCameraPermission = false;
 		const haveMicrophonePermission = await requestMicrophonePermission();
 		if (!haveMicrophonePermission) {
-			Toast.show({
-				type: 'error',
-				text1: 'Micro is not available'
-			});
+			Alert.alert('Micro is not available', 'Allow Mezon access to your microphone', [
+				{
+					text: 'Cancel',
+					style: 'cancel'
+				},
+				{
+					text: 'OK',
+					onPress: () => {
+						try {
+							if (Platform.OS === 'ios') {
+								Linking.openURL('app-settings:');
+							} else {
+								Linking.openSettings();
+							}
+						} catch (error) {
+							console.error('Error opening app settings:', error);
+						}
+					}
+				}
+			]);
+			await handleEndCall({});
 			DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_MODAL, { isDismiss: true });
 			return;
 		}
@@ -268,6 +285,8 @@ export function useWebRTCCallMobile({ dmUserId, channelId, userId, isVideoCall, 
 		try {
 			await setIsSpeaker({ isSpeaker: false });
 			if (!isAnswer) {
+				const constraints = await getConstraintsLocal(isVideoCall);
+				const stream = await mediaDevices.getUserMedia(constraints);
 				handleSend(
 					{
 						t: `${userProfile?.user?.username} started a ${isVideoCall ? 'video' : 'audio'} call`,
@@ -277,9 +296,6 @@ export function useWebRTCCallMobile({ dmUserId, channelId, userId, isVideoCall, 
 					[],
 					[]
 				);
-
-				const constraints = await getConstraintsLocal(isVideoCall);
-				const stream = await mediaDevices.getUserMedia(constraints);
 				// Initialize peer connection
 				const pc = initializePeerConnection();
 
@@ -461,12 +477,12 @@ export function useWebRTCCallMobile({ dmUserId, channelId, userId, isVideoCall, 
 			if (peerConnection?.current) {
 				peerConnection?.current.close();
 			}
-			if (!isCallerEndCall) {
-				await mezon.socketRef.current?.forwardWebrtcSignaling(dmUserId, WebrtcSignalingType.WEBRTC_SDP_QUIT, '', channelId, userId);
-			}
 			dispatch(DMCallActions.removeAll());
 			dispatch(audioCallActions.setUserCallId(''));
 			dispatch(DMCallActions.setIsInCall(false));
+			if (!isCallerEndCall) {
+				await mezon.socketRef.current?.forwardWebrtcSignaling(dmUserId, WebrtcSignalingType.WEBRTC_SDP_QUIT, '', channelId, userId);
+			}
 			if (timeStartConnected?.current) {
 				let timeCall = '';
 				const startTime = new Date(timeStartConnected.current);
@@ -508,6 +524,17 @@ export function useWebRTCCallMobile({ dmUserId, channelId, userId, isVideoCall, 
 				return;
 			}
 		} catch (error) {
+			DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_MODAL, { isDismiss: true });
+			if (isFromNative) {
+				try {
+					InCallManager.stop();
+					NativeModules?.DeviceUtils?.killApp();
+					BackHandler.exitApp();
+				} catch (e) {
+					console.error('log  => onKillApp', e);
+					BackHandler.exitApp();
+				}
+			}
 			console.error('Error ending call:', error);
 		}
 	};

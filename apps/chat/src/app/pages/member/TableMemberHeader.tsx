@@ -2,7 +2,7 @@ import { Icons } from '@mezon/ui';
 
 const TableMemberHeader = () => {
 	return (
-		<div className="flex flex-row justify-between items-center px-4 h-[48px] shadow border-b-theme-primary">
+		<div className="flex flex-row justify-between items-center px-4 h-12 shadow border-b-theme-primary">
 			<div className="flex-3 p-1">
 				<span className="text-xs font-bold uppercase">Name</span>
 			</div>

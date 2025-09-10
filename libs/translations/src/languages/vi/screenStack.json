@@ -21,7 +21,9 @@
     "filterByUser": "Lọc theo người dùng",
     "filterByAction": "Lọc theo hành động",
     "sound": "Hiệu ứng âm thanh",
-    "createSound": "Tạo hiệu ứng âm thanh"
+    "createSound": "Tạo hiệu ứng âm thanh",
+    "transferOwnership": "Chuyển quyền sở hữu",
+    "manageUser": "Quản lý người dùng"
   },
   "menuChannelStack": {
     "channelSetting": "Cài đặt kênh",
@@ -42,6 +44,7 @@
     "quit": "Thoát",
     "menu": "Danh mục",
     "walletManagement": "Quản lý ví",
-    "setPassword": "Đặt mật khẩu"
+    "setPassword": "Đặt mật khẩu",
+    "myQRCode": "Mã QR của tôi"
   }
 }

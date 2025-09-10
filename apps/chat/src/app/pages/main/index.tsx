@@ -196,7 +196,7 @@ function MyApp() {
 				{previewMode && <PreviewOnboardingMode />}
 				{openPopupForward && <ForwardMessageModal />}
 				<SidebarMenu openCreateClanModal={openCreateClanModal} openDiscoverPage={openDiscoverPage} />
-				<Topbar isHidden={currentClanId !== '0' ? !currentChannel?.id : !directId} />
+				<Topbar isHidden={currentClanId !== '0' ? false : !directId} />
 				<MainContent />
 
 				<FooterProfile
@@ -277,6 +277,8 @@ const SidebarMenu = memo(
 		const closeMenu = useSelector(selectCloseMenu);
 		const statusMenu = useSelector(selectStatusMenu);
 		const { setCloseMenu, setStatusMenu } = useMenu();
+		const [isAtTop, setIsAtTop] = useState(true);
+		const [showDmUnreadList, setShowDmUnreadList] = useState(false);
 
 		useEffect(() => {
 			const handleSizeWidth = () => {
@@ -332,24 +334,32 @@ const SidebarMenu = memo(
 				id="menu"
 			>
 				<div
-					className={`top-0 left-0 right-0 flex flex-col items-center pt-4 md:pb-32 pb-4 overflow-y-auto hide-scrollbar ${isWindowsDesktop || isLinuxDesktop ? 'max-h-heightTitleBar h-heightTitleBar' : 'h-[calc(100dvh_-_56px)]'} `}
+					className={`top-0 left-0 right-0 flex flex-col items-center pt-0 md:pb-32 pb-4 overflow-y-auto hide-scrollbar ${isWindowsDesktop || isLinuxDesktop ? 'max-h-heightTitleBar h-heightTitleBar' : 'h-[calc(100dvh_-_56px)]'} `}
+					onScroll={(e) => setIsAtTop(e.currentTarget.scrollTop === 0)}
 				>
-					<div className="flex flex-col items-center">
-						<SidebarLogoItem />
-						<DirectUnreadList />
+					<div className={`flex flex-col items-center sticky top-0 z-10 bg-theme-primary w-full ${isAtTop ? 'pt-3' : 'py-3'}`}>
+						<SidebarLogoItem onToggleUnreadList={() => setShowDmUnreadList((prev) => !prev)} isUnreadListOpen={showDmUnreadList} />
+						{showDmUnreadList && <DirectUnreadList />}
+						{isAtTop && <div className="w-10 border-b border-color-theme mx-auto mt-3" />}
 					</div>
 
-					<div className="pb-32">
+					<div className="pb-12">
 						<ClansList />
 						<div className="mt-3">
 							<NavLinkComponent>
-								<div className="flex items-center justify-between text-theme-primary group" onClick={openDiscoverPage} title="Discover">
+								<div
+									className="flex items-center justify-between text-theme-primary group"
+									onClick={openDiscoverPage}
+									title="Discover"
+								>
 									<div className="w-[40px] h-[40px] rounded-xl theme-base-color flex justify-center items-center  cursor-pointer transition-all bg-add-clan-hover duration-200 size-12">
 										<svg
 											className="text-theme-primary-active size-5"
 											viewBox="0 0 16 16"
 											fill="currentColor"
 											xmlns="http://www.w3.org/2000/svg"
+											width={40}
+											height={40}
 										>
 											<g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
 											<g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>

@@ -6,12 +6,16 @@ import {
 	DMCallActions,
 	EStateFriend,
 	RolesClanEntity,
+	RootState,
 	directActions,
+	friendsActions,
+	getStore,
 	selectAccountCustomStatus,
 	selectAllRolesClan,
 	selectDirectsOpenlist,
 	selectFriendById,
 	selectMemberClanByUserId2,
+	selectStatusSentMobile,
 	useAppDispatch,
 	useAppSelector
 } from '@mezon/store-mobile';
@@ -21,6 +25,7 @@ import { ChannelType } from 'mezon-js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DeviceEventEmitter, Text, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 import { useSelector } from 'react-redux';
 import { useMixImageColor } from '../../../../../../app/hooks/useMixImageColor';
 import { APP_SCREEN } from '../../../../../../app/navigation/ScreenTypes';
@@ -68,7 +73,7 @@ const UserProfile = React.memo(
 		const { themeValue } = useTheme();
 		const styles = style(themeValue, isTabletLandscape);
 		const { userProfile } = useAuth();
-		const { t } = useTranslation(['userProfile']);
+		const { t } = useTranslation(['userProfile', 'friends']);
 		const userById = useAppSelector((state) => selectMemberClanByUserId2(state, userId || user?.id));
 		const userStatus = useMemberStatus(userId || user?.id);
 		const rolesClan: RolesClanEntity[] = useSelector(selectAllRolesClan);
@@ -113,15 +118,40 @@ const UserProfile = React.memo(
 			return !userById;
 		}, [userById]);
 
-		const handleAddFriend = () => {
+		const handleAddFriend = async () => {
 			const userIdToAddFriend = userId || user?.id;
 			if (userIdToAddFriend) {
-				addFriend({
+				await addFriend({
 					usernames: [],
 					ids: [userIdToAddFriend]
 				});
+
+				showAddFriendToast();
 			}
 		};
+
+		const showAddFriendToast = useCallback(() => {
+			const store = getStore();
+			const statusSentMobile = selectStatusSentMobile(store.getState() as RootState);
+			if (statusSentMobile?.isSuccess) {
+				Toast.show({
+					type: 'success',
+					props: {
+						text2: t('friends:toast.sendAddFriendSuccess'),
+						leadingIcon: <MezonIconCDN icon={IconCDN.checkmarkSmallIcon} color={baseColor.green} width={20} height={20} />
+					}
+				});
+			} else {
+				Toast.show({
+					type: 'error',
+					props: {
+						text2: t('friends:toast.sendAddFriendFail'),
+						leadingIcon: <MezonIconCDN icon={IconCDN.closeIcon} color={baseColor.redStrong} width={20} height={20} />
+					}
+				});
+			}
+			dispatch(friendsActions.setSentStatusMobile(null));
+		}, []);
 
 		const iconFriend = useMemo(() => {
 			switch (infoFriend?.state) {

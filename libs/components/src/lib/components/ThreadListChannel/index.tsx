@@ -25,11 +25,11 @@ export type ListThreadChannelRef = {
 
 type ThreadLinkWrapperProps = {
 	thread: IChannel;
-	isFirstThread: boolean;
+	notLastThread: boolean;
 	isActive: boolean;
 };
 
-export const ThreadLinkWrapper: React.FC<ThreadLinkWrapperProps> = ({ thread, isFirstThread, isActive }) => {
+export const ThreadLinkWrapper: React.FC<ThreadLinkWrapperProps> = ({ thread, notLastThread, isActive }) => {
 	const currentChannelId = useAppSelector(selectCurrentChannelId);
 	const threadMeta = useAppSelector((state) => selectChannelMetaById(state, thread?.id));
 	const isCategoryExpanded = useAppSelector((state) => selectCategoryExpandStateByCategoryId(state, thread.category_id as string));
@@ -63,5 +63,5 @@ export const ThreadLinkWrapper: React.FC<ThreadLinkWrapperProps> = ({ thread, is
 		return null;
 	}
 
-	return <ThreadLink isActive={isActive} thread={thread} isFirstThread={isFirstThread} handleClick={handleClickLink} />;
+	return <ThreadLink isActive={isActive} thread={thread} hasLine={notLastThread} handleClick={handleClickLink} />;
 };

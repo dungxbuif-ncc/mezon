@@ -1,17 +1,17 @@
 import { AudioSession, LiveKitRoom, TrackReference, useConnectionState } from '@livekit/react-native';
 import { size, useTheme } from '@mezon/mobile-ui';
-import { getStore, selectChannelById2, selectIsPiPMode, selectVoiceInfo, useAppDispatch, useAppSelector, voiceActions } from '@mezon/store-mobile';
+import { selectIsPiPMode, selectVoiceInfo, useAppDispatch, useAppSelector, voiceActions } from '@mezon/store-mobile';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, NativeModules, Platform, View } from 'react-native';
+import { AppState, NativeModules, Platform, StatusBar, StyleSheet, View } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { PERMISSIONS, request } from 'react-native-permissions';
 import { useSelector } from 'react-redux';
-import { ReactionChannelInfo } from '../../../../../../../../../libs/components/src/lib/components/VoiceChannel/MyVideoConference/Reaction/types';
-import { useSendReaction } from '../../../../../../../../../libs/components/src/lib/components/VoiceChannel/MyVideoConference/Reaction/useSendReaction';
 import StatusBarHeight from '../../../../../components/StatusBarHeight/StatusBarHeight';
 import { useSoundReactions } from '../../../../../hooks/useSoundReactions';
 import { CallReactionHandler } from './CallReactionHandler';
 import HeaderRoomView from './HeaderRoomView';
 import RoomView from './RoomView';
+const { PipModule } = NativeModules;
 
 const { CustomAudioModule, KeepAwake, KeepAwakeIOS, AudioSessionModule } = NativeModules;
 
@@ -118,12 +118,7 @@ function ChannelVoice({
 	const channelId = useMemo(() => {
 		return voiceInfo?.channelId;
 	}, [voiceInfo]);
-	const currentChannel = useMemo(() => {
-		const store = getStore();
-		const channel = selectChannelById2(store.getState(), channelId);
-		return channel;
-	}, [channelId]);
-	const { sendSoundReaction } = useSendReaction({ currentChannel: currentChannel as ReactionChannelInfo });
+
 	const { handleSoundReaction, activeSoundReactions } = useSoundReactions();
 	const clanId = useMemo(() => {
 		return voiceInfo?.clanId;
@@ -176,30 +171,50 @@ function ChannelVoice({
 		};
 	}, []);
 
+	const checkPipSupport = async () => {
+		try {
+			if (Platform.OS !== 'android' || !PipModule?.isPipSupported) {
+				return false;
+			}
+			return await PipModule.isPipSupported();
+		} catch (error) {
+			console.error('Error checking PiP support:', error);
+			return false;
+		}
+	};
+
 	useEffect(() => {
-		const subscription = AppState.addEventListener('change', async (state) => {
-			if (isRequestingPermission?.current || Platform.OS === 'ios') {
-				return;
-			}
-			if (state === 'background') {
-				if (Platform.OS === 'android') {
-					const isPipSupported = await NativeModules.PipModule.isPipSupported();
-					if (isPipSupported) {
-						NativeModules.PipModule.enablePipMode();
-						dispatch(voiceActions.setPiPModeMobile(true));
-					}
-				}
-			} else {
-				if (Platform.OS === 'android') {
-					dispatch(voiceActions.setPiPModeMobile(false));
-				}
-			}
-		});
+		if (Platform.OS === 'android') {
+			checkPipSupport();
+		}
+		const subscription =
+			Platform.OS === 'ios'
+				? null
+				: AppState.addEventListener('change', async (state) => {
+						try {
+							if (isRequestingPermission?.current) {
+								return;
+							}
+							if (state === 'background') {
+								StatusBar.setTranslucent(false);
+								PipModule?.enterPipMode?.();
+								dispatch(voiceActions.setPiPModeMobile(true));
+							} else {
+								StatusBar.setTranslucent(true);
+								PipModule?.exitPipMode?.();
+								dispatch(voiceActions.setPiPModeMobile(false));
+							}
+						} catch (e) {
+							StatusBar.setTranslucent(true);
+							dispatch(voiceActions.setPiPModeMobile(false));
+						}
+					});
 		return () => {
 			if (Platform.OS === 'android') {
+				StatusBar.setTranslucent(true);
 				dispatch(voiceActions.setPiPModeMobile(false));
 			}
-			subscription.remove();
+			subscription && subscription.remove();
 		};
 	}, [dispatch]);
 
@@ -214,8 +229,7 @@ function ChannelVoice({
 				style={[
 					{
 						width: isAnimationComplete ? '100%' : size.s_100 * 2,
-						height: isAnimationComplete ? '100%' : size.s_150,
-						backgroundColor: isAnimationComplete ? themeValue?.primary : themeValue?.secondary
+						height: isAnimationComplete ? '100%' : size.s_150
 					},
 					!isAnimationComplete && {
 						borderWidth: 1,
@@ -225,14 +239,18 @@ function ChannelVoice({
 					}
 				]}
 			>
+				<LinearGradient
+					start={{ x: 1, y: 0 }}
+					end={{ x: 0, y: 0 }}
+					colors={[themeValue.primary, themeValue?.primaryGradiant || themeValue.primary]}
+					style={[StyleSheet.absoluteFillObject]}
+				/>
 				<LiveKitRoom serverUrl={serverUrl} token={token} connect={true}>
 					<HeaderRoomView
 						channelId={channelId}
-						clanId={clanId}
 						onPressMinimizeRoom={onPressMinimizeRoom}
 						isGroupCall={isGroupCall}
 						isShow={isAnimationComplete && !focusedScreenShare && !isPiPMode}
-						sendSoundReaction={sendSoundReaction}
 					/>
 					<ConnectionMonitor />
 					{!isGroupCall && !isPiPMode && isAnimationComplete && (

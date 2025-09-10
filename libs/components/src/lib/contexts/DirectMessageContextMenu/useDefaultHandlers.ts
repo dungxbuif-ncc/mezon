@@ -9,7 +9,7 @@ interface UseDefaultHandlersParams {
 	deleteFriend: (username: string, userId: string) => void;
 	handleMarkAsRead: (channelId: string) => void;
 	handleScheduleMute: (channelId: string, channelType: number, duration: number) => void;
-	muteOrUnMuteChannel: (channelId: string, active: number) => void;
+	muteOrUnMuteChannel: (channelId: string, active: number, channelType?: number) => void;
 	handleEnableE2ee: (directId?: string, e2ee?: number) => Promise<void>;
 	handleRemoveMemberFromGroup: (userId: string, channelId: string) => Promise<void>;
 	handleLeaveDmGroup: (channelId: string, isLastOne: boolean) => Promise<void>;
@@ -67,7 +67,7 @@ export function useDefaultHandlers({
 				},
 				handleUnmute: () => {
 					const channelId = user?.channelId || user?.channel_id;
-					muteOrUnMuteChannel(channelId, EMuteState.UN_MUTE);
+					muteOrUnMuteChannel(channelId, EMuteState.UN_MUTE, user?.type);
 				},
 				handleEnableE2EE: () => {
 					const channelId = user?.channelId || user?.channel_id;

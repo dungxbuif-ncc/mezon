@@ -54,5 +54,10 @@
         "vietnamese": "Tiếng Việt"
     },
     "logOut": "Đăng xuất",
+    "logOutPopup": {
+        "description": "Bạn có chắc chắn muốn đăng xuất không?",
+        "noConfirm": "Không",
+        "yesConfirm": "Có"
+    },
     "removeAccount": "Xóa tài khoản"
 }

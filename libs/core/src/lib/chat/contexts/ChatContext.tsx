@@ -53,6 +53,7 @@ import {
 	policiesActions,
 	resetChannelBadgeCount,
 	rolesClanActions,
+	selectAllChannels,
 	selectAllTextChannel,
 	selectAllThreads,
 	selectAllUserClans,
@@ -70,6 +71,7 @@ import {
 	selectCurrentStreamInfo,
 	selectCurrentTopicId,
 	selectCurrentUserId,
+	selectDefaultChannelIdByClanId,
 	selectDmGroupCurrentId,
 	selectIsInCall,
 	selectLastMessageByChannelId,
@@ -78,6 +80,7 @@ import {
 	selectStreamMembersByChannelId,
 	selectUserCallId,
 	selectVoiceInfo,
+	selectWelcomeChannelByClanId,
 	stickerSettingActions,
 	threadsActions,
 	toastActions,
@@ -106,6 +109,7 @@ import {
 	TOKEN_TO_AMOUNT,
 	ThreadStatus,
 	TypeMessage,
+	checkIsThread,
 	isBackgroundModeActive,
 	isLinuxDesktop
 } from '@mezon/utils';
@@ -846,6 +850,13 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({ children }) =
 						users: [...users].filter((item) => item.user_id !== userId)
 					})
 				);
+				dispatch(
+					channelMembersActions.addNewMember({
+						channel_id: channel_desc.channel_id as string,
+						user_ids: userIds,
+						addedByUserId: caller?.user_id
+					})
+				);
 			}
 
 			if (currentClanId === clan_id) {
@@ -1312,9 +1323,30 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({ children }) =
 				return;
 			}
 			if (channelDeleted) {
-				if (channelDeleted.channel_id === currentChannelId) {
-					navigate(`/chat/clans/${clanId}/member-safety`);
+				const currentChannel = currentChannelId ? selectChannelById(store.getState(), currentChannelId) : null;
+				const isUserInDeletedChannel = channelDeleted.channel_id === currentChannelId;
+				const isUserInChildThread = currentChannel && checkIsThread(currentChannel) && currentChannel.parent_id === channelDeleted.channel_id;
+
+				if (isUserInDeletedChannel || isUserInChildThread) {
+					if (!clanId) {
+						navigate(`/chat/direct/friends`);
+						return;
+					}
+
+					const welcomeChannelId = selectWelcomeChannelByClanId(store.getState(), clanId);
+					const defaultChannelId = selectDefaultChannelIdByClanId(store.getState(), clanId);
+					const allChannels = selectAllChannels(store.getState());
+					const fallbackChannelId = allChannels.find(ch => ch.id !== channelDeleted.channel_id && !checkIsThread(ch))?.id;
+
+					const redirectChannelId = welcomeChannelId || defaultChannelId || fallbackChannelId;
+
+					if (redirectChannelId) {
+						navigate(`/chat/clans/${clanId}/channels/${redirectChannelId}`);
+					} else {
+						navigate(`/chat/clans/${clanId}/member-safety`);
+					}
 				}
+
 				dispatch(channelsActions.deleteChannelSocket(channelDeleted));
 				dispatch(listChannelsByUserActions.remove(channelDeleted.channel_id));
 				dispatch(listChannelRenderAction.updateClanBadgeRender({ channelId: channelDeleted.channel_id, clanId: channelDeleted.clan_id }));
@@ -2369,3 +2401,4 @@ const ChatContextConsumer = ChatContext.Consumer;
 ChatContextProvider.displayName = 'ChatContextProvider';
 
 export { ChatContext, ChatContextConsumer, ChatContextProvider };
+

@@ -57,5 +57,45 @@
     "roleImagePicker": "Role Icon",
     "notifyEveryone":"Notify everyone who has permission to see this channel.",
     "removeImage": "Remove",
-    "allMembers": "All Members"
+    "allMembers": "All Members",
+    "permissionDescriptions": {
+        "administrator": "Allows members to manage entire clan (just lower than owner permission).",
+        "view-channel": "Allows members to view public channels.",
+        "manage-channel": "Allows members to create, edit, or delete channels.",
+        "manage-clan": "Allows users to control clan settings, manage roles and channels, and oversee member activities, ensuring effective administration and a well-organized community.",
+        "manage-thread": "Allows members to create, edit, delete threads in the channel (including private threads).",
+        "send-message": "Allow members to send messages in public channels (including threads and topics within those channels).",
+        "delete-message": "Allows members to delete messages in public channels (including threads and topics within those channels).",
+        "notAvailable": "Permission description not available"
+    },
+    "mainRoles": {
+        "useRolesToGroup": "Use roles to group your clan members and assign permissions.",
+        "defaultPermissions": "Default permissions",
+        "everyoneDescription": "@everyone • applies to all clan members",
+        "searchRoles": "Search Roles",
+        "createRole": "Create Role",
+        "membersUseColor": "Members use the colour of the highest role they have on this list. Drag roles to reorder them.",
+        "noRoles": "No Roles"
+    },
+    "roleManagement": {
+        "newRole": "NEW ROLE",
+        "editRole": "EDIT ROLE",
+        "back": "BACK",
+        "display": "Display",
+        "permissions": "Permissions",
+        "manageMembers": "Manage Members",
+        "searchPermissions": "Search Permissions",
+        "failedToUpdateRoleOrder": "Failed to update role order.",
+        "newRoleDefault": "New Role",
+        "roleName": "Role name",
+        "roleColour": "Role colour",
+        "membersUseColour": "Members use the colour of the highest role they have on the roles list.",
+        "roleIcon": "Role Icon",
+        "roleIconDescription": "Upload an image under 256 KB or pick a custom emoji from this clan. We recommended at least 64x64 pixels. Members will see the icon for their highest role if they have multiple roles",
+        "chooseImage": "Choose image",
+        "removeIcon": "Remove Icon",
+        "edit": "Edit",
+        "view": "View",
+        "delete": "Delete"
+    }
 }

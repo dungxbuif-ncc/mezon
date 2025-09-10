@@ -72,7 +72,7 @@ export default function MezonSearch({
 
 			{isShowCancel && (
 				<TouchableOpacity onPress={handleCancelPress}>
-					<Text style={styles.textCancel}>Cancel</Text>
+					<Text style={styles.textCancel}>{t('cancel')}</Text>
 				</TouchableOpacity>
 			)}
 		</View>

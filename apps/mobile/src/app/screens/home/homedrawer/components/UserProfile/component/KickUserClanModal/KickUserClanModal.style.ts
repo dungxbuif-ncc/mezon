@@ -3,14 +3,38 @@ import { StyleSheet } from 'react-native';
 
 export const style = (colors: Attributes) =>
 	StyleSheet.create({
-		container: {},
+		modalWrapper: {
+			paddingHorizontal: size.s_20,
+			height: '100%',
+			overflow: 'hidden'
+		},
+		headerRow: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+			paddingTop: size.s_14,
+			paddingBottom: size.s_20
+		},
+		leftClose: {
+			width: size.s_30,
+			height: size.s_30,
+			alignItems: 'center',
+			justifyContent: 'center'
+		},
+		headerTitle: {
+			flex: 1,
+			textAlign: 'center',
+			fontSize: size.s_16,
+			fontWeight: '700',
+			color: colors.textStrong
+		},
 		headerContent: {
 			paddingVertical: size.s_14,
 			flexDirection: 'column',
 			alignItems: 'center',
 			justifyContent: 'center',
 			borderRadius: size.s_14,
-			backgroundColor: colors.bgInputPrimary
+			backgroundColor: colors.secondary
 		},
 		userMinusIcon: { flexDirection: 'row', alignContent: 'center', justifyContent: 'center', marginBottom: size.s_20 },
 		clanName: {
@@ -23,8 +47,7 @@ export const style = (colors: Attributes) =>
 			textAlign: 'center',
 			fontSize: size.s_14,
 			fontWeight: '700',
-			color: '#d1323f',
-			paddingTop: size.s_10
+			color: '#d1323f'
 		},
 		description: {
 			marginTop: size.s_14,

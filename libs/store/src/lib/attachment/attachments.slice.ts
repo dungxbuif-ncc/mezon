@@ -45,6 +45,11 @@ export const attachmentAdapter = createEntityAdapter({
 type fetchChannelAttachmentsPayload = {
 	clanId: string;
 	channelId: string;
+	fileType?: string;
+	state?: number;
+	limit?: number;
+	before?: number;
+	after?: number;
 	noCache?: boolean;
 };
 
@@ -55,12 +60,19 @@ export const fetchChannelAttachmentsCached = async (
 	mezon: MezonValueContext,
 	clanId: string,
 	channelId: string,
+	fileType = '',
+	state?: number,
+	limit?: number,
+	before?: number,
+	after?: number,
 	noCache = false
 ) => {
+
+
 	const currentState = getState();
 	const attachmentState = currentState[ATTACHMENT_FEATURE_KEY] as AttachmentState;
 	const channelData = attachmentState.listAttachmentsByChannel[channelId];
-	const apiKey = createApiKey('fetchChannelAttachments', clanId, channelId);
+	const apiKey = createApiKey('fetchChannelAttachments', clanId, channelId, fileType, state || '', limit || '', before || '', after || '');
 
 	const shouldForceCall = shouldForceApiCall(apiKey, channelData?.cache, noCache);
 
@@ -72,7 +84,7 @@ export const fetchChannelAttachmentsCached = async (
 		};
 	}
 
-	const response = await mezon.client.listChannelAttachments(mezon.session, clanId, channelId, '');
+	const response = await mezon.client.listChannelAttachments(mezon.session, clanId, channelId, fileType, state, limit, before, after);
 
 	markApiFirstCalled(apiKey);
 
@@ -90,11 +102,11 @@ export const mapChannelAttachmentsToEntity = (attachmentRes: ApiChannelAttachmen
 
 export const fetchChannelAttachments = createAsyncThunk(
 	'attachment/fetchChannelAttachments',
-	async ({ clanId, channelId, noCache }: fetchChannelAttachmentsPayload, thunkAPI) => {
+	async ({ clanId, channelId, fileType, state, limit, before, after, noCache }: fetchChannelAttachmentsPayload, thunkAPI) => {
 		try {
 			const mezon = await ensureSession(getMezonCtx(thunkAPI));
 
-			const response = await fetchChannelAttachmentsCached(thunkAPI.getState, mezon, channelId, clanId, Boolean(noCache));
+			const response = await fetchChannelAttachmentsCached(thunkAPI.getState, mezon, channelId, clanId, fileType, state, limit, before, after, Boolean(noCache));
 
 			if (!response.attachments) {
 				return { attachments: [], channelId, fromCache: response.fromCache };
@@ -106,7 +118,7 @@ export const fetchChannelAttachments = createAsyncThunk(
 				return {
 					attachments: [],
 					channelId,
-					fromCache: true
+					fromCache: true,
 				};
 			}
 
@@ -196,7 +208,7 @@ export const attachmentSlice = createSlice({
 			})
 			.addCase(
 				fetchChannelAttachments.fulfilled,
-				(state: AttachmentState, action: PayloadAction<{ attachments: AttachmentEntity[]; channelId: string; fromCache?: boolean }>) => {
+				(state: AttachmentState, action: PayloadAction<{ attachments: AttachmentEntity[]; channelId: string; fromCache?: boolean; append?: boolean }>) => {
 					const { attachments, channelId, fromCache } = action.payload;
 
 					if (!state.listAttachmentsByChannel[channelId]) {

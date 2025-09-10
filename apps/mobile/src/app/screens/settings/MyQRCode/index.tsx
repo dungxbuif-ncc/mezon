@@ -153,7 +153,7 @@ export const MyQRCode = () => {
 					<View>
 						<Text style={styles.nameProfile}>{userInfo.username || userInfo.displayName}</Text>
 						<Text style={styles.tokenProfile}>
-							{activeTab === 'profile' ? 'Share with others' : `${t('token')} ${formatMoney(Number(tokenInWallet || 0))}₫`}
+							{activeTab === 'profile' ? `${t('shareWithOthers')}` : `${t('token')} ${formatMoney(Number(tokenInWallet || 0))}₫`}
 						</Text>
 					</View>
 				</View>

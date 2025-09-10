@@ -110,8 +110,6 @@ export const ChannelOnboarding = memo(() => {
 	}, [listOnboardWillShow]);
 
 	const handlePressOnboarding = useCallback(async () => {
-		DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_BOTTOM_SHEET, { isDismiss: true });
-		await sleep(500);
 		const data = {
 			heightFitContent: true,
 			children: <OnboardingBottomSheet actionList={listOnboardWillShow} finishedStep={availableStep} allSteps={NUM_OF_STEP} />

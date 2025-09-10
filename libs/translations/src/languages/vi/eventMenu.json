@@ -17,7 +17,11 @@
         "title": "Sự kiện",
         "noEvent": "Không có sự kiện nào",
         "noEventDescription": "Lên lịch sự kiện cho các hoạt động đã định trong clan của bạn. Bạn có thể cấp quyền cho người khác tạo sự kiện tại Cài đặt Clan > Vai trò.",
-        "createButton": "Tạo"
+        "createButton": "Tạo",
+        "noti": "Sự kiện này mở cho tất cả mọi người trong clan.",
+        "endEvent": "Kết thúc sự kiện",
+        "UnInterested": "Không quan tâm",
+        "Interested": "Quan tâm"
     },
     "item": {
       "interested": "Quan tâm",
@@ -32,6 +36,11 @@
         "search": "Tìm kiếm",
         "share": "Chia sẻ",
         "copied": "Liên kết đã được sao chép!"
+    },
+     "countdown": {
+        "joinIn_other": "sẽ bắt đầu trong {{count}} phút",
+        "joinNow": "Sự kiện đang diễn ra!",
+        "joinIn_one": "sẽ bắt đầu trong 1 phút"
     }
   }
   

@@ -245,6 +245,12 @@ export const notificationSettingSlice = createSlice({
 				...action.payload
 			};
 			NotificationSettingsAdapter.upsertOne(state, notificationEntity);
+			if (state?.byChannels?.[channel_id]) {
+				state.byChannels[channel_id].notificationSetting = notificationEntity as any;
+				state.byChannels[channel_id].cache = createCacheMetadata();
+			} else {
+				state.byChannels[channel_id] = getInitialChannelState();
+			}
 		},
 		removeNotiSetting: (state, action: PayloadAction<string>) => {
 			const channelId = action.payload;
@@ -269,12 +275,27 @@ export const notificationSettingSlice = createSlice({
 				state.byChannels[channelId] = getInitialChannelState();
 			}
 
-			const notificationSetting = state?.byChannels?.[channelId]?.notificationSetting;
-			if (notificationSetting && notificationSetting?.active !== active) {
+			let notificationSetting = state?.byChannels?.[channelId]?.notificationSetting as any;
+			if (!notificationSetting) {
+				notificationSetting = {
+					id: channelId,
+					channel_id: channelId,
+					active: active,
+					notification_type: 0
+				} as any;
+				state.byChannels[channelId].notificationSetting = notificationSetting;
+			}
+
+			if (!notificationSetting.id || notificationSetting.id === '0') {
+				notificationSetting.id = channelId;
+				notificationSetting.channel_id = channelId;
+			}
+
+			if (notificationSetting.active !== active) {
 				notificationSetting.active = active;
 			}
-			if (notificationSetting && notificationSetting?.active === active && active === 0) {
-				notificationSetting.time_mute = new Date(0).toDateString();
+			if (active === 0) {
+				notificationSetting.time_mute = undefined;
 			}
 		}
 	},

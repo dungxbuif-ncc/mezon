@@ -48,5 +48,15 @@
         "search": "Tìm kiếm",
         "community": "Cộng đồng",
         "searchMembers": "Tìm kiếm thành viên"
+    },
+    "modalPanel": {
+        "createCategory": "Tạo danh mục",
+        "markAsRead": "Đánh dấu là đã đọc",
+        "processing": "Đang xử lý...",
+        "invitePeople": "Mời người tham gia",
+        "clanSettings": "Cài đặt clan",
+        "notificationSettings": "Cài đặt thông báo",
+        "showEmptyCategories": "Hiển thị danh mục trống",
+        "leaveClan": "Rời clan"
     }
 }

@@ -11,11 +11,13 @@ import {
 import { Icons, InputField } from '@mezon/ui';
 import { createImgproxyUrl, getAvatarForPrioritize, getNameForPrioritize, UsersClanEntity } from '@mezon/utils';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { AvatarImage } from '../../../AvatarImage/AvatarImage';
 import { AddMembersModal } from '../AddMembersModal';
 
 const SettingManageMembers = ({ RolesClan, hasPermissionEdit }: { RolesClan: RolesClanEntity[]; hasPermissionEdit: boolean }) => {
+	const { t } = useTranslation('clanRoles');
 	const { updateRole } = useRoles();
 	const dispatchRole = useDispatch();
 	const currentClan = useSelector(selectCurrentClan);
@@ -48,7 +50,7 @@ const SettingManageMembers = ({ RolesClan, hasPermissionEdit }: { RolesClan: Rol
 		setSearchResults(results || []);
 	}, [searchTerm, addUsers, clickRole]);
 
-	const isNewRole = clickRole === 'New Role';
+	const isNewRole = clickRole === t('roleManagement.newRoleDefault');
 	useEffect(() => {
 		if (!isNewRole) {
 			const memberIDRoles = activeRole?.role_user_list?.role_users?.map((member) => member.id) || [];
@@ -76,7 +78,7 @@ const SettingManageMembers = ({ RolesClan, hasPermissionEdit }: { RolesClan: Rol
 				<InputField
 					className="flex-grow text-[15px] w-full py-1 px-2 font-normal border-theme-primary bg-input-secondary"
 					type="text"
-					placeholder="Search Members"
+					placeholder={t('setupMember.searchMembers')}
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
 				/>
@@ -86,7 +88,7 @@ const SettingManageMembers = ({ RolesClan, hasPermissionEdit }: { RolesClan: Rol
 						handleOpenModal();
 					}}
 				>
-					Add Members
+					{t('setupMember.addMember')}
 				</button>
 			</div>
 			<br />

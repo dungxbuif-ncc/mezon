@@ -229,6 +229,7 @@ function MessageWithUser({
 										}
 							}
 							isAnonymousReplied={checkAnonymousOnReplied}
+							isTopic={isTopic}
 						/>
 					)}
 					<div

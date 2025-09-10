@@ -1,6 +1,7 @@
 import { useEventManagementQuantity } from '@mezon/core';
 import { selectCurrentClanId, selectEventsByClanId, useAppSelector } from '@mezon/store';
 import { Icons } from '@mezon/ui';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ListEventManagement from './ListEventManagement';
 
@@ -15,6 +16,7 @@ export const StartEventModal = (props: StartEventModalProps) => {
 	const { numberEventManagement } = useEventManagementQuantity();
 	const currentClanId = useSelector(selectCurrentClanId);
 	const allEventManagement = useAppSelector((state) => selectEventsByClanId(state, currentClanId as string));
+	const { t } = useTranslation(['eventCreator']);
 
 	return (
 		<>
@@ -23,14 +25,14 @@ export const StartEventModal = (props: StartEventModalProps) => {
 					<div className="gap-x-2 flex items-center">
 						<Icons.IconEvents />
 						<h4 className="font-bold">
-							{numberEventManagement === 0 && 'Events'}
-							{numberEventManagement === 1 && '1 Event'}
-							{numberEventManagement > 1 && `${numberEventManagement} Events`}
+							{numberEventManagement === 0 && t("actions.noEvent")}
+							{numberEventManagement === 1 && t('actions.event_one')}
+							{numberEventManagement > 1 && t('actions.event_other', { count: numberEventManagement })}
 						</h4>
 					</div>
 					<div className="w-[0.1px] h-4 bg-gray-400"></div>
 					<div className="btn-primary btn-primary-hover  px-2 py-1 rounded-lg text-white font-medium cursor-pointer" onClick={onOpenCreate}>
-						Create Event
+						{t('actions.create')}
 					</div>
 				</div>
 				<span className="text-5xl leading-3 text-theme-primary-hover cursor-pointer" onClick={onClose}>

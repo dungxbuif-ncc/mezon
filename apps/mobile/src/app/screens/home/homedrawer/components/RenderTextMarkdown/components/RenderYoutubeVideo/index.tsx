@@ -1,6 +1,6 @@
 import { baseColor, size } from '@mezon/mobile-ui';
 import { memo, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TextStyle, View, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, Keyboard, StyleSheet, Text, TextStyle, View, useWindowDimensions } from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
 
 type RenderYoutubeVideoProps = {
@@ -42,7 +42,10 @@ const RenderYoutubeVideo = ({ videoKey, videoId, contentInElement, onPress, onLo
 						javaScriptEnabled: true,
 						domStorageEnabled: true,
 						allowsInlineMediaPlayback: true,
-						onStartShouldSetResponder: () => true
+						onStartShouldSetResponder: () => true,
+						onTouchStart: () => {
+							Keyboard.dismiss();
+						},
 					}}
 				/>
 			</View>

@@ -36,12 +36,12 @@ export const ImageListModal = React.memo((props: IImageListModalProps) => {
 	const { t } = useTranslation(['common', 'message']);
 	const [currentImage, setCurrentImage] = useState<AttachmentEntity | null>(null);
 	const [visibleToolbarConfig, setVisibleToolbarConfig] = useState<IVisibleToolbarConfig>({ showHeader: true, showFooter: false });
-	const [currentScale, setCurrentScale] = useState(1);
 	const [showSavedImage, setShowSavedImage] = useState(false);
 	const [isLoadingSaveImage, setIsLoadingSaveImage] = useState(false);
 	const attachments = useSelector((state) => selectAllListAttachmentByChannel(state, channelId));
 	const ref = useRef<GalleryRef>(null);
 	const footerTimeoutRef = useRef<NodeJS.Timeout>(null);
+	const currentScaleRef = useRef<number>(1);
 	const imageSavedTimeoutRef = useRef<NodeJS.Timeout>(null);
 
 	const initialIndex = useMemo(() => {
@@ -66,9 +66,9 @@ export const ImageListModal = React.memo((props: IImageListModalProps) => {
 				: [];
 	}, [attachments, imageSelected]);
 
-	const onClose = () => {
-		if (currentScale === 1) DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_MODAL, { isDismiss: true });
-	};
+	const onClose = useCallback(() => {
+		if (Math.floor(currentScaleRef?.current) === 1) DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_MODAL, { isDismiss: true });
+	}, []);
 
 	const updateToolbarConfig = useCallback(
 		(newValue: Partial<IVisibleToolbarConfig>) => {
@@ -88,11 +88,11 @@ export const ImageListModal = React.memo((props: IImageListModalProps) => {
 				console.error('Error finding image index:', error);
 			}
 		}
-	}, [formattedImageList]);
+	}, [currentImage?.url, formattedImageList]);
 
 	const onIndexChange = useCallback(
 		(newIndex: number) => {
-			if (formattedImageList?.[newIndex]?.id !== currentImage?.id) {
+			if (formattedImageList?.[newIndex]?.id !== currentImage?.id && !!currentImage?.id) {
 				setCurrentImage(formattedImageList[newIndex]);
 				ref.current?.reset();
 			}
@@ -108,39 +108,42 @@ export const ImageListModal = React.memo((props: IImageListModalProps) => {
 		}, TIME_TO_HIDE_THUMBNAIL);
 	}, [updateToolbarConfig]);
 
-	const onTap = () => {
+	const onTap = useCallback(() => {
 		updateToolbarConfig({
 			showHeader: !visibleToolbarConfig.showHeader,
 			showFooter: !visibleToolbarConfig.showHeader
 		});
-	};
+	}, [updateToolbarConfig, visibleToolbarConfig?.showHeader]);
 
 	const clearTimeoutFooter = () => {
 		footerTimeoutRef.current && clearTimeout(footerTimeoutRef.current);
 	};
 
-	const onPanStart = () => {
+	const onPanStart = useCallback(() => {
 		clearTimeoutFooter();
 		if (visibleToolbarConfig.showFooter) {
 			setTimeoutHideFooter();
 			return;
 		}
-		if (!visibleToolbarConfig.showFooter && currentScale === 1) {
+		if (!visibleToolbarConfig.showFooter && currentScaleRef?.current === 1) {
 			updateToolbarConfig({ showFooter: true });
 			setTimeoutHideFooter();
 			return;
 		}
-	};
+	}, [setTimeoutHideFooter, updateToolbarConfig, visibleToolbarConfig?.showFooter]);
 
-	const onDoubleTap = (toScale: number) => {
-		if (toScale > ORIGIN_SCALE) {
-			clearTimeoutFooter();
-			updateToolbarConfig({
-				showHeader: false,
-				showFooter: false
-			});
-		}
-	};
+	const onDoubleTap = useCallback(
+		(toScale: number) => {
+			if (toScale > ORIGIN_SCALE) {
+				clearTimeoutFooter();
+				updateToolbarConfig({
+					showHeader: false,
+					showFooter: false
+				});
+			}
+		},
+		[updateToolbarConfig]
+	);
 
 	const onImageThumbnailChange = useCallback(
 		(image: AttachmentEntity) => {
@@ -159,9 +162,9 @@ export const ImageListModal = React.memo((props: IImageListModalProps) => {
 		[formattedImageList, setTimeoutHideFooter, visibleToolbarConfig?.showFooter]
 	);
 
-	const renderItem = ({ item, index, setImageDimensions }: RenderItemInfo<ApiMessageAttachment>) => {
+	const renderItem = useCallback(({ item, index, setImageDimensions }: RenderItemInfo<ApiMessageAttachment>) => {
 		return <ItemImageModal index={index} item={item} setImageDimensions={setImageDimensions} />;
-	};
+	}, []);
 
 	const onImageSaved = useCallback(() => {
 		setShowSavedImage(true);
@@ -233,7 +236,9 @@ export const ImageListModal = React.memo((props: IImageListModalProps) => {
 		return () => sub.remove();
 	}, []);
 
-	const setScaleDebounced = useThrottledCallback(setCurrentScale, 300);
+	const setScaleDebounced = useThrottledCallback((scale: number) => {
+		currentScaleRef.current = scale;
+	}, 300);
 
 	return (
 		<View style={{ flex: 1 }}>
@@ -249,6 +254,7 @@ export const ImageListModal = React.memo((props: IImageListModalProps) => {
 			<GalleryAwesome
 				ref={ref}
 				style={{ flex: 1 }}
+				numToRender={1}
 				containerDimensions={{ height, width }}
 				initialIndex={initialIndex === -1 ? 0 : initialIndex}
 				data={formattedImageList}

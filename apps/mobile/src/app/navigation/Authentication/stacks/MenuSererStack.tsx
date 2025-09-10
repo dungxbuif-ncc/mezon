@@ -24,11 +24,13 @@ import { StickerSetting } from '../../../components/ClanSettings/Sticker';
 import { EventCreatorDetails } from '../../../components/EventCreator/EventCreatorDetails';
 import { EventCreatorPreview } from '../../../components/EventCreator/EventCreatorPreview';
 import { EventCreatorType } from '../../../components/EventCreator/EventCreatorType';
+import ManageUserScreen from '../../../screens/ManageUserScreen';
 import { CreateNewRole } from '../../../screens/serverRoles/CreateNewRole';
 import { RoleDetail } from '../../../screens/serverRoles/RoleDetail';
 import { ServerRoles } from '../../../screens/serverRoles/ServerRoles';
 import { SetupMembers } from '../../../screens/serverRoles/SetupMembers';
 import { SetupPermissions } from '../../../screens/serverRoles/SetupPermissions';
+import TransferOwnershipScreen from '../../../screens/TransferOwnershipScreen';
 import { APP_SCREEN } from '../../ScreenTypes';
 
 // eslint-disable-next-line no-empty-pattern
@@ -267,6 +269,20 @@ export const MenuClanStacks = ({ }: any) => {
 				component={CreateSoundScreen}
 				options={{
 					headerTitle: t('menuClanStack.createSound')
+				}}
+			/>
+			<Stack.Screen
+				name={APP_SCREEN.MENU_CLAN.TRANSFER_OWNERSHIP}
+				component={TransferOwnershipScreen}
+				options={{
+					headerTitle: t('menuClanStack.transferOwnership')
+				}}
+			/>
+			<Stack.Screen
+				name={APP_SCREEN.MENU_CLAN.MANAGE_USER}
+				component={ManageUserScreen}
+				options={{
+					headerTitle: t('menuClanStack.manageUser')
 				}}
 			/>
 		</Stack.Navigator>

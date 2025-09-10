@@ -19,6 +19,7 @@ import { ChannelType } from 'mezon-js';
 import { ApiUserEventRequest } from 'mezon-js/api.gen';
 import Tooltip from 'rc-tooltip';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useModal } from 'react-modal-hook';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -72,7 +73,7 @@ const ItemEventManagement = (props: ItemEventManagementProps) => {
 	const isChannelEvent = textChannelId && textChannelId !== '0';
 	const isPrivateEvent = !isChannelEvent && ((!isReviewEvent && event?.is_private) || (isReviewEvent && isPrivate));
 	const isClanEvent = !isChannelEvent && ((!isReviewEvent && !event?.is_private) || (isReviewEvent && !isPrivate));
-
+	const { t } = useTranslation(['eventMenu']);
 	const dispatch = useAppDispatch();
 	const channelFirst = useSelector(selectChannelFirst);
 	const channelVoice = useAppSelector((state) => selectChannelById(state, voiceChannel ?? '')) || {};
@@ -95,6 +96,23 @@ const ItemEventManagement = (props: ItemEventManagementProps) => {
 	const getPrivateMeetingRoom = useAppSelector((state) => selectMeetRoomByEventId(state, event?.id as string));
 	const eventIsUpcomming = event?.event_status === EEventStatus.UPCOMING;
 	const eventIsOngoing = event?.event_status === EEventStatus.ONGOING;
+
+	const actualEventStatus = useMemo(() => {
+		if (!event?.start_time) return { isUpcoming: eventIsUpcomming, isOngoing: eventIsOngoing };
+
+		const startTime = new Date(event.start_time).getTime();
+		const currentTime = Date.now();
+		const endTime = event.end_time ? new Date(event.end_time).getTime() : startTime + (2 * 60 * 60 * 1000);
+
+		const isActuallyUpcoming = currentTime < startTime;
+		const isActuallyOngoing = currentTime >= startTime && currentTime <= endTime;
+
+		return {
+			isUpcoming: isActuallyUpcoming,
+			isOngoing: isActuallyOngoing
+		};
+	}, [event?.start_time, event?.end_time, eventIsUpcomming, eventIsOngoing]);
+
 	const externalLink = event?.meet_room?.external_link || getPrivateMeetingRoom?.external_link;
 	const hasLink = Boolean(externalLink);
 
@@ -138,10 +156,25 @@ const ItemEventManagement = (props: ItemEventManagementProps) => {
 
 	const panelRef = useRef(null);
 	useOnClickOutside(panelRef, () => setOpenPanel(false));
+	const timeUntilEvent = useMemo(() => {
+		if (!event?.start_time || !actualEventStatus.isUpcoming) return null;
+
+		const startTime = new Date(event.start_time).getTime();
+		const currentTime = Date.now();
+		const timeDiff = startTime - currentTime;
+		const minutesLeft = Math.ceil(timeDiff / (1000 * 60));
+		if (minutesLeft <= 10 && minutesLeft > 0) {
+			return minutesLeft === 1 ? t("countdown.joinIn_one") : t("countdown.joinIn_other", { count: minutesLeft });
+		}
+
+		return null;
+	}, [event?.start_time, actualEventStatus.isUpcoming, t]);
 
 	const cssEventStatus = useMemo(() => {
-		return eventIsUpcomming ? 'text-purple-500' : eventIsOngoing ? 'text-green-500' : '';
-	}, [event?.event_status]);
+		if (actualEventStatus.isOngoing) return 'text-green-500';
+		if (actualEventStatus.isUpcoming && timeUntilEvent) return 'text-purple-500';
+		return '';
+	}, [actualEventStatus.isOngoing, actualEventStatus.isUpcoming, timeUntilEvent]);
 
 	const { toChannelPage, navigate } = useAppNavigation();
 
@@ -195,10 +228,10 @@ const ItemEventManagement = (props: ItemEventManagementProps) => {
 					<div className="flex items-center gap-x-2 mb-4">
 						<Icons.IconEvents defaultSize={`font-semibold ${cssEventStatus}`} />
 						<p className={`font-semibold ${cssEventStatus}`}>
-							{eventIsUpcomming
-								? '10 minutes left. Join in!'
-								: eventIsOngoing
-									? 'Event is taking place!'
+							{actualEventStatus.isUpcoming
+								? (timeUntilEvent || timeFomat(event?.start_time || start))
+								: actualEventStatus.isOngoing
+									? t('countdown.joinNow')
 									: timeFomat(event?.start_time || start)}
 						</p>
 						{isClanEvent && <p className="bg-blue-500 text-white rounded-sm px-1 text-center">Clan Event</p>}
@@ -311,21 +344,21 @@ const ItemEventManagement = (props: ItemEventManagementProps) => {
 							</button>
 						)}
 
-						{eventIsOngoing && isClanOwner ? (
+						{actualEventStatus.isOngoing && isClanOwner ? (
 							<button
 								className="flex gap-x-1 rounded-lg text-theme-primary-hover px-4 py-2 bg-theme-primary "
 								onClick={() => setOpenModalDelEvent(true)}
 							>
-								End event
+								{t('dashboard.endEvent')}
 							</button>
-						) : !eventIsOngoing ? (
+						) : !actualEventStatus.isOngoing ? (
 							<button
 								onClick={handleToggleUserEvent}
 								className="flex items-center gap-x-1 rounded-lg text-theme-primary-hover px-4 py-2 bg-theme-primary"
 							>
 								{isInterested ? <Icons.MuteBell defaultSize="size-4 text-white" /> : <Icons.Bell className="size-4 text-white" />}
 								<span className="whitespace-nowrap">
-									{event.user_ids?.length} {isInterested ? 'UnInterested' : 'Interested'}
+										{event.user_ids?.length} {isInterested ? t('dashboard.UnInterested') : t('dashboard.Interested')}
 								</span>
 							</button>
 						) : (
@@ -364,7 +397,7 @@ const ItemEventManagement = (props: ItemEventManagementProps) => {
 					</span>
 				) : isClanEvent ? (
 					<span className="flex flex-row">
-						<p className="">This event is open to everyone in the clan.</p>
+								<p className="">{t('dashboard.noti')}</p>
 					</span>
 				) : null}
 			</div>

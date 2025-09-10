@@ -48,5 +48,15 @@
         "search": "Search",
         "community": "Community",
         "searchMembers": "Search Members"
+    },
+    "modalPanel": {
+        "createCategory": "Create Category",
+        "markAsRead": "Mark As Read",
+        "processing": "Processing...",
+        "invitePeople": "Invite People",
+        "clanSettings": "Clan Settings", 
+        "notificationSettings": "Notification Settings",
+        "showEmptyCategories": "Show Empty Categories",
+        "leaveClan": "Leave Clan"
     }
 }

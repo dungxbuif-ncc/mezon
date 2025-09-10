@@ -1,9 +1,8 @@
 import { useGetPriorityNameFromUserClan } from '@mezon/core';
-import { messagesActions, useAppDispatch } from '@mezon/store';
-import { IMentionOnMessage, IMessageWithUser, INotification, TOPBARS_MAX_WIDTH, addMention, createImgproxyUrl } from '@mezon/utils';
+import { IMentionOnMessage, IMessageWithUser, INotification, TOPBARS_MAX_WIDTH, TypeMessage, addMention, createImgproxyUrl } from '@mezon/utils';
 import { ChannelStreamMode, safeJSONParse } from 'mezon-js';
-import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
+import { useNotificationJump } from '../../hooks/useNotificationJump';
 import { AvatarImage } from '../AvatarImage/AvatarImage';
 import MessageAttachment from '../MessageWithUser/MessageAttachment';
 import MessageHead from '../MessageWithUser/MessageHead';
@@ -36,9 +35,8 @@ function convertContentToObject(notify: any) {
 	return notify;
 }
 function NotifyMentionItem({ notify, isUnreadTab }: NotifyMentionProps) {
-	const navigate = useNavigate();
 	const parseNotify = convertContentToObject(notify);
-	const dispatch = useAppDispatch();
+
 	const messageId = useMemo(() => {
 		if (parseNotify.content) {
 			return parseNotify.content.message_id;
@@ -57,17 +55,22 @@ function NotifyMentionItem({ notify, isUnreadTab }: NotifyMentionProps) {
 		}
 	}, [parseNotify.content.clan_id]);
 
-	const handleClickJump = useCallback(() => {
-		dispatch(
-			messagesActions.jumpToMessage({
-				clanId: clanId || '',
-				messageId: messageId,
-				channelId: channelId,
-				mode: parseNotify?.content?.mode - 1,
-				navigate
-			})
-		);
-	}, [dispatch, messageId, notify.id]);
+	const topicId = parseNotify?.content?.topic_id;
+
+	const isTopic =
+		Number(topicId) !== 0 ||
+		parseNotify?.content?.code === TypeMessage.Topic ||
+		parseNotify?.message?.code === TypeMessage.Topic;
+
+	const { handleClickJump } = useNotificationJump({
+		messageId,
+		channelId,
+		clanId,
+		topicId,
+		isTopic,
+		mode: (parseNotify?.content?.mode ?? 1) - 1,
+	});
+
 
 	return (
 		<div className=" bg-transparent rounded-[8px] relative group">

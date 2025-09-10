@@ -1,12 +1,13 @@
-import { trackError } from '@mezon/utils';
+import { LIMIT_CLAN_ITEM, trackError } from '@mezon/utils';
 import { createListenerMiddleware } from '@reduxjs/toolkit';
 import * as Sentry from '@sentry/browser';
 import { authActions } from '../auth/auth.slice';
-import { Toast, ToastPayload, toastActions } from '../toasts';
+import type { Toast, ToastPayload } from '../toasts';
+import { toastActions } from '../toasts';
+import { triggerClanLimitModal } from './errors.slice';
 
-// Create the middleware instance and methods
 export const errorListenerMiddleware = createListenerMiddleware({
-	onError: (error, listenerApi) => {
+	onError: (error, _listenerApi) => {
 		console.error('errorListenerMiddleware', error);
 	}
 });
@@ -40,7 +41,7 @@ function getErrorFromRejectedWithValue(action: any) {
 	return {
 		message,
 		error: action.error,
-		action: action,
+		action,
 		config: action.meta.error || {
 			toast: true
 		}
@@ -147,8 +148,21 @@ errorListenerMiddleware.startListening({
 		if (!toast) {
 			return;
 		}
+
 		if (toast.type === 'error') {
 			if (toast.message === 'Redirect Login') {
+				return;
+			}
+
+			const isMaxClanLimitError = toast.message && typeof toast.message === 'string' && toast.message.includes('clan limit exceeded');
+
+			if (isMaxClanLimitError) {
+				listenerApi.dispatch(
+					triggerClanLimitModal({
+						type: 'join',
+						clanCount: LIMIT_CLAN_ITEM
+					})
+				);
 				return;
 			}
 

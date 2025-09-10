@@ -1,7 +1,9 @@
 import { FRIEND_PAGE_LINK, toChannelPage, useAppNavigation } from '@mezon/core';
-import { RootState, getStoreAsync, selectCurrentClanId, selectWelcomeChannelByClanId, toastActions } from '@mezon/store';
+
+import { RootState, getStoreAsync, selectClanById, selectCurrentClanId, selectWelcomeChannelByClanId, toastActions } from '@mezon/store';
 import { Icons } from '@mezon/ui';
 import { useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 type ModalUnknowChannelProps = {
 	onClose?: () => void;
@@ -38,6 +40,7 @@ function ModalUnknowChannel(props: ModalUnknowChannelProps) {
 	const dispatch = useDispatch();
 	const { onClose, isError = false, errMessage, idErr } = props;
 	const { toClanPage, navigate } = useAppNavigation();
+	const location = useLocation();
 
 	const errorConfig = getErrorConfig(errMessage);
 
@@ -57,6 +60,17 @@ function ModalUnknowChannel(props: ModalUnknowChannelProps) {
 		const currentClanId = selectCurrentClanId(store.getState() as RootState);
 		if (!currentClanId || currentClanId === '0') {
 			navigate(FRIEND_PAGE_LINK);
+			return;
+		}
+
+		const currentClan = selectClanById(currentClanId)(store.getState() as RootState);
+		if (!currentClan) {
+			const isFirstEntry = location.key === 'default' || (typeof window !== 'undefined' && (window.history.state?.idx ?? 0) === 0);
+			if (isFirstEntry) {
+				navigate(FRIEND_PAGE_LINK);
+			} else {
+        navigate(-1);
+			}
 			return;
 		}
 		const welcomeChannelId = selectWelcomeChannelByClanId(store.getState(), currentClanId);
@@ -81,19 +95,6 @@ function ModalUnknowChannel(props: ModalUnknowChannelProps) {
 		<div className="fixed inset-0 z-[1000] flex items-center justify-center">
 			<div className="absolute inset-0 bg-black/10 backdrop-blur-sm transition-opacity" onClick={onCloseAndReset} />
 			<div className="relative bg-theme-setting-primary border-theme-primary rounded-lg shadow-xl max-w-md w-full mx-4 overflow-hidden animate-in zoom-in-95 duration-200">
-				<button
-					onClick={onCloseAndReset}
-					className="absolute top-4 right-4 z-10 text-theme-primary text-theme-primary-hover transition-colors p-1 rounded-full "
-				>
-					<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-						<path
-							fillRule="evenodd"
-							d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-							clipRule="evenodd"
-						/>
-					</svg>
-				</button>
-
 				<div className="p-6 pt-8">
 					<div className="flex flex-col items-center text-center space-y-4">
 						<div className="flex items-center justify-center w-16 h-16 bg-[#5865f2]/20 rounded-full">

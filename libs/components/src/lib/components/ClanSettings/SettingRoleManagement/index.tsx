@@ -15,6 +15,7 @@ import {
 	setSelectedPermissions,
 	setSelectedRoleId
 } from '@mezon/store';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { SettingUserClanProfileSave } from '../../SettingProfile/SettingRightClanProfile/SettingUserClanProfileSave';
 import SettingListRole from './SettingListRole';
@@ -30,6 +31,7 @@ export type ModalSettingSave = {
 	handleUpdateUser: () => Promise<void>;
 };
 const ServerSettingRoleManagement = (props: EditNewRole) => {
+	const { t } = useTranslation('clanRoles');
 	const { rolesClan, flagOption } = props;
 	const { createRole, updateRole } = useRoles();
 	const clickRole = useSelector(getSelectedRoleId);
@@ -41,7 +43,7 @@ const ServerSettingRoleManagement = (props: EditNewRole) => {
 	const dispatch = useDispatch();
 	const currentClan = useSelector(selectCurrentClan);
 	const isChange = useSelector(getIsShow);
-	const isCreateNewRole = clickRole === 'New Role';
+	const isCreateNewRole = clickRole === t('roleManagement.newRoleDefault');
 	const currentRoleIcon = useSelector(selectCurrentRoleIcon);
 
 	const handleClose = () => {
@@ -61,7 +63,7 @@ const ServerSettingRoleManagement = (props: EditNewRole) => {
 	const handleUpdateUser = async (hasChangeRole?: boolean) => {
 		if (isCreateNewRole) {
 			const respond = await createRole(currentClan?.id || '', nameRole, colorRole, addUsers, addPermissions);
-			if (!hasChangeRole) dispatch(setSelectedRoleId((respond as any).id));
+			if (!hasChangeRole) dispatch(setSelectedRoleId(respond?.id || ''));
 		} else {
 			await updateRole(currentClan?.id ?? '', clickRole, nameRole, colorRole, [], addPermissions, [], removePermissions, currentRoleIcon || '');
 		}
@@ -79,9 +81,11 @@ const ServerSettingRoleManagement = (props: EditNewRole) => {
 				<div className="w-2/3">
 					<div className="font-semibold pl-3 dark:text-white text-black">
 						{isCreateNewRole ? (
-							<div className="tracking-wide text-base mb-4 pr-5">NEW ROLE</div>
+							<div className="tracking-wide text-base mb-4 pr-5">{t('roleManagement.newRole')}</div>
 						) : (
-							<div className="tracking-wide mb-4 text-base uppercase pr-5">EDIT ROLE - {nameRole}</div>
+							<div className="tracking-wide mb-4 text-base uppercase pr-5">
+								{t('roleManagement.editRole')} - {nameRole}
+							</div>
 						)}
 						<SettingValueDisplayRole RolesClan={rolesClan} />
 					</div>

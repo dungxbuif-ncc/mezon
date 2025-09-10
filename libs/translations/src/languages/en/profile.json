@@ -21,5 +21,13 @@
     "noThanks": "No, Thanks",
     "userNotFound": "User not found",
     "userNotFoundMessage": "The user with username @{{username}} could not be found.",
-    "goBack": "Go Back"
+    "goBack": "Go Back",
+    "shareWithOthers": "Share with others",
+    "qr_profile_description": "Scan this QR code to chat with me or view my profile",
+    "qr_transfer_description": "Scan this QR code to transfer funds",
+    "qr_profile": "QR Profile",
+    "qr_transfer": "QR Transfer",
+    "changeAvatar": "Change Avatar",
+    "removeAvatar": "Remove Avatar",
+    "chooseImage": "Choose an image"
 }

@@ -9,6 +9,7 @@ import {
 	toggleIsShowTrue
 } from '@mezon/store';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import RoleColor from './RoleColor';
 import RoleIcon from './RoleIcon';
@@ -44,6 +45,7 @@ export const colorArray = [
 ];
 
 const SettingDisplayRole = ({ RolesClan, hasPermissionEdit }: { RolesClan: RolesClanEntity[]; hasPermissionEdit: boolean }) => {
+	const { t } = useTranslation('clanRoles');
 	const nameRole = useSelector(getNewNameRole);
 	const colorRole = useSelector(getNewColorRole);
 	const selectedPermissions = useSelector(getNewSelectedPermissions);
@@ -73,7 +75,8 @@ const SettingDisplayRole = ({ RolesClan, hasPermissionEdit }: { RolesClan: Roles
 		<div className="grid grid-cols-1 gap-4">
 			<div className="w-full flex flex-col text-[15px] pr-5">
 				<div className="text-xs font-bold uppercase text-theme-primary-active mb-2">
-					Role name<b className="text-red-600">*</b>
+					{t('roleManagement.roleName')}
+					<b className="text-red-600">*</b>
 				</div>
 				<input
 					className={` text-[15px] w-full  p-[7px] font-normal border-theme-primary text-theme-message bg-input-secondary rounded-lg outline-none ${!hasPermissionEdit || activeRole?.slug === `everyone-${activeRole?.clan_id}` ? 'cursor-not-allowed' : ''}`}

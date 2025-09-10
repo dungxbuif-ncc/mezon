@@ -12,11 +12,13 @@ import {
 } from '@mezon/store';
 import { Icons } from '@mezon/ui';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useModal } from 'react-modal-hook';
 import { useDispatch, useSelector } from 'react-redux';
 import ChooseIconModal from './ChooseIconModal';
 
 const RoleIcon = () => {
+	const { t } = useTranslation('clanRoles');
 	const currentClanId = useSelector(selectCurrentClanId);
 	const currentRoleId = useSelector(getSelectedRoleId);
 	const currentRoleIcon = useSelector(selectCurrentRoleIcon);
@@ -55,11 +57,8 @@ const RoleIcon = () => {
 	return (
 		<div className="w-full flex flex-col text-[15px] dark:text-textSecondary text-textSecondary800 pr-5">
 			<div className="border-t-[1px] h-4 dark:border-borderDividerLight"></div>
-			<div className="text-xs font-bold uppercase mb-2">Role Icon</div>
-			<div className="text-xs mb-2">
-				Upload an image under 256 KB or pick a custom emoji from this clan. We recommended at least 64x64 pixels. Members will see the icon
-				for their highest role if they have multiple roles
-			</div>
+			<div className="text-xs font-bold uppercase mb-2">{t('roleManagement.roleIcon')}</div>
+			<div className="text-xs mb-2">{t('roleManagement.roleIconDescription')}</div>
 			<div className={'flex items-start gap-5'}>
 				{currentRoleIcon ? (
 					<img src={currentRoleIcon} alt="" className={'w-20 h-20'} />
@@ -77,7 +76,7 @@ const RoleIcon = () => {
 					}
 					onClick={handleChooseIconModal}
 				>
-					Choose image
+					{t('roleManagement.chooseImage')}
 				</button>
 				{currentRoleIcon && (
 					<button
@@ -88,7 +87,7 @@ const RoleIcon = () => {
 						}
 						onClick={handleRemoveIcon}
 					>
-						Remove Icon
+						{t('roleManagement.removeIcon')}
 					</button>
 				)}
 			</div>

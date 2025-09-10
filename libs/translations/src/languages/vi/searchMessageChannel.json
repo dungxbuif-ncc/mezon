@@ -14,5 +14,6 @@
   "filterOptions": {
     "fromUser": "Từ một người cụ thể",
     "mentionUser": "Đề cập ai đó"
-  }
+  },
+  "cancel": "Huỷ"
 }

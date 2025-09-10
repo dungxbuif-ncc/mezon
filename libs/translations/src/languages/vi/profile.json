@@ -21,5 +21,13 @@
   "noThanks": "Không, cảm ơn",
   "userNotFound": "Không tìm thấy người dùng",
   "userNotFoundMessage": "Không thể tìm thấy người dùng với tên @{{username}}.",
-  "goBack": "Quay lại"
+  "goBack": "Quay lại",
+  "shareWithOthers": "Chia sẻ với người khác",
+  "qr_profile_description": "Quét mã QR này để chat với tôi hoặc xem hồ sơ của tôi",
+  "qr_transfer_description": "Quét mã QR này để chuyển tiền",
+  "qr_profile": "Mã QR hồ sơ",
+  "qr_transfer": "Mã QR chuyển tiền",
+  "changeAvatar": "Thay đổi ảnh đại diện",
+  "removeAvatar": "Xóa ảnh đại diện",
+  "chooseImage": "Chọn ảnh"
 }

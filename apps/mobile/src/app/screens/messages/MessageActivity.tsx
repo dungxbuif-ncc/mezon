@@ -9,7 +9,6 @@ import { style } from './styles';
 
 function MessageActivity() {
 	const { themeValue } = useTheme();
-	console.log('log  => MessageActivity');
 	const styles = style(themeValue);
 	const store = getStore();
 	const friends = useSelector(selectAllFriends);

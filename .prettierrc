@@ -5,5 +5,34 @@
 	"printWidth": 150,
 	"trailingComma": "none",
 	"endOfLine": "auto",
-	"plugins": ["prettier-plugin-organize-imports"]
+	"semi": true,
+	"bracketSpacing": true,
+	"bracketSameLine": false,
+	"arrowParens": "always",
+	"quoteProps": "as-needed",
+	"jsxSingleQuote": true,
+	"plugins": ["prettier-plugin-organize-imports"],
+	"overrides": [
+		{
+			"files": ["*.json", "*.jsonc"],
+			"options": {
+				"useTabs": true,
+				"tabWidth": 4
+			}
+		},
+		{
+			"files": ["*.yml", "*.yaml"],
+			"options": {
+				"useTabs": false,
+				"tabWidth": 2
+			}
+		},
+		{
+			"files": ["package.json"],
+			"options": {
+				"useTabs": false,
+				"tabWidth": 2
+			}
+		}
+	]
 }

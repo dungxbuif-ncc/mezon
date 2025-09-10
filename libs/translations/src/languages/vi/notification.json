@@ -38,5 +38,7 @@
     "permissionDenied": "Quyền thông báo bị từ chối.",
     "cancel": "Hủy",
     "ok": "OK"
-  }
+  },
+  "andYou": "and you",
+  "someoneAndYou": "Someone and you"
 }

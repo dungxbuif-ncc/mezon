@@ -4,6 +4,7 @@ import { Icons } from '@mezon/ui';
 import { DEFAULT_ROLE_COLOR, EDragBorderPosition, SlugPermission } from '@mezon/utils';
 import { ApiPermission, ApiUpdateRoleOrderRequest } from 'mezon-js/api.gen';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useModal } from 'react-modal-hook';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -17,6 +18,7 @@ type ListActiveRoleProps = {
 };
 
 const ListActiveRole = (props: ListActiveRoleProps) => {
+	const { t } = useTranslation('clanRoles');
 	const { activeRoles, handleRoleClick, setShowModal, setOpenEdit } = props;
 	const isClanOwner = useClanOwner();
 	const userMaxPermissionLevel = useSelector(selectUserMaxPermissionLevel);
@@ -69,7 +71,7 @@ const ListActiveRole = (props: ListActiveRoleProps) => {
 					dispatch(rolesClanActions.setAll({ roles: currentRoles, clanId: currentClanId as string }));
 				})
 				.catch(() => {
-					toast('Failed to update role order.');
+					toast(t('roleManagement.failedToUpdateRoleOrder'));
 					setRolesList(activeRoles);
 				})
 				.finally(() => {
@@ -120,7 +122,7 @@ const ListActiveRole = (props: ListActiveRoleProps) => {
 						</td>
 						<td className="text-[15px] text-center">
 							{role?.slug === `everyone-${role?.clan_id}` ? (
-								<p className="inline-flex gap-x-2 items-center ">All Members</p>
+								<p className="inline-flex gap-x-2 items-center ">{t('allMembers')}</p>
 							) : (
 								<p className="inline-flex gap-x-2 items-center ">
 									{role.role_user_list?.role_users?.length ?? 0}
@@ -132,11 +134,11 @@ const ListActiveRole = (props: ListActiveRoleProps) => {
 							<div className="flex gap-x-2">
 								<div className="text-[15px] cursor-pointer bg-red-500 p-2 rounded-full opacity-0 group-hover:opacity-100 group-hover:text-white">
 									{hasPermissionEdit ? (
-										<span title="Edit">
+										<span title={t('roleManagement.edit')}>
 											<Icons.PenEdit className="size-5" />
 										</span>
 									) : (
-										<span title="View">
+										<span title={t('roleManagement.view')}>
 											<Icons.ViewRole defaultSize="size-5" />
 										</span>
 									)}
@@ -146,7 +148,7 @@ const ListActiveRole = (props: ListActiveRoleProps) => {
 										className={`text-[15px] cursor-pointer bg-red-500 p-2 text-white rounded-full ${hasPermissionEdit ? 'opacity-100' : 'opacity-20'}`}
 										onClick={(e) => handleOpenDeleteRoleModal(e, role.id)}
 									>
-										<span title="Delete">
+										<span title={t('roleManagement.delete')}>
 											<Icons.DeleteMessageRightClick defaultSize="size-5" />
 										</span>
 									</div>

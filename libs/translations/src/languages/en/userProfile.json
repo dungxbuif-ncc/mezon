@@ -20,6 +20,15 @@
     "reasonKick": "Reason for kick",
     "buttonName": "Kick"
   },
+  "transferOwnershipModal": {
+    "warning": "This will transfer ownership of <highlightClan>{{clanName}}</highlightClan> to <highlightUser>{{username}}</highlightUser>. This cannot be undone!",
+    "sectionTitle": "Transfer Ownership",
+    "acknowledgment": "I acknowledge that by transferring ownership of this server to {{username}}, it officially belongs to them.",
+    "transferButton": "Transfer",
+    "confirmTitle": "Transfer Ownership?",
+    "confirmDescription": "Are you sure you want to transfer ownership of {{clanName}} to {{username}}? This action cannot be undone.",
+    "confirmButton": "Transfer"
+  },
   "pendingContent": {
     "block": "Block",
     "unblock": "Unblock",

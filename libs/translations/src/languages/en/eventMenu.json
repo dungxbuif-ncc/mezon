@@ -17,7 +17,11 @@
         "title": "Events",
         "noEvent": "There are no upcoming events.",
         "noEventDescription": "Schedule an event for any planned activity in your clan. You can give other people permission to create event in Clan Settings > Roles.",
-        "createButton": "Create"
+        "createButton": "Create",
+        "noti": "This event is open to everyone in the clan.",
+        "endEvent": "End Event",
+        "UnInterested": "Uninterested",
+        "Interested": "Interested"
     },
     "item": {
         "interested": "Interested",
@@ -32,5 +36,10 @@
         "search": "Search",
         "share": "Share",
         "copied": "Link Copied!"
+    },
+    "countdown": {
+        "joinIn_other": "will start in {{count}} minutes",
+        "joinNow": "Event is taking place!",
+        "joinIn_one": "sẽ bắt đầu trong 1 phút"
     }
 }

@@ -1,21 +1,39 @@
-import { useParticipants, useTracks, VideoTrack } from '@livekit/react-native';
+import { useParticipants, useRoomContext, useTracks, VideoTrack } from '@livekit/react-native';
+import { useAuth, usePermissionChecker } from '@mezon/core';
+import { ActionEmitEvent } from '@mezon/mobile-components';
 import { size, useTheme } from '@mezon/mobile-ui';
-import { getStore, selectIsPiPMode, selectMemberClanByUserName, useAppSelector } from '@mezon/store-mobile';
-import { Track } from 'livekit-client';
-import React, { memo, useMemo } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { getStore, selectIsPiPMode, selectMemberClanByUserName, useAppDispatch, useAppSelector, voiceActions } from '@mezon/store-mobile';
+import { EPermission } from '@mezon/utils';
+import { Participant, RoomEvent, Track } from 'livekit-client';
+import React, { memo, useCallback, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { DeviceEventEmitter, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import MezonIconCDN from '../../../../../../../../src/app/componentUI/MezonIconCDN';
 import { IconCDN } from '../../../../../../../../src/app/constants/icon_cdn';
 import MezonAvatar from '../../../../../../componentUI/MezonAvatar';
+import MezonConfirm from '../../../../../../componentUI/MezonConfirm';
 import useTabletLandscape from '../../../../../../hooks/useTabletLandscape';
 import { style } from '../styles';
 
 const ParticipantItem = memo(
-	({ username, isMicrophoneEnabled, isSpeaking, screenTrackRef, videoTrackRef, setFocusedScreenShare, activeSoundReactions }: any) => {
+	({
+		username,
+		isMicrophoneEnabled,
+		isSpeaking,
+		screenTrackRef,
+		videoTrackRef,
+		setFocusedScreenShare,
+		activeSoundReactions,
+		room,
+		isGroupCall,
+		canMangeVoice,
+		currentUsername
+	}: any) => {
 		const isTabletLandscape = useTabletLandscape();
 		const store = getStore();
 		const { themeValue } = useTheme();
 		const styles = style(themeValue);
+		const { t } = useTranslation(['channelVoice']);
 		const member = useMemo(() => {
 			return selectMemberClanByUserName(store.getState(), username);
 		}, [username]);
@@ -25,6 +43,11 @@ const ParticipantItem = memo(
 		const avatar = useMemo(() => {
 			return member?.clan_avatar || member?.user?.avatar_url || '';
 		}, [member]);
+		const dispatch = useAppDispatch();
+
+		const isShowMuteMenu = useMemo(() => {
+			return currentUsername !== username && !isPiPMode && !isGroupCall && canMangeVoice;
+		}, [currentUsername, username, isPiPMode, isGroupCall, canMangeVoice]);
 
 		const handleFocusScreen = () => {
 			setFocusedScreenShare(screenTrackRef);
@@ -38,7 +61,61 @@ const ParticipantItem = memo(
 		const renderSoundEffectIcon = () => {
 			return (
 				<View style={styles.soundEffectIcon}>
-					<MezonIconCDN icon={IconCDN.activityIcon} height={size.s_16} width={size.s_16} color={themeValue.textStrong} />
+					<MezonIconCDN icon={IconCDN.activityIcon} height={size.s_16} width={size.s_16} color="#fff" />
+				</View>
+			);
+		};
+
+		const onMuteParticipant = useCallback(() => {
+			dispatch(voiceActions.muteVoiceMember({ room_name: room, username: username }));
+			DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_MODAL, { isDismiss: true });
+		}, [dispatch, room, username]);
+
+		const onKickParticipant = useCallback(() => {
+			dispatch(voiceActions.kickVoiceMember({ room_name: room, username: username }));
+			DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_MODAL, { isDismiss: true });
+		}, [dispatch, room, username]);
+
+		const handleMuteparticipant = useCallback(() => {
+			const data = {
+				children: (
+					<MezonConfirm
+						onConfirm={onMuteParticipant}
+						title={t('muteModal.title')}
+						confirmText={t('muteModal.mute')}
+						content={t('muteModal.content', { userName: voiceUsername })}
+					/>
+				)
+			};
+			DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_MODAL, { isDismiss: false, data });
+		}, [onMuteParticipant, t, voiceUsername]);
+
+		const handleKickparticipant = useCallback(() => {
+			const data = {
+				children: (
+					<MezonConfirm
+						onConfirm={onKickParticipant}
+						title={t('kickModal.title')}
+						confirmText={t('kickModal.kick')}
+						content={t('kickModal.content', { userName: voiceUsername })}
+					/>
+				)
+			};
+			DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_MODAL, { isDismiss: false, data });
+		}, [onKickParticipant, t, voiceUsername]);
+
+		const renderMuteOption = (isMicrophoneEnabled: boolean) => {
+			return (
+				<View style={styles.muteOptions}>
+					{isMicrophoneEnabled && (
+						<TouchableOpacity style={styles.muteIcon} onPress={handleMuteparticipant}>
+							<MezonIconCDN icon={IconCDN.microphoneSlashIcon} height={size.s_16} width={size.s_16} color={themeValue.textStrong} />
+						</TouchableOpacity>
+					)}
+
+					<TouchableOpacity style={styles.muteIcon} onPress={handleKickparticipant}>
+						<MezonIconCDN icon={IconCDN.closeSmallBold} height={size.s_16} width={size.s_16} color={themeValue.textStrong} />
+					</TouchableOpacity>
 				</View>
 			);
 		};
@@ -95,6 +172,7 @@ const ParticipantItem = memo(
 							style={styles.participantView}
 							iosPIP={{ enabled: true, startAutomatically: true, preferredSize: { width: 12, height: 8 } }}
 						/>
+						{isShowMuteMenu && renderMuteOption(isMicrophoneEnabled)}
 						{hasActiveSoundReaction && renderSoundEffectIcon()}
 						<View style={[styles.userName, { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
 							{isMicrophoneEnabled ? (
@@ -117,6 +195,7 @@ const ParticipantItem = memo(
 						]}
 					>
 						{hasActiveSoundReaction && renderSoundEffectIcon()}
+						{isShowMuteMenu && renderMuteOption(isMicrophoneEnabled)}
 						<View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: size.s_10 }}>
 							{!voiceUsername ? (
 								<MezonIconCDN icon={IconCDN.loadingIcon} width={24} height={24} />
@@ -152,33 +231,56 @@ const ParticipantItem = memo(
 			prevProps?.isSpeaking === nextProps?.isSpeaking &&
 			prevProps?.videoTrackRef === nextProps?.videoTrackRef &&
 			prevProps?.screenTrackRef === nextProps?.screenTrackRef &&
-			prevProps?.activeSoundReactions === nextProps?.activeSoundReactions
+			prevProps?.activeSoundReactions === nextProps?.activeSoundReactions &&
+			prevProps?.room === nextProps?.room &&
+			prevProps?.isGroupCall === nextProps?.isGroupCall &&
+			prevProps?.canMangeVoice === nextProps?.canMangeVoice &&
+			prevProps?.currentUsername === nextProps?.currentUsername
 		);
 	}
 );
 
-const ParticipantScreen = ({ setFocusedScreenShare, activeSoundReactions }) => {
+const ParticipantScreen = ({ setFocusedScreenShare, activeSoundReactions, isGroupCall }) => {
 	const participants = useParticipants();
-	const sortedParticipants = useMemo(() => {
-		return [...participants].sort((a, b) => {
-			const aScreenShare = a.isScreenShareEnabled ? 1 : 0;
-			const bScreenShare = b.isScreenShareEnabled ? 1 : 0;
-			let aSpeaking = 0;
-			let bSpeaking = 0;
-			if (participants?.length > 8) {
-				aSpeaking = a.isSpeaking ? 1 : 0;
-				bSpeaking = b.isSpeaking ? 1 : 0;
-			}
-
-			if (aScreenShare !== bScreenShare) {
-				return bScreenShare - aScreenShare;
-			}
-			return bSpeaking - aSpeaking;
-		});
-	}, [participants]);
-
-	const tracks = useTracks([Track.Source.Camera, Track.Source.ScreenShare, Track.Source.ScreenShareAudio]);
+	const tracks = useTracks(
+		[
+			{ source: Track.Source.Camera, withPlaceholder: true },
+			{ source: Track.Source.Microphone, withPlaceholder: false },
+			{ source: Track.Source.ScreenShare, withPlaceholder: false },
+			{ source: Track.Source.ScreenShareAudio, withPlaceholder: false }
+		],
+		{ updateOnlyOn: [RoomEvent.ActiveSpeakersChanged], onlySubscribed: false }
+	);
 	const isPiPMode = useAppSelector((state) => selectIsPiPMode(state));
+	const [canMangeVoice] = usePermissionChecker([EPermission.manageChannel]);
+	const { userProfile } = useAuth();
+	const { name } = useRoomContext();
+
+	const sortedParticipantsRef = useRef<Participant[]>([]);
+
+	const sortedParticipants = useMemo(() => {
+		try {
+			const sortBySpeaking = participants?.length >= 10;
+			const currentSids = new Set(participants?.map((p) => p?.sid)?.filter(Boolean));
+
+			const remaining = sortedParticipantsRef?.current?.filter((p) => currentSids?.has?.(p?.sid)) ?? [];
+
+			const remainingSet = new Set(remaining?.map?.((p) => p?.sid));
+			const newOnes = participants?.filter((p) => !remainingSet.has(p?.sid)) ?? [];
+
+			const combined = [...remaining, ...newOnes];
+
+			const sorted = combined.sort((a, b) => {
+				const score = (p: Participant) => (p?.isScreenShareEnabled ? 2 : 0) + (sortBySpeaking && p?.isSpeaking ? 1 : 0);
+				return score(b) - score(a);
+			});
+
+			sortedParticipantsRef.current = sorted;
+			return sorted;
+		} catch (e) {
+			return participants;
+		}
+	}, [participants]);
 
 	return (
 		<ScrollView
@@ -220,6 +322,8 @@ const ParticipantScreen = ({ setFocusedScreenShare, activeSoundReactions }) => {
 							(t) => t.participant.identity === participant.identity && t.source === Track.Source.ScreenShare
 						);
 
+						const currentUsername = userProfile?.user?.username;
+
 						return (
 							<ParticipantItem
 								key={participant.identity}
@@ -232,6 +336,10 @@ const ParticipantScreen = ({ setFocusedScreenShare, activeSoundReactions }) => {
 								tracks={tracks}
 								setFocusedScreenShare={setFocusedScreenShare}
 								activeSoundReactions={activeSoundReactions}
+								room={name}
+								isGroupCall={isGroupCall}
+								canMangeVoice={canMangeVoice}
+								currentUsername={currentUsername}
 							/>
 						);
 					})}

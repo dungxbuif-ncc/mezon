@@ -1,5 +1,5 @@
 import { getShowName, useUserById } from '@mezon/core';
-import { messagesActions, selectClanView, useAppDispatch } from '@mezon/store';
+import { getStoreAsync, messagesActions, selectClanView, selectCurrentChannelId, useAppDispatch } from '@mezon/store';
 import { Icons } from '@mezon/ui';
 import { IMessageWithUser, createImgproxyUrl } from '@mezon/utils';
 
@@ -14,10 +14,11 @@ type MessageReplyProps = {
 	mode?: number;
 	onClick?: (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => void;
 	isAnonymousReplied?: boolean;
+	isTopic?: boolean;
 };
 
 // TODO: refactor component for message lines
-const MessageReply: React.FC<MessageReplyProps> = ({ message, onClick, mode, isAnonymousReplied }) => {
+const MessageReply: React.FC<MessageReplyProps> = ({ message, onClick, isTopic, isAnonymousReplied }) => {
 	const senderIdMessageRef = message?.references?.[0]?.message_sender_id as string;
 	const messageIdRef = message?.references?.[0]?.message_ref_id;
 	const messageUsernameSenderRef = message?.references?.[0]?.message_sender_username ?? '';
@@ -29,10 +30,19 @@ const MessageReply: React.FC<MessageReplyProps> = ({ message, onClick, mode, isA
 	const dispatch = useAppDispatch();
 
 	const getIdMessageToJump = useCallback(
-		(e: React.MouseEvent<HTMLDivElement | HTMLSpanElement>) => {
+		async (e: React.MouseEvent<HTMLDivElement | HTMLSpanElement>) => {
 			e.stopPropagation();
 			if (messageIdRef) {
-				dispatch(messagesActions.jumpToMessage({ clanId: message?.clan_id || '', messageId: messageIdRef, channelId: message?.channel_id }));
+				const store = await getStoreAsync();
+				const currentChannelId = selectCurrentChannelId(store.getState());
+				dispatch(
+					messagesActions.jumpToMessage({
+						clanId: message?.clan_id || '',
+						messageId: messageIdRef,
+						channelId: currentChannelId || message?.channel_id || '',
+						topicId: isTopic ? message?.channel_id || '' : undefined
+					})
+				);
 			}
 		},
 		[dispatch, message?.channel_id, message?.clan_id, messageIdRef]

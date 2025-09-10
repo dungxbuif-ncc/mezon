@@ -50,22 +50,12 @@ const FriendMenu = ({ friend, coords, onClose, onDeleteFriend, onBlockFriend }: 
 	};
 
 	return (
-		<div
-			ref={menuRef}
-			className="bg-theme-contexify p-2 w-[150px] text-[14px] font-medium absolute z-50"
-			style={menuStyle}
-		>
+		<div ref={menuRef} className="bg-theme-contexify p-2 w-[150px] text-[14px] font-medium absolute z-50" style={menuStyle}>
 			<div className="flex flex-col gap-1">
-				<button
-					className="text-theme-primary bg-item-hover p-2 rounded-[5px] w-full flex"
-					onClick={onClose}
-				>
+				<button className="text-theme-primary bg-item-hover p-2 rounded-[5px] w-full flex" onClick={onClose}>
 					Start Video Call
 				</button>
-				<button
-					className="text-theme-primary bg-item-hover p-2 rounded-[5px] w-full flex"
-					onClick={onClose}
-				>
+				<button className="text-theme-primary bg-item-hover p-2 rounded-[5px] w-full flex" onClick={onClose}>
 					Start Voice Call
 				</button>
 				<button
@@ -194,7 +184,7 @@ const FriendsListItem = ({ friend }: FriendProps) => {
 						userMeta={{
 							status: (friend?.user?.metadata as MetaDateStatusUser)?.status,
 							user_status: friend?.user?.online
-								? ((friend?.user?.metadata as MetaDateStatusUser)?.status as EUserStatus) || EUserStatus.ONLINE
+								? ((friend?.user?.metadata as MetaDateStatusUser)?.user_status as EUserStatus) || EUserStatus.ONLINE
 								: EUserStatus.INVISIBLE
 						}}
 					/>

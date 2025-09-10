@@ -164,14 +164,14 @@ const MentionUser = ({
 			)}
 			{displayToken?.type === MentionType.USER_EXIST && (
 				<a
-
+          contentEditable="false"
           data-entity-type="MessageEntityMentionName"
           data-user-id={tagUserId}
 					// eslint-disable-next-line @typescript-eslint/no-empty-function
 					onMouseDown={!isJumMessageEnabled || isTokenClickAble ? (e) => handleOpenShortUser(e) : () => {}}
 					// eslint-disable-next-line @typescript-eslint/no-empty-function
 					style={{ textDecoration: 'none' }}
-					className={`cursor-pointer outline-none font-medium px-0.1 rounded-sm whitespace-nowrap bg-mention color-mention hover-mention   ${isJumMessageEnabled ? '' : 'hover:none'}`}
+					className={`select-all cursor-pointer outline-none font-medium px-0.1 rounded-sm whitespace-nowrap bg-mention color-mention hover-mention   ${isJumMessageEnabled ? '' : 'hover:none'}`}
 				>
 					{displayToken.display}
 				</a>

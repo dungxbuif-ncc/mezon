@@ -72,14 +72,14 @@ export const Settings = ({ navigation }: { navigation: any }) => {
 	const confirmLogout = () => {
 		Alert.alert(
 			t('logOut'),
-			'Are you sure you want to log out?',
+			t('logOutPopup.description'),
 			[
 				{
-					text: 'Cancel',
+					text: t('logOutPopup.noConfirm'),
 					onPress: () => {},
 					style: 'cancel'
 				},
-				{ text: 'Yes', onPress: () => logoutRedirect() }
+				{ text: t('logOutPopup.yesConfirm'), onPress: () => logoutRedirect() }
 			],
 			{ cancelable: false }
 		);

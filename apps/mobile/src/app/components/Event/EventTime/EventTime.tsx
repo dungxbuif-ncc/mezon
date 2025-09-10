@@ -14,9 +14,10 @@ import { style } from './styles';
 interface IEventTimeProps {
 	event: EventManagementEntity;
 	eventStatus: number;
+	minutes: number;
 }
 
-export function EventTime({ event, eventStatus }: IEventTimeProps) {
+export function EventTime({ event, eventStatus, minutes }: IEventTimeProps) {
 	const { themeValue } = useTheme();
 	const styles = style(themeValue);
 	const { t } = useTranslation(['eventCreator']);
@@ -28,7 +29,7 @@ export function EventTime({ event, eventStatus }: IEventTimeProps) {
 		switch (eventStatus) {
 			case EEventStatus?.UPCOMING:
 				color = baseColor.blurple;
-				text = t('eventDetail.tenMinutesLeft');
+				text = t('eventDetail.tenMinutesLeft', { minutes });
 				break;
 			case EEventStatus.ONGOING:
 				color = baseColor.green;

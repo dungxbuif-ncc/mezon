@@ -1,5 +1,5 @@
 import { getShowName, useColorsRoleById, useGetPriorityNameFromUserClan, useNotification } from '@mezon/core';
-import { messagesActions, selectChannelById, selectClanById, selectMemberDMByUserId, useAppDispatch, useAppSelector } from '@mezon/store';
+import { selectChannelById, selectClanById, selectMemberDMByUserId, useAppSelector } from '@mezon/store';
 import {
 	DEFAULT_MESSAGE_CREATOR_NAME_DISPLAY_COLOR,
 	IMentionOnMessage,
@@ -7,13 +7,14 @@ import {
 	INotification,
 	NotificationCategory,
 	TOPBARS_MAX_WIDTH,
+	TypeMessage,
 	addMention,
 	convertTimeString,
 	createImgproxyUrl
 } from '@mezon/utils';
 import { ChannelStreamMode, safeJSONParse } from 'mezon-js';
-import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
+import { useNotificationJump } from '../../hooks/useNotificationJump';
 import { AvatarImage } from '../AvatarImage/AvatarImage';
 import MessageAttachment from '../MessageWithUser/MessageAttachment';
 import { MessageLine } from '../MessageWithUser/MessageLine';
@@ -48,25 +49,28 @@ function convertContentToObject(notify: any) {
 }
 
 function AllNotificationItem({ notify }: NotifyMentionProps) {
-	const navigate = useNavigate();
 	const parseNotify = useMemo(() => convertContentToObject(notify), [notify]);
-	const dispatch = useAppDispatch();
 	const messageId = parseNotify.content.message_id;
 	const channelId = parseNotify.content.channel_id;
 	const clanId = parseNotify.content.clan_id;
 	const mode = parseNotify?.content?.mode - 1;
 
-	const handleClickJump = useCallback(() => {
-		dispatch(
-			messagesActions.jumpToMessage({
-				clanId: clanId || '',
-				messageId: messageId,
-				channelId: channelId,
-				mode: mode,
-				navigate
-			})
-		);
-	}, [dispatch]);
+	const topicId = parseNotify?.content?.topic_id;
+
+	const isTopic =
+		Number(topicId) !== 0 ||
+		parseNotify?.content?.code === TypeMessage.Topic ||
+		parseNotify?.message?.code === TypeMessage.Topic;
+
+	const { handleClickJump } = useNotificationJump({
+		messageId,
+		channelId,
+		clanId,
+		topicId,
+		isTopic,
+		mode,
+	});
+
 
 	const { deleteNotify } = useNotification();
 	const handleDeleteNotification = (

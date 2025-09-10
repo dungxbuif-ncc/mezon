@@ -146,13 +146,13 @@ export const settingClanChannelSlice = createSlice({
 	extraReducers(builder) {
 		builder
 			.addCase(fetchChannelSettingInClan.fulfilled, (state: SettingClanChannelState, actions) => {
-				const { fromCache, response } = actions.payload;
+				const { fromCache, response, typeFetch } = actions.payload;
 
 				if (!fromCache && response) {
 					state.loadingStatus = 'loaded';
-					switch (actions.payload.typeFetch) {
+					switch (typeFetch) {
 						case ETypeFetchChannelSetting.FETCH_CHANNEL:
-							channelSettingAdapter.setAll(state, response.channel_setting_list || []);
+							channelSettingAdapter.setMany(state, response.channel_setting_list || []);
 							break;
 						case ETypeFetchChannelSetting.MORE_CHANNEL:
 							channelSettingAdapter.setMany(state, response.channel_setting_list || []);

@@ -1,19 +1,18 @@
 import { useAuth, useFriends } from '@mezon/core';
 import { baseColor, size, useTheme } from '@mezon/mobile-ui';
-import { friendsActions, requestAddFriendParam, selectStatusSentMobile } from '@mezon/store-mobile';
+import { RootState, friendsActions, getStore, requestAddFriendParam, selectStatusSentMobile } from '@mezon/store-mobile';
 import StatusBarHeight from 'apps/mobile/src/app/components/StatusBarHeight/StatusBarHeight';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import MezonIconCDN from 'apps/mobile/src/app/componentUI/MezonIconCDN';
+import { IconCDN } from 'apps/mobile/src/app/constants/icon_cdn';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, StatusBar, Text, TextInput, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import Toast from 'react-native-toast-message';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import MezonButton from '../../../../../componentUI/MezonButton';
-import MezonIconCDN from '../../../../../componentUI/MezonIconCDN';
 import { MezonModal } from '../../../../../componentUI/MezonModal';
-import { IconCDN } from '../../../../../constants/icon_cdn';
 import { style } from './styles';
-
 interface IAddFriendModal {
 	isShow: boolean;
 	onClose: () => void;
@@ -25,7 +24,6 @@ export const AddFriendModal = React.memo((props: IAddFriendModal) => {
 	const { isShow, onClose } = props;
 	const { userProfile } = useAuth();
 	const { addFriend } = useFriends();
-	const statusSentMobile = useSelector(selectStatusSentMobile);
 	const dispatch = useDispatch();
 	const [visibleModal, setVisibleModal] = useState<boolean>(false);
 	const [requestAddFriend, setRequestAddFriend] = useState<requestAddFriendParam>({
@@ -34,30 +32,6 @@ export const AddFriendModal = React.memo((props: IAddFriendModal) => {
 	});
 	const { t } = useTranslation('friends');
 	const inputRef = useRef<TextInput>(null);
-
-	useEffect(() => {
-		if (statusSentMobile !== null) {
-			if (statusSentMobile?.isSuccess) {
-				Toast.show({
-					type: 'success',
-					props: {
-						text2: t('toast.sendAddFriendSuccess'),
-						leadingIcon: <MezonIconCDN icon={IconCDN.checkmarkSmallIcon} color={baseColor.green} width={20} height={20} />
-					}
-				});
-				resetField();
-			} else {
-				Toast.show({
-					type: 'success',
-					props: {
-						text2: t('toast.sendAddFriendFail'),
-						leadingIcon: <MezonIconCDN icon={IconCDN.closeIcon} color={baseColor.redStrong} width={20} height={20} />
-					}
-				});
-			}
-			dispatch(friendsActions.setSentStatusMobile(null));
-		}
-	}, [statusSentMobile]);
 
 	useEffect(() => {
 		setVisibleModal(isShow);
@@ -108,7 +82,32 @@ export const AddFriendModal = React.memo((props: IAddFriendModal) => {
 			inputRef.current.blur();
 		}
 		await addFriend(requestAddFriend);
+		showAddFriendToast();
 	};
+
+	const showAddFriendToast = useCallback(() => {
+		const store = getStore();
+		const statusSentMobile = selectStatusSentMobile(store.getState() as RootState);
+		if (statusSentMobile?.isSuccess) {
+			Toast.show({
+				type: 'success',
+				props: {
+					text2: t('toast.sendAddFriendSuccess'),
+					leadingIcon: <MezonIconCDN icon={IconCDN.checkmarkSmallIcon} color={baseColor.green} width={20} height={20} />
+				}
+			});
+			resetField();
+		} else {
+			Toast.show({
+				type: 'success',
+				props: {
+					text2: t('toast.sendAddFriendFail'),
+					leadingIcon: <MezonIconCDN icon={IconCDN.closeIcon} color={baseColor.redStrong} width={20} height={20} />
+				}
+			});
+		}
+		dispatch(friendsActions.setSentStatusMobile(null));
+	}, []);
 
 	return (
 		<MezonModal

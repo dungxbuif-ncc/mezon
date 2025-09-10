@@ -53,7 +53,7 @@ const Gallery = ({ onPickGallery, currentChannelId }: IProps) => {
 				first: 32,
 				assetType: 'All',
 				...(!!after && { after: after }),
-				include: ['filename', 'fileSize', 'fileExtension', 'imageSize', 'orientation'],
+				include: ['filename', 'fileSize', 'fileExtension', 'imageSize', 'orientation', 'playableDuration'],
 				groupTypes: 'All'
 			});
 
@@ -260,7 +260,8 @@ const Gallery = ({ onPickGallery, currentChannelId }: IProps) => {
 					name,
 					fileData: filePath,
 					width: image?.width,
-					height: image?.height
+					height: image?.height,
+					thumbnailPreview: image?.uri + '?thumbnail=true&quality=low'
 				};
 
 				onPickGallery(fileFormat);

@@ -1,7 +1,7 @@
 import { useLocalParticipant, useParticipants, useTracks, VideoTrack } from '@livekit/react-native';
 import { size, useTheme } from '@mezon/mobile-ui';
 import { selectMemberClanByUserName, useAppSelector } from '@mezon/store-mobile';
-import { Track } from 'livekit-client';
+import { RoomEvent, Track } from 'livekit-client';
 import React, { useMemo } from 'react';
 import { Text, View } from 'react-native';
 import MezonIconCDN from '../../../../../../../../src/app/componentUI/MezonIconCDN';
@@ -12,7 +12,15 @@ import { style } from '../styles';
 const FocusedScreenPopup = () => {
 	const { localParticipant } = useLocalParticipant();
 	const participants = useParticipants();
-	const tracks = useTracks([Track.Source.Camera, Track.Source.ScreenShare, Track.Source.ScreenShareAudio]);
+	const tracks = useTracks(
+		[
+			{ source: Track.Source.Camera, withPlaceholder: true },
+			{ source: Track.Source.Microphone, withPlaceholder: false },
+			{ source: Track.Source.ScreenShare, withPlaceholder: false },
+			{ source: Track.Source.ScreenShareAudio, withPlaceholder: false },
+		],
+		{ updateOnlyOn: [RoomEvent.ActiveSpeakersChanged], onlySubscribed: false }
+	);
 	const { themeValue } = useTheme();
 	const styles = style(themeValue);
 	const otherParticipants = participants.filter((p) => p.identity !== localParticipant.identity);

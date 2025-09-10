@@ -9,6 +9,7 @@ import {
 } from '@mezon/store-mobile';
 import { SearchFilter, SIZE_PAGE_SEARCH } from '@mezon/utils';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { EmptySearchPage } from '../../EmptySearchPage';
 import MessagesSearchTab from '../../MessagesSearchTab';
@@ -23,6 +24,7 @@ export enum ACTIVE_TAB {
 export default function SearchMessageDm({ navigation, route }: any) {
 	const { themeValue } = useTheme();
 	const [activeTab, setActiveTab] = useState<number>(ACTIVE_TAB.MESSAGES);
+	const { t } = useTranslation('searchMessageChannel');
 	const handelHeaderTabChange = useCallback((index: number) => {
 		setActiveTab(index);
 	}, []);
@@ -60,13 +62,13 @@ export default function SearchMessageDm({ navigation, route }: any) {
 		() =>
 			[
 				{
-					title: 'Messages',
+					title: t('Messages'),
 					quantitySearch: totalResult && totalResult,
 					display: !!totalResult,
 					index: ACTIVE_TAB?.MESSAGES
 				}
 			].filter((tab) => tab?.display),
-		[totalResult]
+		[totalResult, t]
 	);
 
 	useEffect(() => {

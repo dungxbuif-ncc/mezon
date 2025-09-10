@@ -22,7 +22,7 @@ export const UserStatusIconDM = ({ status }: { status?: EUserStatus }) => {
 				</span>
 			);
 		default:
-			return <StatusUser status="online" />;
+			return <StatusUser status="offline" />;
 	}
 };
 
@@ -37,7 +37,7 @@ export const UserStatusIcon = ({ status }: { status?: EUserStatus }) => {
 		case EUserStatus.INVISIBLE:
 			return <Icons.OfflineStatus className="w-5 h-5 bg-theme-primary p-1 rounded-full" />;
 		default:
-			return <StatusUser status="online" className="w-5 h-5 p-1" />;
+			return <StatusUser status="offline" className="w-5 h-5 p-1" />;
 	}
 };
 
@@ -65,7 +65,7 @@ export const UserStatusIconClan = ({
 
 	switch (normalizedStatus) {
 		case 'IDLE':
-			return <Icons.DarkModeIcon className="text-[#F0B232] -rotate-90 w-[10px] h-[10px]" />;
+			return <Icons.DarkModeIcon className="text-[#F0B232] absolute -rotate-90 w-[10px] h-[10px] bottom-0 right-1" />;
 		case 'DO NOT DISTURB':
 			return <StatusUser status="dnd" />;
 		case 'INVISIBLE':

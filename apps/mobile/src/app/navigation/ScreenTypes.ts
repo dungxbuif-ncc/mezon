@@ -1,5 +1,5 @@
 import { ETypeSearch, ICategoryChannelOption } from '@mezon/mobile-components';
-import { ChannelsEntity, DirectEntity, EventManagementEntity, NotiChannelCategorySettingEntity, RolesClanEntity } from '@mezon/store-mobile';
+import { ChannelMembersEntity, ChannelsEntity, DirectEntity, EventManagementEntity, NotiChannelCategorySettingEntity, RolesClanEntity } from '@mezon/store-mobile';
 import { ChannelThreads, ICategoryChannel, IChannel, IMessageWithUser, OptionEvent } from '@mezon/utils';
 import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -103,7 +103,9 @@ export const APP_SCREEN = {
 		FILTER_BY_USER: 'FILTER_BY_USER',
 		FILTER_BY_ACTION: 'FILTER_BY_ACTION',
 		SOUND_STICKER: 'ROUTES.MENU_CLAN.SOUND_STICKER',
-		CREATE_SOUND: 'ROUTES.MENU_CLAN.CREATE_SOUND'
+		CREATE_SOUND: 'ROUTES.MENU_CLAN.CREATE_SOUND',
+		TRANSFER_OWNERSHIP: 'ROUTES.MENU_CLAN.TRANSFER_OWNERSHIP',
+		MANAGE_USER: 'ROUTES.MENU_CLAN.MANAGE_USER'
 	},
 
 	MENU_CHANNEL: {
@@ -287,6 +289,12 @@ type MenuClanStackParamList = {
 	};
 	[APP_SCREEN.MENU_CLAN.SOUND_STICKER]: undefined;
 	[APP_SCREEN.MENU_CLAN.CREATE_SOUND]: undefined;
+	[APP_SCREEN.MENU_CLAN.TRANSFER_OWNERSHIP]: {
+		user: ChannelMembersEntity;
+	};
+	[APP_SCREEN.MENU_CLAN.MANAGE_USER]: {
+		user: ChannelMembersEntity;
+	};
 };
 
 type SettingStackParamList = {

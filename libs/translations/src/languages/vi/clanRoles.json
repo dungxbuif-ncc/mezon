@@ -57,5 +57,45 @@
   "roleImagePicker": "Biểu tượng vai trò",
   "notifyEveryone": "Thông báo cho tất cả những người có quyền xem kênh này.",
   "removeImage": "Xoá",
-  "allMembers": "Tất cả thành viên"
+  "allMembers": "Tất cả thành viên",
+    "permissionDescriptions": {
+        "administrator": "Cho phép thành viên quản lý toàn bộ clan (quyền chỉ thấp hơn chủ sở hữu).",
+        "view-channel": "Cho phép thành viên xem các kênh công khai.",
+        "manage-channel": "Cho phép thành viên tạo, chỉnh sửa hoặc xóa kênh.",
+        "manage-clan": "Cho phép người dùng kiểm soát cài đặt clan, quản lý vai trò và kênh, giám sát hoạt động của thành viên, đảm bảo quản lý hiệu quả và cộng đồng được tổ chức tốt.",
+        "manage-thread": "Cho phép thành viên tạo, chỉnh sửa, xóa các luồng trong kênh (bao gồm cả luồng riêng tư).",
+        "send-message": "Cho phép thành viên gửi tin nhắn trong các kênh công khai (bao gồm các luồng và chủ đề trong những kênh đó).",
+        "delete-message": "Cho phép thành viên xóa tin nhắn trong các kênh công khai (bao gồm các luồng và chủ đề trong những kênh đó).",
+        "notAvailable": "Mô tả quyền không có sẵn"
+    },
+    "mainRoles": {
+        "useRolesToGroup": "Sử dụng vai trò để nhóm các thành viên trong clan của bạn và gán quyền.",
+        "defaultPermissions": "Quyền mặc định",
+        "everyoneDescription": "@everyone • áp dụng cho tất cả thành viên clan",
+        "searchRoles": "Tìm kiếm vai trò",
+        "createRole": "Tạo vai trò",
+        "membersUseColor": "Thành viên sử dụng màu của vai trò cao nhất mà họ có trong danh sách này. Kéo các vai trò để sắp xếp lại chúng.",
+        "noRoles": "Không có vai trò"
+    },
+    "roleManagement": {
+        "newRole": "VAI TRÒ MỚI",
+        "editRole": "CHỈNH SỬA VAI TRÒ",
+        "back": "QUAY LẠI",
+        "display": "Hiển thị",
+        "permissions": "Quyền",
+        "manageMembers": "Quản lý thành viên",
+        "searchPermissions": "Tìm kiếm quyền",
+        "failedToUpdateRoleOrder": "Không thể cập nhật thứ tự vai trò.",
+        "newRoleDefault": "Vai trò mới",
+        "roleName": "Tên vai trò",
+        "roleColour": "Màu vai trò",
+        "membersUseColour": "Thành viên sử dụng màu của vai trò cao nhất mà họ có trong danh sách vai trò.",
+        "roleIcon": "Biểu tượng vai trò",
+        "roleIconDescription": "Tải lên hình ảnh dưới 256 KB hoặc chọn emoji tùy chỉnh từ clan này. Chúng tôi khuyến nghị ít nhất 64x64 pixel. Thành viên sẽ thấy biểu tượng của vai trò cao nhất nếu họ có nhiều vai trò",
+        "chooseImage": "Chọn hình ảnh",
+        "removeIcon": "Xóa biểu tượng",
+        "edit": "Chỉnh sửa",
+        "view": "Xem",
+        "delete": "Xóa"
+    }
 }

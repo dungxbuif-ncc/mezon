@@ -150,5 +150,6 @@
     "yourLocation": "Vị trí của bạn",
     "sender": "Người gửi",
     "locationOf": "Vị trí của {{name}}"
-  }
+  },
+  "sharedBy": "Được chia sẻ bởi {{username}}"
 }

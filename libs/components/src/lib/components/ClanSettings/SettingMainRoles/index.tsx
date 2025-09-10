@@ -19,6 +19,7 @@ import {
 import { ButtonLoading, Icons, InputField } from '@mezon/ui';
 import { DEFAULT_ROLE_COLOR } from '@mezon/utils';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { DeleteModal } from '../DeleteRoleModal/deleteRoleModal';
 import ServerSettingRoleManagement from '../SettingRoleManagement';
@@ -28,6 +29,7 @@ export type ModalOpenEdit = {
 	handleOpen?: () => void;
 };
 const ServerSettingMainRoles = (props: ModalOpenEdit) => {
+	const { t } = useTranslation('clanRoles');
 	const rolesClan = useSelector(selectAllRolesClan);
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [openEdit, setOpenEdit] = useState<boolean>(false);
@@ -74,9 +76,9 @@ const ServerSettingMainRoles = (props: ModalOpenEdit) => {
 	}, [valueSearch, roles]);
 
 	const handleCreateNewRole = async () => {
-		const newRole = await createRole(currentClanId || '', 'New Role', DEFAULT_ROLE_COLOR, [], []);
+		const newRole = await createRole(currentClanId || '', t('createNewRole.newRole'), DEFAULT_ROLE_COLOR, [], []);
 		dispatch(setSelectedRoleId(newRole?.id || ''));
-		dispatch(setNameRoleNew('New Role'));
+		dispatch(setNameRoleNew(t('createNewRole.newRole')));
 		dispatch(setColorRoleNew(DEFAULT_ROLE_COLOR));
 		dispatch(setAddPermissions([]));
 		dispatch(setAddMemberRoles([]));
@@ -89,7 +91,7 @@ const ServerSettingMainRoles = (props: ModalOpenEdit) => {
 		<>
 			{!openEdit && (
 				<>
-					<p className="text-sm mb-4">Use roles to group your clan members and assign permissions.</p>
+					<p className="text-sm mb-4">{t('mainRoles.useRolesToGroup')}</p>
 					<div
 						onClick={() => {
 							handleRoleClick(rolesClan.find((role) => role.slug === `everyone-${currentClanId}`)?.id || '');
@@ -102,8 +104,8 @@ const ServerSettingMainRoles = (props: ModalOpenEdit) => {
 								<Icons.MemberList defaultSize="w-5 h-5" />
 							</div>
 							<div className="">
-								<h4 className="text-base font-semibold">Default permissions</h4>
-								<p className="text-xs">@everyone •&nbsp;applies to all clan members</p>
+								<h4 className="text-base font-semibold">{t('mainRoles.defaultPermissions')}</h4>
+								<p className="text-xs">{t('mainRoles.everyoneDescription')}</p>
 							</div>
 						</div>
 						<Icons.ArrowDown defaultSize="w-[20px] h-[30px] -rotate-90 " />
@@ -113,29 +115,27 @@ const ServerSettingMainRoles = (props: ModalOpenEdit) => {
 							<InputField
 								type="text"
 								className="rounded-lg w-full border-theme-primary  px-2 py-1 focus:outline-none bg-theme-contexify focus:border-white-500 bg-theme-input text-base"
-								placeholder="Search Roles"
+								placeholder={t('mainRoles.searchRoles')}
 								onChange={(e) => setValueSearch(e.target.value)}
 							/>
 						</div>
 						<ButtonLoading
 							className="text-[15px] bg-indigo-500 hover:bg-indigo-600 text-white py-[5px] rounded-lg px-2 text-nowrap font-medium inline-flex items-center justify-center h-[32.5px]"
 							onClick={handleCreateNewRole}
-							label="Create Role"
+							label={t('mainRoles.createRole')}
 						/>
 					</div>
-					<p className=" text-sm mt-2">
-						Members use the colour of the highest role they have on this list. Drag roles to reorder them.&nbsp;
-					</p>
+					<p className=" text-sm mt-2">{t('mainRoles.membersUseColor')}&nbsp;</p>
 					<br />
 					<div className={`overflow-hidden w-full `}>
 						<table className="w-full divide-y  mb-10">
 							<thead>
 								<tr className="h-11">
 									<th scope="col" className="text-xs font-bold uppercase tracking-wider w-1/2 text-left">
-										Roles - {numRoles - 1}
+										{t('roles')} - {numRoles - 1}
 									</th>
 									<th scope="col" className="text-xs font-bold uppercase tracking-wider w-1/4 text-center">
-										Members
+										{t('members')}
 									</th>
 									<th scope="col" className="text-xs font-bold uppercase tracking-wider w-1/4 text-center"></th>
 								</tr>
@@ -146,7 +146,7 @@ const ServerSettingMainRoles = (props: ModalOpenEdit) => {
 										<td className=" text-[15px]">
 											<p className="inline-flex gap-x-2 mt-1.5">
 												<Icons.RoleIcon defaultSize="w-5 h-5 min-w-5" />
-												No Roles
+												{t('mainRoles.noRoles')}
 											</p>
 										</td>
 									</tr>

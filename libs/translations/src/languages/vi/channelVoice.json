@@ -17,5 +17,15 @@
     },
     "noChannelVoice": "Không có kênh thoại",
     "chat": "Trò chuyện",
-    "noDisplay": "Không hiển thị kênh thoại"
+    "noDisplay": "Không hiển thị kênh thoại",
+    "muteModal": {
+        "title": "Tắt tiếng thành viên",
+        "content": "Bạn có chắc muốn tắt tiếng \"{{userName}}\"?",
+        "mute": "Tắt tiếng"
+    },
+    "kickModal": {
+        "title": "Xóa khỏi kênh thoại",
+        "content": "Bạn có chắc muốn xóa \"{{userName}}\" khỏi kênh thoại?",
+        "kick": "Xóa"
+    }
 }

@@ -54,5 +54,10 @@
         "vietnamese": "Tiếng Việt"
     },
     "logOut": "Logout",
+    "logOutPopup": {
+        "description": "Are you sure you want to log out?",
+        "noConfirm": "No",
+        "yesConfirm": "Yes"
+    },
     "removeAccount": "Remove Account"
 }

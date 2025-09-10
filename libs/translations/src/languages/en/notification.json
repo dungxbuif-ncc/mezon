@@ -38,5 +38,7 @@
     "permissionDenied": "Notification permission denied.",
     "cancel": "Cancel",
     "ok": "OK"
-  }
+  },
+  "andYou": "và bạn",
+  "someoneAndYou": "Ai đó và bạn"
 }

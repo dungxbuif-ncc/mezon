@@ -1,6 +1,5 @@
-import { TrackReference, VideoTrack, useParticipants } from '@livekit/react-native';
+import { TrackReference, VideoTrack, useParticipants, useRoomContext } from '@livekit/react-native';
 import { ScreenCapturePickerView } from '@livekit/react-native-webrtc';
-import { ActiveSoundReaction } from '@mezon/components';
 import { ActionEmitEvent } from '@mezon/mobile-components';
 import { ThemeModeBase, size, useTheme } from '@mezon/mobile-ui';
 import {
@@ -11,6 +10,7 @@ import {
 	useAppDispatch,
 	useAppSelector
 } from '@mezon/store-mobile';
+import { DisconnectReason, RoomEvent } from 'livekit-client';
 import LottieView from 'lottie-react-native';
 import { ChannelStreamMode } from 'mezon-js';
 import React, { memo, useCallback, useEffect, useState } from 'react';
@@ -20,6 +20,7 @@ import { useSelector } from 'react-redux';
 import { TYPING_DARK_MODE, TYPING_LIGHT_MODE } from '../../../../../../../assets/lottie';
 import MezonIconCDN from '../../../../../../componentUI/MezonIconCDN';
 import { IconCDN } from '../../../../../../constants/icon_cdn';
+import { ActiveSoundReaction } from '../../../../../../hooks/useSoundReactions';
 import { ContainerMessageActionModal } from '../../MessageItemBS/ContainerMessageActionModal';
 import ControlBottomBar from '../ControlBottomBar';
 import FocusedScreenPopup from '../FocusedScreenPopup';
@@ -30,14 +31,19 @@ const RoomViewListener = memo(
 	({
 		isShowPreCallInterface,
 		focusedScreenShare,
-		setFocusedScreenShare
+		setFocusedScreenShare,
+		channelId,
+		clanId
 	}: {
 		isShowPreCallInterface: boolean;
 		focusedScreenShare: TrackReference;
 		setFocusedScreenShare: any;
+		channelId: string;
+		clanId: string;
 	}) => {
 		const participants = useParticipants();
 		const dispatch = useAppDispatch();
+		const room = useRoomContext();
 
 		useEffect(() => {
 			if (participants?.length > 1 && isShowPreCallInterface) {
@@ -54,6 +60,25 @@ const RoomViewListener = memo(
 				}
 			}
 		}, [participants, focusedScreenShare]);
+
+		const handleDisconnected = useCallback(
+			async (reason?: DisconnectReason) => {
+				if (reason === DisconnectReason.PARTICIPANT_REMOVED) {
+					room.disconnect();
+					DeviceEventEmitter.emit(ActionEmitEvent.ON_OPEN_MEZON_MEET, { isEndCall: true, clanId: clanId, channelId: channelId });
+				}
+			},
+			[channelId, clanId, room]
+		);
+
+		useEffect(() => {
+			room?.on(RoomEvent.Disconnected, handleDisconnected);
+			return () => {
+				if (room) {
+					room.off(RoomEvent.Disconnected, handleDisconnected);
+				}
+			};
+		}, [handleDisconnected, room]);
 		return null;
 	}
 );
@@ -90,8 +115,8 @@ const RoomView = ({
 	useEffect(() => {
 		const subscription = focusedScreenShare
 			? Dimensions.addEventListener('change', () => {
-				setIsHiddenControl((prevState) => !prevState);
-			})
+					setIsHiddenControl((prevState) => !prevState);
+				})
 			: null;
 
 		return () => subscription?.remove();
@@ -100,7 +125,6 @@ const RoomView = ({
 	const handleOpenEmojiPicker = () => {
 		const data = {
 			snapPoints: ['45%', '75%'],
-			disableScrollView: true,
 			children: (
 				<ContainerMessageActionModal
 					message={undefined}
@@ -170,7 +194,11 @@ const RoomView = ({
 			{!isAnimationComplete ? (
 				<FocusedScreenPopup />
 			) : (
-				<ParticipantScreen setFocusedScreenShare={setFocusedScreenShareProp} activeSoundReactions={activeSoundReactions} />
+				<ParticipantScreen
+					setFocusedScreenShare={setFocusedScreenShareProp}
+					activeSoundReactions={activeSoundReactions}
+					isGroupCall={isGroupCall}
+				/>
 			)}
 			{isAnimationComplete && isGroupCall && isShowPreCallInterface && (
 				<View style={{ alignItems: 'center', justifyContent: 'center', paddingBottom: size.s_100 * 2 }}>
@@ -196,6 +224,8 @@ const RoomView = ({
 				isShowPreCallInterface={isShowPreCallInterface}
 				focusedScreenShare={focusedScreenShare}
 				setFocusedScreenShare={setFocusedScreenShareProp}
+				channelId={channelId}
+				clanId={clanId}
 			/>
 		</View>
 	);

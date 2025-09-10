@@ -66,52 +66,61 @@ const ListChannelSetting = ({ listChannel, clanId, countChannel, searchFilter }:
 
 	const menu = useMemo(() => {
 		const itemMenu: ReactElement[] = [
-			<Menu.Item className={'bg-item-hover'} onClick={() => handleChangePageSize(10)}>
+			<Menu.Item key={'10-item'} className={'bg-item-hover'} onClick={() => handleChangePageSize(10)}>
 				10
 			</Menu.Item>,
-			<Menu.Item className={'bg-item-hover'} onClick={() => handleChangePageSize(20)}>
+			<Menu.Item key={'20-item'} className={'bg-item-hover'} onClick={() => handleChangePageSize(20)}>
 				20
 			</Menu.Item>,
-			<Menu.Item className={'bg-item-hover'} onClick={() => handleChangePageSize(30)}>
+			<Menu.Item key={'30-item'} className={'bg-item-hover'} onClick={() => handleChangePageSize(30)}>
 				30
 			</Menu.Item>
 		];
 		return <>{itemMenu}</>;
 	}, []);
+
+	const channelListCut = useMemo(() => {
+		if (!listChannel) return [];
+		const start = (currentPage - 1) * pageSize;
+		const end = start + pageSize;
+		return listChannel.slice(start, end);
+	}, [listChannel, currentPage, pageSize]);
 	return (
 		<div className="h-full w-full flex flex-col gap-1 flex-1">
-			<div className="w-full flex pl-12 pr-12 justify-between items-center h-[48px] shadow text-xs font-bold uppercase border-b-theme-primary text-theme-primary">
-				<span className="flex-1">Name</span>
-				<span className="flex-1">Members</span>
-				<span className="flex-1">Messages count</span>
-				<span className="flex-1">Last Sent</span>
-				<span className="pr-1">Creator</span>
+			<div className="flex flex-row justify-between items-center px-4 h-12 shadow border-b-theme-primary">
+				<div className="flex-1 text-xs font-bold uppercase p-1">Name</div>
+				<div className="flex-1 text-xs font-bold uppercase p-1">Members</div>
+				<div className="flex-1 text-xs font-bold uppercase p-1">Messages count</div>
+				<div className="flex-1 text-xs font-bold uppercase p-1">Last Sent</div>
+				<div className="pr-1 text-xs font-bold uppercase p-1">Creator</div>
 			</div>
-			<AnchorScroll anchorId={clanId} ref={parentRef} className={['hide-scrollbar']} classNameChild={['!justify-start']}>
-				{listChannel.map((channel) => (
-					<RenderChannelAndThread
-						channelParent={channel}
-						key={`group_${channel.id}`}
-						clanId={clanId}
-						currentPage={currentPage}
-						pageSize={pageSize}
-						searchFilter={searchFilter}
-					/>
-				))}
-				<div className="flex flex-row justify-between items-center px-4 h-[54px] border-t-theme-primary mt-0 text-theme-primary">
-					<div className={'flex flex-row items-center '}>
-						Show
-						<Menu menu={menu}>
-							<div className={'flex flex-row items-center justify-center text-center border-theme-primary rounded mx-1 px-3 w-12'}>
-								<span className="mr-1">{pageSize}</span>
-								<Icons.ArrowDown />
-							</div>
-						</Menu>
-						channel of {countChannel}
+			<div className="flex-1">
+				<AnchorScroll anchorId={clanId} ref={parentRef} className={['hide-scrollbar']} classNameChild={['!justify-start']}>
+					{channelListCut.map((channel) => (
+						<RenderChannelAndThread
+							channelParent={channel}
+							key={`group_${channel.id}`}
+							clanId={clanId}
+							currentPage={currentPage}
+							pageSize={pageSize}
+							searchFilter={searchFilter}
+						/>
+					))}
+					<div className="flex flex-row justify-between items-center px-4 h-[54px] border-t-theme-primary mt-0">
+						<div className={'flex flex-row items-center '}>
+							Show
+							<Menu menu={menu}>
+								<div className={'flex flex-row items-center justify-center text-center border-theme-primary rounded mx-1 px-3 w-12'}>
+									<span className="mr-1">{pageSize}</span>
+									<Icons.ArrowDown />
+								</div>
+							</Menu>
+							channel of {countChannel}
+						</div>
+						<Pagination totalPages={Math.ceil((countChannel || 0) / pageSize)} currentPage={currentPage} onPageChange={onPageChange} />
 					</div>
-					<Pagination totalPages={Math.ceil((countChannel || 0) / pageSize)} currentPage={currentPage} onPageChange={onPageChange} />
-				</div>
-			</AnchorScroll>
+				</AnchorScroll>
+			</div>
 		</div>
 	);
 };
@@ -155,7 +164,7 @@ const RenderChannelAndThread = ({ channelParent, clanId, currentPage, pageSize, 
 	}, [channelParent.channel_type]);
 
 	return (
-		<div className="flex flex-col">
+		<div className="flex flex-col border-b-[1px] border-b-theme-primary last:border-b-0">
 			<div className="relative" onClick={handleFetchThreads}>
 				<ItemInfor
 					creatorId={channelParent.creator_id as string}

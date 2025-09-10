@@ -1,14 +1,6 @@
 import { getFirstMessageOfTopic, selectMemberClanByUserId2, threadsActions, topicsActions, useAppDispatch, useAppSelector } from '@mezon/store';
 import { Icons } from '@mezon/ui';
-import {
-  EBacktickType,
-  ETypeLinkMedia,
-  IExtendedMessage,
-  IMessageWithUser,
-  addMention,
-  createImgproxyUrl,
-  isValidEmojiData
-} from '@mezon/utils';
+import { EBacktickType, ETypeLinkMedia, IExtendedMessage, IMessageWithUser, addMention, createImgproxyUrl, isValidEmojiData } from '@mezon/utils';
 import { safeJSONParse } from 'mezon-js';
 import React, { memo, useCallback } from 'react';
 import { AvatarImage } from '../AvatarImage/AvatarImage';
@@ -39,9 +31,7 @@ const MessageContent = ({ message, mode, isSearchMessage, isEphemeral, isSending
 		}
 	})();
 
-	const handleCopyMessage = (event: React.ClipboardEvent<HTMLDivElement>, startIndex: number, endIndex: number) => {
-
-	};
+	const handleCopyMessage = (event: React.ClipboardEvent<HTMLDivElement>, startIndex: number, endIndex: number) => {};
 
 	return (
 		<MessageText
@@ -138,7 +128,7 @@ const MessageText = ({
 		attachmentOnMessage[0].url === contentToMessage?.trim();
 	const showEditted = !message.hide_editted && !isSearchMessage;
 
-	const linkFromMarkdown = patchedContent?.mk?.find?.((item) => item.type === EBacktickType.LINK);
+	const linkFromMarkdown = patchedContent?.mk?.find?.((item) => item?.type === EBacktickType.LINK);
 	let displayLine = lines;
 	if ((!lines || lines.length === 0) && linkFromMarkdown && typeof linkFromMarkdown.s === 'number' && typeof linkFromMarkdown.e === 'number') {
 		let linkFromLk = '';

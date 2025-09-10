@@ -85,7 +85,10 @@
     "actions": {
         "next": "Next",
         "create": "Create Event",
-        "edit": "Update Event"
+        "edit": "Update Event",
+        "event_one": "1 Event",
+        "event_other": "{{count}} Events",
+        "noEvent": "Events"
     },
     "notify": {
         "locationBlank": "A location is required",
@@ -95,7 +98,7 @@
     },
     "eventDetail": {
         "eventIsTaking": "Event is taking place!",
-        "tenMinutesLeft": "10 minutes left. Join in!"
+        "tenMinutesLeft": "{{minutes}} minutes left. Join in!"
     },
     "selectUser": "Select channel to create event"
 }

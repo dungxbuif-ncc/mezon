@@ -9,7 +9,7 @@ import {
 } from '@mezon/store';
 import { MessageCrypt, UploadLimitReason } from '@mezon/utils';
 
-import { TooManyUpload, WebRTCStreamProvider } from '@mezon/components';
+import { TooManyUpload, WebRTCStreamProvider, useClanLimitModalErrorHandler } from '@mezon/components';
 import { selectTotalUnreadDM, useAppSelector } from '@mezon/store';
 import { MezonSuspense } from '@mezon/transport';
 import { SubPanelName, electronBridge, isLinuxDesktop, isWindowsDesktop } from '@mezon/utils';
@@ -22,6 +22,7 @@ import ChannelVoice from '../pages/channel/ChannelVoice';
 const GlobalEventListener = () => {
 	const { handleReconnect } = useContext(ChatContext);
 	const dispatch = useAppDispatch();
+	useClanLimitModalErrorHandler();
 
 	const allNotificationReplyMentionAllClan = useSelector(selectBadgeCountAllClan);
 
@@ -130,7 +131,7 @@ const MainLayout = memo(
 
 		return (
 			<div
-				id="main-layout"
+				id='main-layout'
 				className={`${isWindowsDesktop || isLinuxDesktop ? 'top-[21px] fixed' : ''} w-full bg-theme-primary`}
 				onClick={handleClickingOutside}
 				onContextMenu={(event: React.MouseEvent) => {

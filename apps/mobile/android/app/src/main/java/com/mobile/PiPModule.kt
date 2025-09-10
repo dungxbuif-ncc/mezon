@@ -1,97 +1,95 @@
 package com.mezon.mobile
 import android.app.Activity
 import android.app.PictureInPictureParams
+import android.content.Intent
 import android.os.Build
 import android.util.Rational
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.*
 import android.util.Log
+import android.content.pm.PackageManager
 
 class PipModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
-    override fun getName() = "PipModule"
+    override fun getName(): String = "PipModule"
+    private val TAG = "PipModule"
 
-    @ReactMethod
-    fun enablePipMode(promise: Promise? = null) {
-        try {
-            val activity = reactContext.currentActivity
-            if (activity == null) {
-                Log.e("PipModule", "No current activity available")
-                promise?.reject("NO_ACTIVITY", "No current activity available")
-                return
-            }
+ @ReactMethod
+ fun enterPipMode() {
+   val activity: Activity? = currentActivity
 
-            // Check if the activity is in a valid state for PiP
-            if (!isActivityResumed(activity)) {
-                Log.e("PipModule", "Activity is not in resumed state")
-                promise?.reject("ACTIVITY_NOT_RESUMED", "Activity must be resumed to enter picture-in-picture")
-                return
-            }
+   if (activity == null) {
+     Log.w(TAG, "E_NO_ACTIVITY No active Activity to enter PiP")
+     return
+   }
 
-            activity.runOnUiThread {
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        // Check if PiP is supported
-                        if (!activity.packageManager.hasSystemFeature("android.software.picture_in_picture")) {
-                            Log.e("PipModule", "Picture-in-picture not supported on this device")
-                            promise?.reject("PIP_NOT_SUPPORTED", "Picture-in-picture not supported on this device")
-                            return@runOnUiThread
-                        }
+   if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+     Log.w(TAG, "enterPipMode aborted: API level too low (${Build.VERSION.SDK_INT})")
+     return
+   }
 
-                        val params = PictureInPictureParams.Builder()
-                            .setAspectRatio(Rational(3, 2))
-                            .build()
+   try {
+     val ratio = Rational(16, 9)
+     val builder = PictureInPictureParams.Builder()
+       .setAspectRatio(ratio)
 
-                        val result = activity.enterPictureInPictureMode(params)
-                        if (result) {
-                            Log.d("PipModule", "Successfully entered PiP mode")
-                            promise?.resolve(true)
-                        } else {
-                            Log.e("PipModule", "Failed to enter PiP mode")
-                            promise?.reject("PIP_FAILED", "Failed to enter picture-in-picture mode")
-                        }
-                    } else {
-                        Log.e("PipModule", "Picture-in-picture requires Android O (API 26) or higher")
-                        promise?.reject("API_VERSION_TOO_LOW", "Picture-in-picture requires Android O (API 26) or higher")
-                    }
-                } catch (e: Exception) {
-                    Log.e("PipModule", "Error entering PiP mode: ${e.message}", e)
-                    promise?.reject("PIP_ERROR", "Error entering picture-in-picture mode: ${e.message}")
-                }
-            }
-        } catch (e: Exception) {
-            Log.e("PipModule", "Unexpected error in enablePipMode: ${e.message}", e)
-            promise?.reject("UNEXPECTED_ERROR", "Unexpected error: ${e.message}")
-        }
+     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+       val autoEnter = true
+       builder.setAutoEnterEnabled(autoEnter)
+     }
+
+     val params = builder.build()
+     activity.setPictureInPictureParams(params)
+
+     val entered = activity.enterPictureInPictureMode(params)
+     Log.d(TAG, "PiP mode enter result: $entered")
+   } catch (t: Throwable) {
+     Log.e(TAG, "E_ENTER_PIP: ${t.message}", t)
+   }
+ }
+
+  @ReactMethod
+  fun exitPipMode(promise: Promise) {
+    val activity: Activity? = currentActivity
+    if (activity == null) {
+      promise.reject("E_NO_ACTIVITY", "No active Activity to exit PiP.")
+      return
     }
 
-    private fun isActivityResumed(activity: Activity): Boolean {
-        return try {
-            // Check if activity is not finishing and not destroyed
-            !activity.isFinishing && !activity.isDestroyed
-        } catch (e: Exception) {
-            Log.e("PipModule", "Error checking activity state: ${e.message}")
-            false
-        }
+    try {
+      // If we're already not in PiP, just resolve
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !activity.isInPictureInPictureMode) {
+        promise.resolve(true)
+        return
+      }
+
+      // Bring the existing Activity to the foreground, which expands out of PiP
+      val intent = Intent(activity, activity::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_NEW_TASK)
+      }
+      activity.startActivity(intent)
+      promise.resolve(true)
+    } catch (t: Throwable) {
+      promise.reject("E_EXIT_PIP", t.message, t)
+    }
+  }
+
+  @ReactMethod
+  fun isPipSupported(promise: Promise) {
+    val activity: Activity? = currentActivity
+
+    if (activity == null) {
+      promise.resolve(false)
+      return
     }
 
-    @ReactMethod
-    fun isPipSupported(promise: Promise) {
-        try {
-            val activity = reactContext.currentActivity
-            if (activity == null) {
-                promise.resolve(false)
-                return
-            }
+    // Check Android version support (PiP requires Android 8.0/API level 26 or higher)
+    val isVersionSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
-            val isSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
-                    activity.packageManager.hasSystemFeature("android.software.picture_in_picture")
+    // Check if PiP is supported by the device
+    val packageManager = activity.packageManager
+    val isPipSupported = isVersionSupported &&
+                         packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
 
-            promise.resolve(isSupported)
-        } catch (e: Exception) {
-            Log.e("PipModule", "Error checking PiP support: ${e.message}")
-            promise.resolve(false)
-        }
-    }
+    Log.d(TAG, "PiP support check: version=$isVersionSupported, feature=$isPipSupported")
+    promise.resolve(isPipSupported)
+  }
 }

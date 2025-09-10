@@ -50,13 +50,16 @@
             "kickMemberSuccess": "Member kicked successfully",
             "kickMemberFailed": "Failed to kick member",
             "removeMemberThreadSuccess": "Member removed successfully",
-            "removeMemberThreadFailed": "Failed to remove member"
+            "removeMemberThreadFailed": "Failed to remove member",
+            "transferOwnershipSuccess": "Transfer successfully",
+            "transferOwnershipFailed": "Transfer fail"
         }
     },
     "action": {
         "kick": "Kick",
         "removeFromThread": "Remove from Thread",
-        "manage": "Manage"
+        "manage": "Manage",
+        "transferOwnership": "Transfer Ownership"
     },
     "threadRemoveModal": {
         "title": "Remove from Thread?",

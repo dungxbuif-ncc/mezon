@@ -7,7 +7,7 @@ export const style = (colors: Attributes, isTabletLandscape: boolean) =>
 			fontSize: size.s_12
 		},
 		currentTime: {
-			color: colors.text,
+			color: '#fff',
 			fontSize: size.s_14,
 			fontWeight: 'bold'
 		},

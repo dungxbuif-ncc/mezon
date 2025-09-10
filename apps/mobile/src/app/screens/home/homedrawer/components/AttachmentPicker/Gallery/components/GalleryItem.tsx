@@ -1,8 +1,8 @@
 import { size } from '@mezon/mobile-ui';
-import { PreSendAttachment } from '@mezon/utils';
+import { formatTimeToMMSS, PreSendAttachment } from '@mezon/utils';
 import { PhotoIdentifier } from '@react-native-camera-roll/camera-roll';
 import React, { memo, useEffect, useState } from 'react';
-import { ActivityIndicator, Image, Platform, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, Platform, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import MezonIconCDN from '../../../../../../../componentUI/MezonIconCDN';
 import { IconCDN } from '../../../../../../../constants/icon_cdn';
@@ -33,6 +33,15 @@ const GalleryItem = ({
 	const isSelected = attachmentFilteredByChannelId?.files.some((file) => file.filename === fileName);
 	const disabled = isDisableSelectAttachment && !isSelected;
 	const [isLoadingImage, setIsLoadingImage] = useState(true);
+
+	const getDurationSec = (): number | undefined => {
+		return (
+			item?.node?.image?.playableDuration ??
+			item?.node?.image?.duration ??
+			item?.node?.playableDuration ??
+			undefined
+		);
+	};
 
 	useEffect(() => {
 		if (item?.node?.image?.uri && Platform.OS === 'ios') {
@@ -80,7 +89,8 @@ const GalleryItem = ({
 			)}
 			{isVideo && (
 				<View style={styles.videoOverlay}>
-					<MezonIconCDN icon={IconCDN.playIcon} width={size.s_20} height={size.s_20} />
+					<MezonIconCDN icon={IconCDN.playIcon} width={size.s_8} height={size.s_8} />
+					<Text style={styles.videoDuration}> {formatTimeToMMSS(getDurationSec() ?? 0)}</Text>
 				</View>
 			)}
 			{isSelected && (

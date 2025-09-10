@@ -35,5 +35,6 @@
             "error": "Failed to unblock user"
         }
     },
-    "waveWelcome": "Wave to say hi!"
+    "waveWelcome": "Wave to say hi!",
+    "members": "members"
 }

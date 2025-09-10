@@ -17,7 +17,7 @@ const ChannelRouterListener = () => {
 	const isTabletLandscape = useTabletLandscape();
 	const openBottomSheetJoinVoice = (channel: IChannel) => {
 		const data = {
-			snapPoints: ['45%'],
+			heightFitContent: true,
 			children:
 				channel?.type === ChannelType.CHANNEL_TYPE_STREAMING ? (
 					<JoinStreamingRoomBS channel={channel} />

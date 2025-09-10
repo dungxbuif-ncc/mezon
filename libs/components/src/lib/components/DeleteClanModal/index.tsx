@@ -25,6 +25,7 @@ const DeleteClanModal: React.FC<DeleteClanModalProps> = ({ onClose, title, butto
 	};
 
 	const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
 		if (inputValueIsMatchClanName && onClick) {
 			onClick();
 		}

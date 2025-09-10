@@ -21,8 +21,9 @@ import { ChannelStreamMode, ChannelType } from 'mezon-js';
 import { ApiChannelDescription, ApiCreateChannelDescRequest, ApiMessageAttachment, ApiMessageMention, ApiMessageRef } from 'mezon-js/api.gen';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, DeviceEventEmitter, Keyboard, Platform, ScrollView, StatusBar, Text, View } from 'react-native';
+import { Alert, DeviceEventEmitter, Keyboard, Platform, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import LinearGradient from 'react-native-linear-gradient';
 import Toast from 'react-native-toast-message';
 import { useSelector } from 'react-redux';
 import MezonIconCDN from '../../../componentUI/MezonIconCDN';
@@ -35,6 +36,7 @@ import { ChatBox } from '../../../screens/home/homedrawer/ChatBox';
 import MessageItem from '../../../screens/home/homedrawer/MessageItem';
 import PanelKeyboard from '../../../screens/home/homedrawer/PanelKeyboard';
 import { EMessageActionType } from '../../../screens/home/homedrawer/enums';
+import { checkNotificationPermissionMiddleware } from '../../../utils/notificationPermissionHelper';
 import StatusBarHeight from '../../StatusBarHeight/StatusBarHeight';
 import { style } from './CreateThreadForm.style';
 import HeaderLeftThreadForm from './HeaderLeftThreadForm';
@@ -148,8 +150,11 @@ export default function CreateThreadForm({ navigation, route }: MenuThreadScreen
 									clanId: currentClanId
 								})
 							);
+							dispatch(appActions.setLoadingMainMobile(false));
+							await checkNotificationPermissionMiddleware({ showBottomSheet: true });
 						}
 					} catch (error) {
+						dispatch(appActions.setLoadingMainMobile(false));
 						console.error('Error creating thread:', error);
 					} finally {
 						dispatch(appActions.setLoadingMainMobile(false));
@@ -217,6 +222,12 @@ export default function CreateThreadForm({ navigation, route }: MenuThreadScreen
 			behavior={'padding'}
 			keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : StatusBar.currentHeight + 5}
 		>
+			<LinearGradient
+				start={{ x: 1, y: 0 }}
+				end={{ x: 0, y: 0 }}
+				colors={[themeValue.primary, themeValue?.primaryGradiant || themeValue.primary]}
+				style={[StyleSheet.absoluteFillObject]}
+			/>
 			<StatusBarHeight />
 			<View style={styles.createChannelContent}>
 				<HeaderLeftThreadForm currentChannel={channelThreads || currentChannel} />

@@ -14,5 +14,6 @@
   "filterOptions": {
     "fromUser": "From a specific user",
     "mentionUser": "Mention someone"
-  }
+  },
+  "cancel": "Cancel"
 }

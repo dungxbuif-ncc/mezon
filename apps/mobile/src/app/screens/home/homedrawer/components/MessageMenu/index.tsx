@@ -366,7 +366,11 @@ function MessageMenu({ messageInfo }: IServerMenuProps) {
 					<Text style={styles.serverName} numberOfLines={2}>
 						{userName}
 					</Text>
-					{isGroup && <Text style={styles.memberText}>{messageInfo?.user_id?.length + 1} members</Text>}
+					{isGroup && (
+						<Text style={styles.memberText}>
+							{messageInfo?.user_id?.length + 1} {t('members')}
+						</Text>
+					)}
 				</View>
 			</View>
 

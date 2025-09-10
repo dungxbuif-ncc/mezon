@@ -4,6 +4,7 @@ import {
 	clansActions,
 	selectClanView,
 	selectCurrentClanId,
+	selectDirectsUnreadlist,
 	selectDmGroupCurrentId,
 	selectDmGroupCurrentType,
 	selectLogoCustom,
@@ -19,7 +20,12 @@ import { Coords } from '../ChannelLink';
 import NavLinkComponent from '../NavLink';
 import PanelClan from '../PanelClan';
 
-const SidebarLogoItem = () => {
+type SidebarLogoItemProps = {
+	onToggleUnreadList?: () => void;
+	isUnreadListOpen?: boolean;
+};
+
+const SidebarLogoItem = ({ onToggleUnreadList, isUnreadListOpen }: SidebarLogoItemProps) => {
 	const navigate = useCustomNavigate();
 	const dispatch = useAppDispatch();
 	const appearanceTheme = useSelector(selectTheme);
@@ -31,7 +37,7 @@ const SidebarLogoItem = () => {
 		(value: ModeResponsive) => {
 			dispatch(channelsActions.setModeResponsive({ clanId: currentClanId as string, mode: value }));
 		},
-		[dispatch]
+		[dispatch, currentClanId]
 	);
 	const isClanView = useSelector(selectClanView);
 	const [coords, setCoords] = useState<Coords>({
@@ -39,16 +45,10 @@ const SidebarLogoItem = () => {
 		mouseY: 0,
 		distanceToBottom: 0
 	});
-	const [openRightClickModal, closeRightClickModal] = useModal(() => {
-
-	  return (
-		  <PanelClan
-			  coords={coords}
-			  setShowClanListMenuContext={closeRightClickModal}
-			  userProfile={userProfile || undefined}
-		  />
-	  );
-  }, [coords, userProfile]);
+	const [openRightClickModal, closeRightClickModal] = useModal(
+		() => <PanelClan coords={coords} setShowClanListMenuContext={closeRightClickModal} userProfile={userProfile || undefined} />,
+		[coords, userProfile]
+	);
 	const handleMouseClick = async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 		const mouseX = event.clientX;
 		const mouseY = event.clientY;
@@ -61,13 +61,20 @@ const SidebarLogoItem = () => {
 		dispatch(clansActions.joinClan({ clanId: '0' }));
 	};
 	const { quantityPendingRequest } = useFriends();
+	const unreadDMs = useSelector(selectDirectsUnreadlist);
+	const unreadCount = isUnreadListOpen ? 0 : unreadDMs?.length || 0;
+	const combinedBadge = unreadCount + (quantityPendingRequest || 0);
 	const logoCustom = useSelector(selectLogoCustom);
 	return (
 		<div className="relative h-[40px]">
 			<button
 				onClick={() => {
 					setModeResponsive(ModeResponsive.MODE_DM);
-					navigate(currentDmId ? `/chat/direct/message/${currentDmId}/${currentDmIType}` : '/chat/direct/friends');
+					if (unreadDMs?.length || 0) {
+						onToggleUnreadList?.();
+					} else {
+						navigate(currentDmId ? `/chat/direct/message/${currentDmId}/${currentDmIType}` : '/chat/direct/friends');
+					}
 				}}
 				draggable="false"
 			>
@@ -86,13 +93,13 @@ const SidebarLogoItem = () => {
 					</div>
 				</NavLinkComponent>
 			</button>
-			{quantityPendingRequest > 0 ? (
+			{combinedBadge > 0 ? (
 				<div
 					className={`flex items-center text-center justify-center text-[12px] font-bold rounded-full bg-colorDanger absolute bottom-[-2px] right-[-2px]  ${
-						quantityPendingRequest >= 10 ? 'w-[22px] h-[16px]' : 'w-[16px] h-[16px]'
+						combinedBadge >= 10 ? 'w-[22px] h-[16px]' : 'w-[16px] h-[16px]'
 					}`}
 				>
-					{quantityPendingRequest >= 100 ? '99+' : quantityPendingRequest}
+					{combinedBadge >= 100 ? '99+' : combinedBadge}
 				</div>
 			) : null}
 		</div>

@@ -23,6 +23,8 @@ class CallActivity : ReactActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
      try {
+        setShowWhenLocked(true);
+        setTurnScreenOn(true);
         window.addFlags(
           WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
           WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or

@@ -1,23 +1,23 @@
 import { useAppParams, useAttachments } from '@mezon/core';
 import {
-	attachmentActions,
-	selectAllListAttachmentByChannel,
-	selectAttachment,
-	selectCurrentAttachmentShowImage,
-	selectCurrentChannel,
-	selectCurrentChannelId,
-	selectDmGroupCurrent,
-	selectMembeGroupByUserId,
-	selectMemberClanByUserId2,
-	selectMessageIdAttachment,
-	selectModeAttachment,
-	selectModeResponsive,
-	selectOpenModalAttachment,
-	useAppSelector
+  attachmentActions,
+  selectAllListAttachmentByChannel,
+  selectAttachment,
+  selectCurrentAttachmentShowImage,
+  selectCurrentChannel,
+  selectCurrentChannelId,
+  selectDmGroupCurrent,
+  selectMembeGroupByUserId,
+  selectMemberClanByUserId2,
+  selectMessageIdAttachment,
+  selectModeAttachment,
+  selectModeResponsive,
+  selectOpenModalAttachment,
+  useAppSelector
 } from '@mezon/store';
 import { Icons } from '@mezon/ui';
 import { ModeResponsive, SHOW_POSITION, convertTimeString, createImgproxyUrl, handleSaveImage } from '@mezon/utils';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { MessageContextMenuProps, useMessageContextMenu } from '../../ContextMenu';
 import ListAttachment from './listAttachment';
@@ -27,6 +27,7 @@ const MessageModalImage = () => {
 	const { directId } = useAppParams();
 	const [scale, setScale] = useState(1);
 	const [rotate, setRotate] = useState(0);
+	const modalRef = useRef<HTMLDivElement>(null);
 
 	const [showList, setShowList] = useState(true);
 	const currentChannelId = useSelector(selectCurrentChannelId);
@@ -49,7 +50,10 @@ const MessageModalImage = () => {
 		setShowList(true);
 		setScale(1);
 		setUrlImg(attachment);
-	}, [openModalAttachment]);
+		if (openModalAttachment && modalRef.current) {
+			modalRef.current.focus();
+		}
+	}, [openModalAttachment, attachment]);
 
 	useEffect(() => {
 		if (attachments && attachments.length > 0) {
@@ -203,7 +207,9 @@ const MessageModalImage = () => {
 
 	return (
 		<div
-			className={`justify-center items-center flex flex-col fixed z-40 inset-0 outline-none focus:outline-nonebg-black text-colorTextLightMode select-none`}
+			ref={modalRef}
+			tabIndex={-1}
+			className={`justify-center items-center flex flex-col fixed z-40 inset-0 outline-none focus:outline-none bg-black text-colorTextLightMode select-none`}
 		>
 			<div className="flex justify-center items-center bg-[#2e2e2e] w-full h-[30px] relative">
 				<div className="text-textDarkTheme">{currentDM?.channel_label || currentChannel?.channel_label}</div>

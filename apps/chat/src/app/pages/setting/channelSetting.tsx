@@ -11,6 +11,7 @@ import {
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
+import ChannelTopBar from './ChannelTopBar';
 
 const ChannelSetting = () => {
 	const [searchFilter, setSearchFilter] = useState('');
@@ -57,17 +58,9 @@ const ChannelSetting = () => {
 	}, []);
 
 	return (
-		<div className="p-8 h-[calc(100vh_-_56px)] flex flex-col">
-			<div className="p-2 flex items-center justify-between">
-				<div className="flex items-center gap-2">
-					<input
-						type="text"
-						value={searchFilter}
-						placeholder="Search"
-						onChange={handleSearchByNameChannel}
-						className="w-full h-8 pl-2 pr-2 py-3 bg-theme-input text-theme-primary rounded items-center inline-flex outline-none focus:outline-none"
-					/>
-				</div>
+		<div className="p-4 h-[calc(100vh_-_56px)] flex flex-col text-theme-primary ">
+			<div className="flex items-center justify-between">
+				<ChannelTopBar searchQuery={searchFilter} handleSearchChange={handleSearchByNameChannel} />
 			</div>
 			<ListChannelSetting
 				listChannel={listChannelBySearch}

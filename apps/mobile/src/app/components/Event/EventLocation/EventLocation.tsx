@@ -26,7 +26,7 @@ export function EventLocation({ event }: IEventLocation) {
 			await Linking.openURL(urlVoice);
 		} else if (channelVoice?.meeting_code && channelVoice?.type === ChannelType.CHANNEL_TYPE_MEZON_VOICE) {
 			const data = {
-				snapPoints: ['45%', '45%'],
+				heightFitContent: true,
 				children: <JoinChannelVoiceBS channel={channelVoice} />
 			};
 			DeviceEventEmitter.emit(ActionEmitEvent.ON_TRIGGER_BOTTOM_SHEET, { isDismiss: false, data });

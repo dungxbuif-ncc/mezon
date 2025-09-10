@@ -2,8 +2,6 @@ name: Mezon FE - E2E Validation
 
 on:
   workflow_dispatch:
-  push:
-    branches: [develop]
   pull_request:
     branches: [develop]
     types: [opened, synchronize, reopened]
@@ -72,10 +70,13 @@ jobs:
           SERVER_PID=$!
           echo $SERVER_PID > mezon-dev.pid
           echo "📋 Server PID: $SERVER_PID"
+
           echo "⏱️ Waiting 10 seconds for initial startup..."
           sleep 10
+
           echo "📜 Initial server log output:"
           head -50 mezon-dev.log || echo "No log file yet"
+
           echo "🔍 Checking if process is still running:"
           if ps -p $SERVER_PID > /dev/null; then
             echo "✅ Server process is running (PID: $SERVER_PID)"
@@ -84,16 +85,20 @@ jobs:
             cat mezon-dev.log || echo "No log file found"
             exit 1
           fi
+
       - name: Wait for mezon server to be ready
         run: |
           echo "⏳ Waiting for mezon server to be ready on port 4200..."
+
           # Check if PID file exists
           if [ ! -f ./mezon/mezon-dev.pid ]; then
             echo "❌ PID file not found!"
             exit 1
           fi
+
           SERVER_PID=$(cat ./mezon/mezon-dev.pid)
           echo "📋 Server PID from file: $SERVER_PID"
+
           # Check if process is running
           if ! ps -p $SERVER_PID > /dev/null; then
             echo "❌ Server process is not running! Checking logs..."
@@ -131,7 +136,9 @@ jobs:
           xvfb-run yarn test
           TEST_EXIT_CODE=$?
           set -e  # Re-enable exit on error
+
           echo "📊 Test exit code: $TEST_EXIT_CODE"
+
           if [ $TEST_EXIT_CODE -eq 0 ]; then
             echo "✅ All tests passed"
             echo "test-result=success" >> $GITHUB_OUTPUT

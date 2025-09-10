@@ -28,6 +28,7 @@ export * from './lib/clanWebhook/clanWebhook.slide';
 export * from './lib/clans/clanSettingChannel.slice';
 export * from './lib/clans/clans.slice';
 export * from './lib/compose/compose.slice';
+export * from './lib/gallery/gallery.slice';
 export * from './lib/comunity/comunity.slice';
 export * from './lib/direct/direct.members.meta';
 export * from './lib/direct/direct.slice';

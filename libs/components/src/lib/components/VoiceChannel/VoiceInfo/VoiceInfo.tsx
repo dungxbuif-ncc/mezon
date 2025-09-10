@@ -133,7 +133,7 @@ const VoiceInfo = React.memo(() => {
 				? `${process.env.NX_DOMAIN_URL}/chat/direct/message/${currentVoiceInfo.channelId}/${ChannelType.CHANNEL_TYPE_GROUP}`
 				: `${process.env.NX_DOMAIN_URL}/chat/clans/${currentVoiceInfo.clanId}/channels/${currentVoiceInfo.channelId}`;
 		}
-	}, []);
+	}, [currentVoiceInfo]);
 	return (
 		<div
 			className={`flex flex-col gap-2 rounded-t-lg border-b-2 border-theme-primary px-4 py-2 hover:bg-gray-550/[0.16] shadow-sm transition
@@ -151,7 +151,7 @@ const VoiceInfo = React.memo(() => {
 						</div>
 					</button>
 				</div>
-				<ButtonCopy copyText={linkVoice} />
+				<ButtonCopy copyText={linkVoice} key={linkVoice} />
 			</div>
 			<div className="flex items-centerg gap-4 justify-between">
 				{hasMicrophoneAccess && (

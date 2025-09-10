@@ -620,6 +620,12 @@ export const ChatBoxBottomBar = memo(
 					style={[StyleSheet.absoluteFillObject]}
 				/>
 				<View style={[styles.suggestions]}>
+					<LinearGradient
+						start={{ x: 1, y: 0 }}
+						end={{ x: 0, y: 0 }}
+						colors={[themeValue.primary, themeValue?.primaryGradiant || themeValue.primary]}
+						style={[StyleSheet.absoluteFillObject]}
+					/>
 					{triggers?.mention?.keyword !== undefined && (
 						<Suggestions {...triggers.mention} listMentions={listMentions} isEphemeralMode={isEphemeralMode} />
 					)}

@@ -37,7 +37,7 @@ import { resetChannelBadgeCount } from '../badge/badgeHelpers';
 import { CacheMetadata, createApiKey, createCacheMetadata, markApiFirstCalled, shouldForceApiCall } from '../cache-metadata';
 import { channelMetaActions } from '../channels/channelmeta.slice';
 import { selectLoadingStatus, selectShowScrollDownButton } from '../channels/channels.slice';
-import { selectClansLoadingStatus } from '../clans/clans.slice';
+import { selectClanById, selectClansLoadingStatus } from '../clans/clans.slice';
 import { selectCurrentDM } from '../direct/direct.slice';
 import { checkE2EE, selectE2eeByUserIds } from '../e2ee/e2ee.slice';
 import { MezonValueContext, ensureSession, ensureSocket, getMezonCtx } from '../helpers';
@@ -197,6 +197,14 @@ export const fetchMessagesCached = async (
 	noCache = false
 ) => {
 	const state = getState();
+
+	const clanExists = clanId === '0' || !!selectClanById(clanId)(state);
+	if (!clanExists) {
+		return {
+			messages: [],
+			fromCache: true
+		};
+	}
 	const channelData = state[MESSAGES_FEATURE_KEY].channelMessages[channelId];
 	const apiKey = createApiKey('fetchMessages', clanId, channelId, messageId || '', direction || 1, topicId || '');
 	const shouldForceCall = shouldForceApiCall(apiKey, channelData?.cache, noCache);
@@ -554,6 +562,7 @@ type JumpToMessageArgs = {
 	isFetchingLatestMessages?: boolean;
 	mode?: number;
 	navigate?: (path: string) => void;
+	topicId?: string;
 };
 /**
  * Jump to message by message id
@@ -566,7 +575,10 @@ type JumpToMessageArgs = {
  */
 export const jumpToMessage = createAsyncThunk(
 	'messages/jumpToMessage',
-	async ({ clanId, messageId, channelId, noCache = true, isFetchingLatestMessages = false, navigate, mode }: JumpToMessageArgs, thunkAPI) => {
+	async (
+		{ clanId, messageId, channelId, noCache = true, isFetchingLatestMessages = false, navigate, mode, topicId }: JumpToMessageArgs,
+		thunkAPI
+	) => {
 		try {
 			thunkAPI.dispatch(messagesActions.setLoadingJumpMessage(true));
 			thunkAPI.dispatch(messagesActions.setIdMessageToJump({ id: 'temp', navigate: false }));
@@ -584,7 +596,8 @@ export const jumpToMessage = createAsyncThunk(
 							direction: Direction_Mode.AROUND_TIMESTAMP,
 							isFetchingLatestMessages,
 							viewingOlder: true,
-							isClearMessage: true
+							isClearMessage: true,
+							topicId: topicId 
 						})
 					)
 					.unwrap();

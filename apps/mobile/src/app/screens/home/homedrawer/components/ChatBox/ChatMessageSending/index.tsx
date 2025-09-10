@@ -40,7 +40,6 @@ import { Pressable } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import MezonIconCDN from '../../../../../../componentUI/MezonIconCDN';
 import { IconCDN } from '../../../../../../constants/icon_cdn';
-import { showNotificationPermissionBottomSheet } from '../../../../../../utils/notificationPermissionHelper';
 import { EMessageActionType } from '../../../enums';
 import { IMessageActionNeedToResolve, IPayloadThreadSendMessage } from '../../../types';
 import { style } from '../ChatBoxBottomBar/style';
@@ -288,7 +287,6 @@ export const ChatMessageSending = memo(
 						references: []
 					};
 					DeviceEventEmitter.emit(ActionEmitEvent.SEND_MESSAGE, payloadThreadSendMessage);
-					showNotificationPermissionBottomSheet();
 				} else {
 					if (type === EMessageActionType.EditMessage) {
 						await onEditMessage(
