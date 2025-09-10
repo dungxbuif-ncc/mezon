@@ -1,6 +1,4 @@
 
-<div align="center">
-  <h1>Mezon</h1>
   
   <p align="center">
     <strong>The Live, Work, and Play Platform – the best Discord alternative.</strong>
