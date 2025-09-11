@@ -10,7 +10,7 @@
 	"bracketSameLine": false,
 	"arrowParens": "always",
 	"quoteProps": "as-needed",
-	"jsxSingleQuote": true,
+	"jsxSingleQuote": false,
 	"plugins": ["prettier-plugin-organize-imports"],
 	"overrides": [
 		{

@@ -12,8 +12,9 @@ import { Icons, Menu, Pagination } from '@mezon/ui';
 import { createImgproxyUrl, getAvatarForPrioritize } from '@mezon/utils';
 import { formatDistance } from 'date-fns';
 import { ChannelType } from 'mezon-js';
-import { ApiChannelMessageHeader, ApiChannelSettingItem } from 'mezon-js/api.gen';
-import { ReactElement, useMemo, useRef, useState } from 'react';
+import type { ApiChannelMessageHeader, ApiChannelSettingItem } from 'mezon-js/api.gen';
+import type { ReactElement } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useModal } from 'react-modal-hook';
 import { useSelector } from 'react-redux';
 import { AnchorScroll } from '../../AnchorScroll/AnchorScroll';
@@ -41,7 +42,7 @@ const ListChannelSetting = ({ listChannel, clanId, countChannel, searchFilter }:
 				parentId: '0',
 				page,
 				limit: pageSize,
-				typeFetch: ETypeFetchChannelSetting.FETCH_CHANNEL
+				typeFetch: ETypeFetchChannelSetting.MORE_CHANNEL
 			})
 		);
 	};
@@ -81,8 +82,16 @@ const ListChannelSetting = ({ listChannel, clanId, countChannel, searchFilter }:
 
 	const channelListCut = useMemo(() => {
 		if (!listChannel) return [];
-		const start = (currentPage - 1) * pageSize;
-		const end = start + pageSize;
+
+		let start = (currentPage - 1) * pageSize;
+		let end = start + pageSize;
+
+		if (start >= listChannel.length) {
+			const lastPage = Math.ceil(listChannel.length / pageSize);
+			start = (lastPage - 1) * pageSize;
+			end = start + pageSize;
+		}
+
 		return listChannel.slice(start, end);
 	}, [listChannel, currentPage, pageSize]);
 	return (
@@ -267,7 +276,7 @@ const ItemInfor = ({
 				onClick={closeModalAllMember}
 			>
 				<div
-					className="w-450 max-h-[80vh] min-h-250  rounded-lg flex flex-col gap-2 p-4 overflow-y-auto hide-scrollbar"
+					className="w-450 max-h-[80vh] min-h-250  rounded-lg flex flex-col gap-2 p-4 overflow-y-auto hide-scrollbar bg-theme-setting-primary text-theme-primary"
 					onClick={(e) => e.stopPropagation()}
 				>
 					<div className="font-semibold pb-3 ">List Member</div>

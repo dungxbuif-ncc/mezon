@@ -1,8 +1,8 @@
+import type { TrackReferenceOrPlaceholder } from '@livekit/components-react';
 import {
 	ConnectionStateToast,
 	LayoutContextProvider,
 	RoomAudioRenderer,
-	TrackReferenceOrPlaceholder,
 	isTrackReference,
 	useCreateLayoutContext,
 	usePinnedTracks,
@@ -11,15 +11,8 @@ import {
 } from '@livekit/components-react';
 import { useAppDispatch, voiceActions } from '@mezon/store';
 import { Icons } from '@mezon/ui';
-import {
-	DisconnectReason,
-	LocalParticipant,
-	LocalTrackPublication,
-	RemoteParticipant,
-	RemoteTrackPublication,
-	RoomEvent,
-	Track
-} from 'livekit-client';
+import type { LocalParticipant, LocalTrackPublication, RemoteParticipant, RemoteTrackPublication } from 'livekit-client';
+import { DisconnectReason, RoomEvent, Track } from 'livekit-client';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { NotificationTooltip } from '../../NotificationList/NotificationTooltip';
 import ControlBar from '../ControlBar/ControlBar';
@@ -113,7 +106,9 @@ export function MyVideoConference({
 				reason === DisconnectReason.SERVER_SHUTDOWN ||
 				reason === DisconnectReason.DUPLICATE_IDENTITY ||
 				reason === DisconnectReason.CLIENT_INITIATED ||
-				reason === DisconnectReason.PARTICIPANT_REMOVED
+				reason === DisconnectReason.PARTICIPANT_REMOVED ||
+				reason === DisconnectReason.SIGNAL_CLOSE ||
+				reason === DisconnectReason.JOIN_FAILURE
 			) {
 				onLeaveRoom();
 			} else {
@@ -175,6 +170,12 @@ export function MyVideoConference({
 			room?.off('trackUnpublished', handleTrackUnpublish);
 		};
 	}, [room, focusTrack?.participant.sid]);
+
+	useEffect(() => {
+		if (room?.name) {
+			dispatch(voiceActions.setVoiceInfoId(room?.name));
+		}
+	}, [room?.name]);
 
 	const onToggleChatBox = () => {
 		if (isExternalCalling) {

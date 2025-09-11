@@ -1,6 +1,6 @@
 import type React from "react"
 
-import { comunityActions, selectCommunityBanner, selectComunityAbout, selectComunityError, selectComunityLoading, selectIsCommunityEnabled, selectComunityShortUrl, useAppDispatch, useAppSelector } from "@mezon/store"
+import { comunityActions, selectCommunityBanner, selectComunityAbout, selectComunityError, selectComunityLoading, selectComunityShortUrl, selectIsCommunityEnabled, useAppDispatch, useAppSelector } from "@mezon/store"
 import { handleUploadEmoticon, useMezon } from "@mezon/transport"
 import { Icons } from "@mezon/ui"
 import { useEffect, useRef, useState } from "react"
@@ -19,6 +19,12 @@ const SettingComunity = ({
   const about = useAppSelector(state => selectComunityAbout(state, clanId));
   const isLoading = useAppSelector(state => selectComunityLoading(state));
   const error = useAppSelector(state => selectComunityError(state));
+
+  useEffect(() => {
+    if (clanId) {
+      dispatch(comunityActions.getCommunityInfo({ clan_id: clanId }));
+    }
+  }, [dispatch, clanId]);
 
   const [isInitialEditing, setIsInitialEditing] = useState(false)
   const [bannerFile, setBannerFile] = useState<File | null>(null)
@@ -278,8 +284,16 @@ const SettingComunity = ({
     setInitialVanityUrl(shortUrl);
   }, [shortUrl, clanId, isEnabled]);
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[500px]">
+        <div className="text-theme-primary">Loading community settings...</div>
+      </div>
+    );
+  }
+
   if (!isEnabled && !isInitialEditing) {
-    return <EnableComunity onEnable={handleEnable} />
+    return <EnableComunity onEnable={handleEnable} clanId={clanId} />
   }
 
   if (!isEnabled && isInitialEditing) {

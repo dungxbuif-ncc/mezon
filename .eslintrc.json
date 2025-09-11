@@ -70,6 +70,7 @@
 				"tabWidth": 4,
 				"useTabs": true,
 				"singleQuote": true,
+				"jsxSingleQuote": false,
 				"printWidth": 150,
 				"trailingComma": "none",
 				"endOfLine": "auto"

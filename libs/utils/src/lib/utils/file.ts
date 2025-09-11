@@ -1,6 +1,7 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { ApiMessageAttachment } from 'mezon-js/api.gen';
 import { MentionItem } from 'react-mentions';
+import { MAX_FILE_SIZE, MAX_IMAGE_FILE_SIZE, fileTypeImage } from '../constant';
 import { IMentionOnMessage, IRolesClan, IStartEndIndex, MentionDataProps, MentionReactInputProps, RequestInput } from '../types';
 
 function createFileMetadata<T>(file: File): T {
@@ -107,6 +108,19 @@ export function isMediaTypeNotSupported(mediaType?: string) {
 	]);
 
 	return unsupportedMediaTypes.has(mediaType);
+}
+
+export function isImageFile(file: File): boolean {
+	return fileTypeImage.includes(file.type);
+}
+
+export function getMaxFileSize(file: File): number {
+	return isImageFile(file) ? MAX_IMAGE_FILE_SIZE : MAX_FILE_SIZE;
+}
+
+export function isFileSizeExceeded(file: File): boolean {
+	const maxSize = getMaxFileSize(file);
+	return file.size > maxSize;
 }
 
 export function formatMentionsToString(array: MentionDataProps[]) {

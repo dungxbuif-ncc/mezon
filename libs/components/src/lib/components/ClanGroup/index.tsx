@@ -1,13 +1,6 @@
 import { useExpandedGroupDragAndDrop } from '@mezon/core';
-import {
-	ClanGroup as ClanGroupType,
-	RootState,
-	clansActions,
-	selectBadgeCountByClanId,
-	selectClanView,
-	selectClansEntities,
-	selectCurrentClanId
-} from '@mezon/store';
+import type { ClanGroup as ClanGroupType, RootState } from '@mezon/store';
+import { clansActions, selectBadgeCountByClanId, selectClanView, selectClansEntities, selectCurrentClanId } from '@mezon/store';
 import { createImgproxyUrl } from '@mezon/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import SidebarClanItem from '../ModalListClans';
@@ -39,9 +32,10 @@ export type ClanGroupProps = {
 	className?: string;
 	isGroupIntent?: boolean;
 	onClanMouseDown?: (e: React.MouseEvent<HTMLDivElement>, clanId: string, fromGroup: { groupId: string; clanId: string }) => void;
+	onClanClick?: () => void;
 };
 
-const ClanGroup = ({ group, onMouseDown, onMouseEnter, className = '', isGroupIntent, onClanMouseDown }: ClanGroupProps) => {
+const ClanGroup = ({ group, onMouseDown, onMouseEnter, className = '', isGroupIntent, onClanMouseDown, onClanClick }: ClanGroupProps) => {
 	const dispatch = useDispatch();
 	const allClansEntities = useSelector(selectClansEntities);
 
@@ -62,6 +56,7 @@ const ClanGroup = ({ group, onMouseDown, onMouseEnter, className = '', isGroupIn
 
 	const handleToggle = () => {
 		dispatch(clansActions.toggleGroupExpanded(group.id));
+		onClanClick?.();
 	};
 
 	const maxDisplayClans = 4;
@@ -100,7 +95,7 @@ const ClanGroup = ({ group, onMouseDown, onMouseEnter, className = '', isGroupIn
 		dispatch(
 			clansActions.removeClanFromGroup({
 				groupId: group.id,
-				clanId: clanId
+				clanId
 			})
 		);
 	};
@@ -151,6 +146,7 @@ const ClanGroup = ({ group, onMouseDown, onMouseEnter, className = '', isGroupIn
 										active={isActive(clan.id)}
 										className="scale-100 hover:scale-105 transition-transform duration-200"
 										onMouseDown={(e) => handleClanMouseDown(e, clan)}
+										onClanClick={onClanClick}
 									/>
 
 									{!expandedGroupDragAndDrop.draggingState.isDragging && (

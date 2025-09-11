@@ -1,6 +1,6 @@
 import { useGetPriorityNameFromUserClan } from '@mezon/core';
 import { PinMessageEntity, messagesActions, selectCurrentClanId, selectMessageByMessageId, useAppDispatch, useAppSelector } from '@mezon/store';
-import { IMessageWithUser, TOPBARS_MAX_WIDTH, convertTimeString } from '@mezon/utils';
+import { IMessageWithUser, TOPBARS_MAX_WIDTH, convertTimeString, generateE2eId } from '@mezon/utils';
 import { ChannelStreamMode, safeJSONParse } from 'mezon-js';
 import { ApiMessageAttachment } from 'mezon-js/api.gen';
 import { useMemo } from 'react';
@@ -71,6 +71,7 @@ const ItemPinMessage = (props: ItemPinMessageProps) => {
 	return (
 		<div
 			key={pinMessage.id}
+			data-e2e={generateE2eId('common.pin_message', `msg-${pinMessage.id}`)}
 			className="relative flex flex-row justify-between  py-3 px-3 mx-2 w-widthPinMess cursor-default rounded overflow-hidden border-theme-primary bg-item-theme group/item-pinMess"
 		>
 			<div className="flex items-start gap-2 w-full ">

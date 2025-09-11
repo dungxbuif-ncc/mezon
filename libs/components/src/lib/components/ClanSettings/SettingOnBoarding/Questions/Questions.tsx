@@ -8,8 +8,9 @@ import {
 	useAppSelector
 } from '@mezon/store';
 import { Icons } from '@mezon/ui';
-import { ApiOnboardingItem, OnboardingAnswer } from 'mezon-js/api.gen';
-import { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import type { ApiOnboardingItem, OnboardingAnswer } from 'mezon-js/api.gen';
+import type { ChangeEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useModal } from 'react-modal-hook';
 import { useSelector } from 'react-redux';
 import { EOnboardingStep } from '..';
@@ -64,13 +65,6 @@ const Questions = ({ handleGoToPage, setOpenModalSaveChanges }: IQuestionsProps)
 					<div className="font-medium text-gray-700 dark:text-channelTextLabel">
 						Create questions to help members pick additional channels and roles. Their channel list will be customised based on their
 						answers.
-					</div>
-					<div className="flex gap-2 items-center">
-						<div className="cursor-pointer text-indigo-500 hover:underline">See examples</div>
-						<div className="w-1 h-1 rounded-full bg-gray-600" />
-						<div className="cursor-pointer text-indigo-500 hover:underline">Preview</div>
-						<div className="w-1 h-1 rounded-full bg-gray-600" />
-						<div className="cursor-pointer text-indigo-500 hover:underline">Switch to Advanced Mode</div>
 					</div>
 				</div>
 				<div>
@@ -182,6 +176,11 @@ const QuestionItem = ({ question, index, tempId }: { question: ApiOnboardingItem
 		[titleQuestion, answers.length, indexEditAnswer]
 	);
 
+	const openPopupAnswer = useCallback(() => {
+		setIndexEditAnswer(undefined);
+		openAnswerPopup();
+	}, [openAnswerPopup]);
+
 	useEffect(() => {
 		if (indexEditAnswer !== undefined) {
 			openAnswerPopup();
@@ -203,7 +202,7 @@ const QuestionItem = ({ question, index, tempId }: { question: ApiOnboardingItem
 
 	const handleAddQuestion = () => {
 		if (!titleQuestion) {
-			setError('Question is require.');
+			setError('Question is required.');
 			return;
 		}
 		setError('');
@@ -213,7 +212,7 @@ const QuestionItem = ({ question, index, tempId }: { question: ApiOnboardingItem
 				onboardingActions.addQuestion({
 					data: {
 						title: titleQuestion,
-						answers: answers,
+						answers,
 						guide_type: EGuideType.QUESTION
 					},
 					update: tempId
@@ -228,7 +227,7 @@ const QuestionItem = ({ question, index, tempId }: { question: ApiOnboardingItem
 				content: {
 					...question,
 					title: titleQuestion,
-					answers: answers,
+					answers,
 					task_type: EGuideType.QUESTION
 				}
 			})
@@ -310,7 +309,7 @@ const QuestionItem = ({ question, index, tempId }: { question: ApiOnboardingItem
 								/>
 							))}
 							<GuideItemLayout
-								onClick={openAnswerPopup}
+								onClick={openPopupAnswer}
 								icon={<Icons.CirclePlusFill className="w-5" />}
 								title={'Add an Answer'}
 								className="w-fit hover:bg-transparent rounded-xl text-gray-800 dark:text-white justify-center items-center p-4 border-2 border-gray-300 dark:border-[#4e5058] hover:border-indigo-400 dark:hover:border-[#7d808c] border-dashed font-medium flex gap-2"

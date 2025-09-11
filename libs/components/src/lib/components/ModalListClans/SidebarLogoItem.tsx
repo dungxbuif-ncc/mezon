@@ -16,7 +16,7 @@ import { ModeResponsive, createImgproxyUrl } from '@mezon/utils';
 import { useCallback, useState } from 'react';
 import { useModal } from 'react-modal-hook';
 import { useSelector } from 'react-redux';
-import { Coords } from '../ChannelLink';
+import type { Coords } from '../ChannelLink';
 import NavLinkComponent from '../NavLink';
 import PanelClan from '../PanelClan';
 
@@ -70,11 +70,11 @@ const SidebarLogoItem = ({ onToggleUnreadList, isUnreadListOpen }: SidebarLogoIt
 			<button
 				onClick={() => {
 					setModeResponsive(ModeResponsive.MODE_DM);
-					if (unreadDMs?.length || 0) {
+
+					if (unreadDMs?.length || isUnreadListOpen) {
 						onToggleUnreadList?.();
-					} else {
-						navigate(currentDmId ? `/chat/direct/message/${currentDmId}/${currentDmIType}` : '/chat/direct/friends');
 					}
+					navigate(currentDmId ? `/chat/direct/message/${currentDmId}/${currentDmIType}` : '/chat/direct/friends');
 				}}
 				draggable="false"
 			>

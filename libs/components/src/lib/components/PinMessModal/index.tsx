@@ -1,6 +1,6 @@
 import { ColorRoleProvider, useEscapeKeyClose } from '@mezon/core';
 import { selectAllAccount, selectMemberClanByUserId2, useAppSelector } from '@mezon/store';
-import { IMessageWithUser, KEY_KEYBOARD } from '@mezon/utils';
+import { IMessageWithUser, KEY_KEYBOARD, generateE2eId } from '@mezon/utils';
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import MessageWithUser from '../MessageWithUser';
@@ -65,10 +65,15 @@ export const ModalAddPinMess = (props: ModalAddPinMessProps) => {
 						</ColorRoleProvider>
 					</div>
 					<div className="w-full  p-4 flex justify-end gap-x-4 bg-theme-setting-nav">
-						<button onClick={closeModal} className="px-4 py-2 hover:underline rounded">
+						<button
+							data-e2e={generateE2eId('chat.message_action_modal.confirm_modal.button.cancel')}
+							onClick={closeModal}
+							className="px-4 py-2 hover:underline rounded"
+						>
 							Cancel
 						</button>
 						<button
+							data-e2e={generateE2eId('chat.message_action_modal.confirm_modal.button.confirm')}
 							onClick={handlePinMessageAndCloseModal}
 							className="px-4 py-2 hover:bg-opacity-80 rounded-lg btn-primary-hover btn-primary font-medium"
 						>

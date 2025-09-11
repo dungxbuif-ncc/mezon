@@ -1,14 +1,15 @@
+import type { RolesClanEntity } from '@mezon/store';
 import {
 	channelUsersActions,
 	permissionRoleChannelActions,
-	RolesClanEntity,
 	selectChannelById,
 	selectCurrentClanId,
 	useAppDispatch,
 	useAppSelector
 } from '@mezon/store';
 import { Icons } from '@mezon/ui';
-import { createImgproxyUrl, getAvatarForPrioritize, getNameForPrioritize, UsersClanEntity } from '@mezon/utils';
+import type { UsersClanEntity } from '@mezon/utils';
+import { createImgproxyUrl, getAvatarForPrioritize, getNameForPrioritize } from '@mezon/utils';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { AvatarImage } from '../../../../AvatarImage/AvatarImage';
@@ -40,7 +41,7 @@ const ListRoleMember = memo((props: ListRoleMemberProps) => {
 			if (listManageInChannel[0].type === 0) {
 				dispatch(
 					permissionRoleChannelActions.fetchPermissionRoleChannel({
-						channelId: channelId,
+						channelId,
 						roleId: listManageInChannel[0].id,
 						userId: ''
 					})
@@ -48,7 +49,7 @@ const ListRoleMember = memo((props: ListRoleMemberProps) => {
 			} else {
 				dispatch(
 					permissionRoleChannelActions.fetchPermissionRoleChannel({
-						channelId: channelId,
+						channelId,
 						roleId: '',
 						userId: listManageInChannel[0].id
 					})
@@ -62,13 +63,9 @@ const ListRoleMember = memo((props: ListRoleMemberProps) => {
 			setSelectedItemId(item.id);
 			onSelect(item.id, item.type);
 			if (item.type === 0) {
-				dispatch(
-					permissionRoleChannelActions.fetchPermissionRoleChannel({ channelId: channelId, roleId: item.id, userId: '', noCache: true })
-				);
+				dispatch(permissionRoleChannelActions.fetchPermissionRoleChannel({ channelId, roleId: item.id, userId: '', noCache: true }));
 			} else {
-				dispatch(
-					permissionRoleChannelActions.fetchPermissionRoleChannel({ channelId: channelId, roleId: '', userId: item.id, noCache: true })
-				);
+				dispatch(permissionRoleChannelActions.fetchPermissionRoleChannel({ channelId, roleId: '', userId: item.id, noCache: true }));
 			}
 		}
 	};
@@ -134,12 +131,18 @@ const HeaderAddRoleMember = memo((props: HeaderAddRoleMemberProps) => {
 			<h4 className="uppercase font-bold text-xs text-theme-primary-active">Roles/Members</h4>
 			{channel?.channel_private === 1 && <Icons.PlusIcon defaultSize="size-4  cursor-pointer" />}
 			{showPopup && (
-				<div className="absolute bottom-5 w-64 rounded-lg overflow-hidden bg-theme-setting-primary border-theme-primary">
+				<div
+					className="absolute bottom-5 w-64 rounded-lg overflow-hidden bg-theme-setting-primary border-theme-primary"
+					onClick={(e) => e.stopPropagation()}
+				>
 					<div className=" flex gap-x-1 p-4 text-sm bg-theme-setting-nav">
 						<p className="font-bold text-theme-primary-active">ADD:</p>
 						<input type="text" className="bg-transparent outline-none font-medium" placeholder="Role/Member" />
 					</div>
-					<div className=" p-2 h-64 overflow-y-scroll hide-scrollbar text-theme-primary text-theme-primary-hover">
+					<div
+						className=" p-2 h-64 overflow-y-scroll hide-scrollbar text-theme-primary text-theme-primary-hover"
+						onClick={() => setShowPopup(!showPopup)}
+					>
 						{Boolean(listManageNotInChannel.length) && (
 							<div>
 								<p className="px-3 py-2 uppercase text-[11px] font-bold">Role</p>

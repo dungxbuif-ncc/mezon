@@ -1,6 +1,7 @@
 import { AvatarImage } from '@mezon/components';
 import { useCustomNavigate } from '@mezon/core';
-import { DMMetaEntity, directActions, directMetaActions, selectDirectById, useAppDispatch, useAppSelector } from '@mezon/store';
+import type { DMMetaEntity } from '@mezon/store';
+import { directActions, directMetaActions, selectDirectById, useAppDispatch, useAppSelector } from '@mezon/store';
 import { createImgproxyUrl } from '@mezon/utils';
 import { ChannelType } from 'mezon-js';
 import { useMemo } from 'react';
@@ -9,9 +10,11 @@ import { NavLink } from 'react-router-dom';
 export type DirectMessUnreadProp = {
 	readonly directMessage: Readonly<DMMetaEntity>;
 	checkMoveOut: string[];
+	onMemberClick?: () => void;
+	isHiding?: boolean;
 };
 
-function DirectUnread({ directMessage, checkMoveOut }: DirectMessUnreadProp) {
+function DirectUnread({ directMessage, checkMoveOut, onMemberClick, isHiding }: DirectMessUnreadProp) {
 	const dispatch = useAppDispatch();
 	const direct = useAppSelector((state) => selectDirectById(state, directMessage.id)) || {};
 	const navigate = useCustomNavigate();
@@ -27,11 +30,13 @@ function DirectUnread({ directMessage, checkMoveOut }: DirectMessUnreadProp) {
 		navigate(`/chat/direct/message/${direct.channel_id}/${direct.type}`);
 		const timestamp = Date.now() / 1000;
 		dispatch(directMetaActions.setDirectLastSeenTimestamp({ channelId: direct.id || '', timestamp }));
+
+		onMemberClick?.();
 	};
 
 	const isMoveOutAnimation = useMemo(() => {
-		return !checkMoveOut.includes(directMessage.id);
-	}, [checkMoveOut]);
+		return !checkMoveOut.includes(directMessage.id) || isHiding;
+	}, [checkMoveOut, directMessage.id, isHiding]);
 
 	return (
 		<NavLink
@@ -49,9 +54,17 @@ function DirectUnread({ directMessage, checkMoveOut }: DirectMessUnreadProp) {
 					srcImgProxy={
 						direct.type === ChannelType.CHANNEL_TYPE_DM
 							? createImgproxyUrl(direct?.channel_avatar?.at(0) ?? '', { width: 300, height: 300, resizeType: 'fill-down' })
-							: createImgproxyUrl(direct?.topic ?? 'assets/images/avatar-group.png', { width: 300, height: 300, resizeType: 'fill-down' })
+							: createImgproxyUrl(direct?.topic ?? 'assets/images/avatar-group.png', {
+									width: 300,
+									height: 300,
+									resizeType: 'fill-down'
+								})
 					}
-					src={direct.type === ChannelType.CHANNEL_TYPE_DM ? direct?.channel_avatar?.at(0) : direct?.topic ?? 'assets/images/avatar-group.png'}
+					src={
+						direct.type === ChannelType.CHANNEL_TYPE_DM
+							? direct?.channel_avatar?.at(0)
+							: (direct?.topic ?? 'assets/images/avatar-group.png')
+					}
 				/>
 				{directMessage?.count_mess_unread && (
 					<div

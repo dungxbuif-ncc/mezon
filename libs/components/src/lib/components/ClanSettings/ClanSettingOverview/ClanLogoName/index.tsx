@@ -94,7 +94,15 @@ const ClanLogoName = ({ onUpload, onGetClanName }: ClanLogoNameProps) => {
 									style={{ backgroundImage: `url(${urlLogo})` }}
 									className={`flex items-center justify-center bg-cover bg-no-repeat bg-center w-[100px] h-[100px] bg-transparent rounded-full relative cursor-pointer overflow-hidden`}
 								>
-									{!urlLogo && <span className={'max-w-[70px] overflow-hidden text-theme-primary-active whitespace-nowrap text-lg max-h-[100px]'}>{currentClan?.clan_name}</span>}
+									{!urlLogo && (
+										<span
+											className={
+												'max-w-[70px] overflow-hidden text-theme-primary-active whitespace-nowrap text-lg max-h-[100px]'
+											}
+										>
+											{currentClan?.clan_name}
+										</span>
+									)}
 								</div>
 								<input ref={fileInputRef} id="upload_logo" onChange={(e) => handleFile(e)} type="file" className="hidden" />
 							</label>
@@ -136,7 +144,7 @@ const ClanLogoName = ({ onUpload, onGetClanName }: ClanLogoNameProps) => {
 			{openModal && (
 				<ModalValidateFile
 					onClose={() => setOpenModal(false)}
-					image="assets/images/file-and-folder.png"
+					image="assets/images/qr-mezon.png"
 					title="Only image files are allowed"
 					content="Just upload type file (JPEG, PNG), please!"
 				/>

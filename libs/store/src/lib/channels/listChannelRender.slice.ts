@@ -1,11 +1,12 @@
 import { captureSentryError } from '@mezon/logger';
-import { ICategoryChannel, IChannel } from '@mezon/utils';
-import { PayloadAction, createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
-import { ApiChannelDescription, ApiUpdateCategoryDescRequest } from 'mezon-js/api.gen';
-import { CategoriesEntity } from '../categories/categories.slice';
+import type { ICategoryChannel, IChannel } from '@mezon/utils';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSelector, createSlice } from '@reduxjs/toolkit';
+import type { ApiChannelDescription, ApiUpdateCategoryDescRequest } from 'mezon-js/api.gen';
+import type { CategoriesEntity } from '../categories/categories.slice';
 import { clansActions } from '../clans/clans.slice';
-import { RootState } from '../store';
-import { ChannelsEntity, IUpdateChannelRequest } from './channels.slice';
+import type { RootState } from '../store';
+import type { ChannelsEntity, IUpdateChannelRequest } from './channels.slice';
 
 export const CHANNEL_LIST_RENDER = 'CHANNEL_LIST_RENDER';
 
@@ -492,6 +493,25 @@ export const selectListChannelRenderByClanId = createSelector([getListChannelRen
 	}
 	return state.listChannelRender[clanId];
 });
+
+export const selectAllThreadUnreadBehind = createSelector(
+	[
+		getListChannelRenderState,
+		(state, clanId?: string) => clanId,
+		(_, __, channelId?: string) => channelId,
+		(_, __, ___, threadId?: string) => threadId
+	],
+	(state, clanId, channelId, threadId) => {
+		if (!clanId || !state.listChannelRender[clanId]) {
+			return undefined;
+		}
+		const list = state.listChannelRender[clanId];
+		const index = list.findIndex((c) => c.id === threadId);
+
+		const result = list.slice(index + 1).filter((channel) => (channel as IChannel)?.parent_id === channelId);
+		return result;
+	}
+);
 
 export const selectListOrderChannel = createSelector(getListChannelRenderState, (state) => {
 	return state.listOrderChannelByCate;

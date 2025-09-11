@@ -1,5 +1,6 @@
-import { ChannelDescription, ChannelMessage, ChannelStreamMode, ChannelType, HashtagDm, NotificationType, WebrtcSignalingFwd } from 'mezon-js';
-import {
+import type { ChannelDescription, ChannelMessage, ChannelStreamMode, ChannelType, HashtagDm, WebrtcSignalingFwd } from 'mezon-js';
+import { NotificationType } from 'mezon-js';
+import type {
 	ApiAccount,
 	ApiCategoryDesc,
 	ApiChannelAppResponse,
@@ -26,17 +27,17 @@ import {
 	ClanUserListClanUser,
 	RoleUserListRoleUser
 } from 'mezon-js/api.gen';
-import {
+import type {
 	ApiAllUsersAddChannelResponse,
 	ApiNotifiReactMessage,
 	ApiNotificationChannelCategorySetting,
 	ApiPermissionRoleChannel
 } from 'mezon-js/dist/api.gen';
-import { HTMLInputTypeAttribute } from 'react';
-import { MentionItem } from 'react-mentions';
-import { ILongPressType } from '../hooks';
-import { CanvasDataResponse } from './htmlCanvas';
-import {
+import type { HTMLInputTypeAttribute } from 'react';
+import type { MentionItem } from 'react-mentions';
+import type { ILongPressType } from '../hooks';
+import type { CanvasDataResponse } from './htmlCanvas';
+import type {
 	IBoldMessage,
 	IEmojiOnMessage,
 	IHashtagOnMessage,
@@ -1502,6 +1503,7 @@ export type IvoiceInfo = {
 	channelId: string;
 	channelLabel: string;
 	channelPrivate: number;
+	roomId?: string;
 };
 
 export type ImageSourceObject = {

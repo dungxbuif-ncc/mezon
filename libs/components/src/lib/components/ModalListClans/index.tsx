@@ -1,12 +1,13 @@
 import { useCustomNavigate } from '@mezon/core';
 import { appActions, getStore, selectBadgeCountByClanId, selectIsUseProfileDM, useAppDispatch } from '@mezon/store';
 import { Image } from '@mezon/ui';
-import { IClan, createImgproxyUrl, generateE2eId } from '@mezon/utils';
+import type { IClan } from '@mezon/utils';
+import { createImgproxyUrl, generateE2eId } from '@mezon/utils';
 import { safeJSONParse } from 'mezon-js';
 import { memo, useState, useTransition } from 'react';
 import { useModal } from 'react-modal-hook';
 import { useSelector } from 'react-redux';
-import { Coords } from '../ChannelLink';
+import type { Coords } from '../ChannelLink';
 import NavLinkComponent from '../NavLink';
 import PanelClan from '../PanelClan';
 
@@ -15,9 +16,10 @@ export type SidebarClanItemProps = {
 	active?: boolean;
 	onMouseDown?: (e: React.MouseEvent<HTMLDivElement>) => void;
 	className?: string;
+	onClanClick?: () => void;
 };
 
-const SidebarClanItem = ({ option, active, onMouseDown, className = '' }: SidebarClanItemProps) => {
+const SidebarClanItem = ({ option, active, onMouseDown, className = '', onClanClick }: SidebarClanItemProps) => {
 	const [_, startTransition] = useTransition();
 	const badgeCountClan = useSelector(selectBadgeCountByClanId(option?.clan_id ?? '')) || 0;
 	const navigate = useCustomNavigate();
@@ -29,6 +31,7 @@ const SidebarClanItem = ({ option, active, onMouseDown, className = '' }: Sideba
 		const channelId = idsSelectedChannel[option?.id] || option?.welcome_channel_id;
 		const link = `/chat/clans/${option?.id}${channelId ? `/channels/${channelId}` : ''}`;
 		const isShowDmProfile = selectIsUseProfileDM(store.getState());
+		onClanClick?.();
 
 		startTransition(() => {
 			navigate(link);

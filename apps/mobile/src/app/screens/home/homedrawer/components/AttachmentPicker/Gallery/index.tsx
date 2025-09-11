@@ -1,7 +1,7 @@
 import { useReference } from '@mezon/core';
 import { useTheme } from '@mezon/mobile-ui';
 import { appActions, useAppDispatch } from '@mezon/store-mobile';
-import { MAX_FILE_SIZE } from '@mezon/utils';
+import { MAX_FILE_SIZE, MAX_IMAGE_FILE_SIZE, fileTypeImage } from '@mezon/utils';
 import {
 	CameraRoll,
 	PhotoIdentifier,
@@ -29,7 +29,7 @@ interface IProps {
 
 const Gallery = ({ onPickGallery, currentChannelId }: IProps) => {
 	const { themeValue } = useTheme();
-	const { t } = useTranslation(['qrScanner']);
+	const { t } = useTranslation(['qrScanner', 'sharing', 'common']);
 	const [hasPermission, setHasPermission] = useState(false);
 	const [photos, setPhotos] = useState<PhotoIdentifier[]>([]);
 	const [pageInfo, setPageInfo] = useState(null);
@@ -231,10 +231,17 @@ const Gallery = ({ onPickGallery, currentChannelId }: IProps) => {
 				const name = file?.node?.image?.filename || file?.node?.image?.uri;
 				const size = file?.node?.image?.fileSize;
 
-				if (size && size >= MAX_FILE_SIZE) {
+				// Determine if this is an image file based on type
+				const isImage = type && fileTypeImage.includes(type);
+				const maxAllowedSize = isImage ? MAX_IMAGE_FILE_SIZE : MAX_FILE_SIZE;
+				
+				if (size && size >= maxAllowedSize) {
+					const fileTypeText = isImage ? t('common:image') : t('common:files');
+					const maxSizeMB = Math.round(maxAllowedSize / 1024 / 1024);
 					Toast.show({
 						type: 'error',
-						text1: 'File size cannot exceed 50MB!'
+						text1: t('sharing:fileTooLarge'),
+						text2: t('sharing:fileSizeExceeded', { fileType: fileTypeText, maxSize: maxSizeMB }),
 					});
 					return;
 				}

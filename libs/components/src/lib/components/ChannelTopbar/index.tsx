@@ -1,54 +1,54 @@
 import { toChannelPage, useChatSending, useCustomNavigate, useGifsStickersEmoji, useMenu, usePathMatch } from '@mezon/core';
+import type { DirectEntity, RootState } from '@mezon/store';
 import {
-  DMCallActions,
-  DirectEntity,
-  RootState,
-  appActions,
-  audioCallActions,
-  canvasAPIActions,
-  channelsActions,
-  galleryActions,
-  getStore,
-  getStoreAsync,
-  groupCallActions,
-  pinMessageActions,
-  searchMessagesActions,
-  selectAllAccount,
-  selectChannelById,
-  selectCloseMenu,
-  selectCurrentChannel,
-  selectCurrentChannelId,
-  selectCurrentClanId,
-  selectCurrentDM,
-  selectDefaultNotificationCategory,
-  selectDefaultNotificationClan,
-  selectGalleryAttachmentsByChannel,
-  selectIsInCall,
-  selectIsPinModalVisible,
-  selectIsShowChatStream,
-  selectIsShowCreateThread,
-  selectIsShowCreateTopic,
-  selectIsShowMemberList,
-  selectIsShowMemberListDM,
-  selectIsShowPinBadgeByChannelId,
-  selectIsThreadModalVisible,
-  selectIsUseProfileDM,
-  selectNotifiSettingsEntitiesById,
-  selectSession,
-  selectStatusMenu,
-  selectUpdateDmGroupError,
-  selectUpdateDmGroupLoading,
-  threadsActions,
-  toastActions,
-  topicsActions,
-  useAppDispatch,
-  useAppSelector,
-  voiceActions
+	DMCallActions,
+	appActions,
+	audioCallActions,
+	canvasAPIActions,
+	channelsActions,
+	galleryActions,
+	getStore,
+	getStoreAsync,
+	groupCallActions,
+	pinMessageActions,
+	searchMessagesActions,
+	selectAllAccount,
+	selectChannelById,
+	selectCloseMenu,
+	selectCurrentChannel,
+	selectCurrentChannelId,
+	selectCurrentClanId,
+	selectCurrentDM,
+	selectDefaultNotificationCategory,
+	selectDefaultNotificationClan,
+	selectGalleryAttachmentsByChannel,
+	selectIsInCall,
+	selectIsPinModalVisible,
+	selectIsShowChatStream,
+	selectIsShowCreateThread,
+	selectIsShowCreateTopic,
+	selectIsShowMemberList,
+	selectIsShowMemberListDM,
+	selectIsShowPinBadgeByChannelId,
+	selectIsThreadModalVisible,
+	selectIsUseProfileDM,
+	selectNotifiSettingsEntitiesById,
+	selectSession,
+	selectStatusMenu,
+	selectUpdateDmGroupError,
+	selectUpdateDmGroupLoading,
+	threadsActions,
+	toastActions,
+	topicsActions,
+	useAppDispatch,
+	useAppSelector,
+	voiceActions
 } from '@mezon/store';
 import { Icons } from '@mezon/ui';
-import { IMessageSendPayload, IMessageTypeCallLog, SubPanelName, createImgproxyUrl, generateE2eId } from '@mezon/utils';
+import type { IMessageSendPayload } from '@mezon/utils';
+import { IMessageTypeCallLog, SubPanelName, createImgproxyUrl, generateE2eId } from '@mezon/utils';
 import { ChannelStreamMode, ChannelType, NotificationType } from 'mezon-js';
-import { ApiMessageAttachment, ApiMessageMention, ApiMessageRef } from 'mezon-js/api.gen';
+import type { ApiMessageAttachment, ApiMessageMention, ApiMessageRef } from 'mezon-js/api.gen';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEditGroupModal } from '../../hooks/useEditGroupModal';
@@ -464,7 +464,7 @@ const DmTopbarTools = memo(() => {
 	const userProfile = useSelector(selectSession);
 	const { setStatusMenu } = useMenu();
 	const mode = currentDmGroup?.type === ChannelType.CHANNEL_TYPE_DM ? ChannelStreamMode.STREAM_MODE_DM : ChannelStreamMode.STREAM_MODE_GROUP;
-	const { sendMessage } = useChatSending({ channelOrDirect: currentDmGroup, mode: mode });
+	const { sendMessage } = useChatSending({ channelOrDirect: currentDmGroup, mode });
 	const isInCall = useSelector(selectIsInCall);
 	const isGroupCallActive = useSelector((state: RootState) => state.groupCall?.isGroupCallActive || false);
 	const voiceInfo = useSelector((state: RootState) => state.voice?.voiceInfo || null);
@@ -885,13 +885,12 @@ function PinButton({ styleCss, mode }: { styleCss: string; mode?: number }) {
 
 export function InboxButton({ isVoiceChannel }: { isVoiceChannel?: boolean }) {
 	return (
-		<button
-			title="Inbox"
+		<div
 			className="focus-visible:outline-none text-theme-primary text-theme-primary-hover"
 			data-e2e={generateE2eId('chat.channel_message.header.button.inbox')}
 		>
 			<NotificationTooltip />
-		</button>
+		</div>
 	);
 }
 
