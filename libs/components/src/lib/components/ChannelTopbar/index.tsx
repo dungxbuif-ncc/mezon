@@ -354,19 +354,7 @@ const ChannelTopbarLabel = memo(
 );
 
 const ChannelTopbarTools = memo(
-	({
-		isPagePath,
-		isThread,
-		isApp,
-		isVoice,
-		isStream
-	}: {
-		isVoice: boolean;
-		isPagePath: boolean;
-		isThread: boolean;
-		isApp: boolean;
-		isStream: boolean;
-	}) => {
+	({ isPagePath, isApp, isVoice, isStream }: { isVoice: boolean; isPagePath: boolean; isThread: boolean; isApp: boolean; isStream: boolean }) => {
 		const dispatch = useAppDispatch();
 		const isShowChatStream = useSelector(selectIsShowChatStream);
 		const { setStatusMenu } = useMenu();

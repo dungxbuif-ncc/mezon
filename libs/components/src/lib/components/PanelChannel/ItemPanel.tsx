@@ -17,21 +17,7 @@ type ItemPanelProps = {
 	info?: boolean;
 };
 
-const ItemPanel = ({
-	children,
-	dropdown,
-	type,
-	danger,
-	onClick,
-	notificationId,
-	defaultNotifi,
-	defaultChecked,
-	checked,
-	name,
-	subText,
-	disabled,
-	info
-}: ItemPanelProps) => {
+const ItemPanel = ({ children, dropdown, type, danger, onClick, defaultChecked, checked, name, subText, disabled, info }: ItemPanelProps) => {
 	return (
 		<button
 			disabled={disabled}

@@ -11,6 +11,7 @@ export * from './lib/e2e-testing/generateE2eId';
 export * from './lib/e2ee';
 export * from './lib/errors';
 export * from './lib/fasterdom';
+export * from './lib/files';
 export * from './lib/helper';
 export * from './lib/hooks';
 export * from './lib/toast';

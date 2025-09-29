@@ -1,28 +1,65 @@
+import { createWhiteboardContent, ECanvasMode, ECanvasType, isWhiteboardCanvas, isWhiteboardMode } from '@mezon/components';
 import { useEscapeKeyClose, useOnClickOutside } from '@mezon/core';
 import {
 	appActions,
 	canvasActions,
+	CanvasAPIEntity,
 	selectCanvasIdsByChannelId,
 	selectCurrentChannel,
 	selectCurrentClanId,
 	selectIdCanvas,
 	selectTheme,
+	setCanvasMode,
 	useAppDispatch,
 	useAppSelector
 } from '@mezon/store';
 import { Icons } from '@mezon/ui';
-import { RefObject, useEffect, useMemo, useRef, useState } from 'react';
+import { CanvasSelector } from 'libs/components/src/lib/components/ChannelTopbar/TopBarComponents/Canvas/CanvasModal/CanvasSelector';
+import type { RefObject } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import EmptyCanvas from './EmptyCanvas';
 import GroupCanvas from './GroupCanvas';
 import SearchCanvas from './SearchCanvas';
-import { CANVAS_TYPES } from './constants';
-
 type CanvasProps = {
 	onClose: () => void;
 	rootRef?: RefObject<HTMLElement>;
 };
+
+interface ICanvasModalConfig {
+	createButtonText: string;
+	filterFunction: (canvases: (CanvasAPIEntity & { title: string })[], keyword: string) => any[];
+}
+
+class CanvasModalFactory {
+	static createConfig(mode: ECanvasMode, t: any): ICanvasModalConfig {
+		switch (mode) {
+			case ECanvasMode.CANVAS:
+				return {
+					createButtonText: t('modals.canvas.create'),
+					filterFunction: (canvases, keyword) => {
+						if (!keyword) return canvases.filter((entity) => !isWhiteboardCanvas(entity.content));
+						const lowerCaseQuery = keyword.toLowerCase().trim();
+						return canvases.filter(
+							(entity) => !isWhiteboardCanvas(entity.content) && entity.title.toLowerCase().includes(lowerCaseQuery)
+						);
+					}
+				};
+			case ECanvasMode.WHITEBOARD:
+				return {
+					createButtonText: 'Create',
+					filterFunction: (canvases, keyword) => {
+						if (!keyword) return canvases.filter((entity) => isWhiteboardCanvas(entity.content));
+						const lowerCaseQuery = keyword.toLowerCase().trim();
+						return canvases.filter((entity) => isWhiteboardCanvas(entity.content) && entity.title.toLowerCase().includes(lowerCaseQuery));
+					}
+				};
+			default:
+				throw new Error(`Unknown canvas type: ${mode}`);
+		}
+	}
+}
 
 const CanvasModal = ({ onClose, rootRef }: CanvasProps) => {
 	const { t } = useTranslation('channelTopbar');
@@ -32,21 +69,20 @@ const CanvasModal = ({ onClose, rootRef }: CanvasProps) => {
 	const appearanceTheme = useSelector(selectTheme);
 	const [keywordSearch, setKeywordSearch] = useState('');
 	const currentIdCanvas = useSelector(selectIdCanvas);
+	const mode = useSelector(setCanvasMode);
+
 	const [selectedCanvasId, setSelectedCanvasId] = useState<string | null>(currentIdCanvas);
-	// const { countCanvas } = useAppSelector((state) => selectCanvasCursors(state, currentChannel?.channel_id ?? ''));
 	const canvases = useAppSelector((state) => selectCanvasIdsByChannelId(state, currentChannel?.channel_id ?? '', currentChannel?.parent_id));
+	const config = useMemo(() => CanvasModalFactory.createConfig(mode, t), [mode, t]);
 	const filteredCanvases = useMemo(() => {
-		if (!keywordSearch) return canvases;
-		const lowerCaseQuery = keywordSearch.toLowerCase().trim();
-		return canvases.filter((entity) => entity.title.toLowerCase().includes(lowerCaseQuery));
-	}, [canvases, keywordSearch]);
+		return config.filterFunction(canvases, keywordSearch);
+	}, [canvases, keywordSearch, config]);
 
 	useEffect(() => {
 		if (currentIdCanvas && !selectedCanvasId) {
 			setSelectedCanvasId(currentIdCanvas);
 		}
 	}, [currentIdCanvas, selectedCanvasId]);
-
 	const handleCreateCanvas = () => {
 		const isThread = Boolean(currentChannel?.parent_id && currentChannel?.parent_id !== '0');
 		const id = isThread ? currentChannel?.channel_id : currentChannel?.channel_id;
@@ -55,12 +91,12 @@ const CanvasModal = ({ onClose, rootRef }: CanvasProps) => {
 			console.error('Error: ID is undefined. Check currentChannel data:', currentChannel);
 			return;
 		}
-		const type = isThread ? CANVAS_TYPES.THREAD : CANVAS_TYPES.CHANNEL;
+		const type = isThread ? ECanvasType.THREAD : ECanvasType.CHANNEL;
+		const canvasContent = isWhiteboardMode(mode) ? createWhiteboardContent([]) : '';
 		dispatch(canvasActions.setParentId(isThread ? currentChannel?.parent_id || null : id));
 		dispatch(canvasActions.setType(type));
 		dispatch(appActions.setIsShowCanvas(true));
-		dispatch(canvasActions.setTitle(''));
-		dispatch(canvasActions.setContent(''));
+		dispatch(canvasActions.setContent(canvasContent));
 		dispatch(canvasActions.setIdCanvas(null));
 		onClose();
 	};
@@ -72,25 +108,7 @@ const CanvasModal = ({ onClose, rootRef }: CanvasProps) => {
 	const modalRef = useRef<HTMLDivElement>(null);
 	useEscapeKeyClose(modalRef, onClose);
 	useOnClickOutside(modalRef, onClose, rootRef);
-	// const totalPages = countCanvas === undefined ? 0 : Math.ceil(countCanvas / 10);
-	// const [currentPage, setCurrentPage] = useState(1);
-	// const onPageChange = useCallback(
-	// 	(page: number) => {
-	// 		if (!currentChannel?.channel_id || !currentClanId) {
-	// 			return;
-	// 		}
-	// 		setCurrentPage(page);
-	// 		dispatch(
-	// 			getChannelCanvasList({
-	// 				channel_id: currentChannel?.channel_id,
-	// 				clan_id: currentClanId,
-	// 				page: page,
-	// 				noCache: true
-	// 			})
-	// 		);
-	// 	},
-	// 	[dispatch, currentChannel?.channel_id, currentClanId]
-	// );
+
 	return (
 		<div
 			ref={modalRef}
@@ -101,12 +119,12 @@ const CanvasModal = ({ onClose, rootRef }: CanvasProps) => {
 				<div className="flex flex-row items-center bg-theme-setting-nav border-b-theme-primary justify-between p-[16px] h-12 ">
 					<div className="flex flex-row items-center border-r-[1px] border-color-theme pr-[16px] gap-4">
 						<Icons.CanvasIcon />
-						<span className="text-base font-semibold cursor-default ">{t('modals.canvas.title')}</span>
+						<CanvasSelector />
 					</div>
 					<SearchCanvas setKeywordSearch={setKeywordSearch} />
 					<div className="flex flex-row items-center gap-4">
 						<button onClick={handleCreateCanvas} className="px-3 h-6 rounded-lg btn-primary btn-primary-hover text-sm">
-							{t('modals.canvas.create')}
+							{config.createButtonText}
 						</button>
 						<button onClick={onClose} className="text-theme-primary text-theme-primary-hover">
 							<Icons.Close defaultSize="w-4 h-4 " />
@@ -131,21 +149,8 @@ const CanvasModal = ({ onClose, rootRef }: CanvasProps) => {
 						);
 					})}
 
-					{!canvases?.length && <EmptyCanvas onClick={handleCreateCanvas} />}
+					{!filteredCanvases?.length && <EmptyCanvas onClick={handleCreateCanvas} mode={mode} />}
 				</div>
-				{/* {totalPages > 1 && (
-					<div className="py-2">
-						<Pagination
-							theme={customTheme(totalPages <= 5)}
-							currentPage={currentPage}
-							totalPages={totalPages}
-							onPageChange={onPageChange}
-							previousLabel=""
-							nextLabel=""
-							showIcons={totalPages > 5}
-						/>
-					</div>
-				)} */}
 			</div>
 		</div>
 	);

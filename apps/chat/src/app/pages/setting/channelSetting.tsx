@@ -8,7 +8,8 @@ import {
 	selectNumberChannelCount,
 	useAppDispatch
 } from '@mezon/store';
-import { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import ChannelTopBar from './ChannelTopBar';

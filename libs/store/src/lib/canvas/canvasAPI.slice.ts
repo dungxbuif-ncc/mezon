@@ -12,11 +12,8 @@ import type { RootState } from '../store';
 
 export const CANVAS_API_FEATURE_KEY = 'canvasapi';
 
-/*
- * Update these interfaces according to your requirements.
- */
 export interface CanvasAPIEntity extends ICanvas {
-	id: string; // Primary ID
+	id: string;
 	countCanvas?: number;
 	create_time?: string;
 }
@@ -370,7 +367,7 @@ export const canvasAPISlice = createSlice({
 			.addCase(getChannelCanvasDetail.pending, (state: CanvasAPIState) => {
 				state.loadingStatus = 'loading';
 			})
-			.addCase(getChannelCanvasDetail.fulfilled, (state: CanvasAPIState, action: PayloadAction<any>) => {
+			.addCase(getChannelCanvasDetail.fulfilled, (state: CanvasAPIState) => {
 				state.loadingStatus = 'loaded';
 			})
 			.addCase(getChannelCanvasDetail.rejected, (state: CanvasAPIState, action) => {
@@ -380,29 +377,8 @@ export const canvasAPISlice = createSlice({
 	}
 });
 
-/*
- * Export reducer for store configuration.
- */
 export const canvasAPIReducer = canvasAPISlice.reducer;
 
-/*
- * Export action creators to be dispatched. For use with the `useDispatch` hook.
- *
- * e.g.
- * ```
- * import React, { useEffect } from 'react';
- * import { useDispatch } from 'react-redux';
- *
- * // ...
- *
- * const dispatch = useDispatch();
- * useEffect(() => {
- *   dispatch(usersActions.add({ id: 1 }))
- * }, [dispatch]);
- * ```
- *
- * See: https://react-redux.js.org/next/api/hooks#usedispatch
- */
 export const canvasAPIActions = {
 	...canvasAPISlice.actions,
 	createEditCanvas,
@@ -410,21 +386,6 @@ export const canvasAPIActions = {
 	getChannelCanvasDetail,
 	deleteCanvas
 };
-
-/*
- * Export selectors to query state. For use with the `useSelector` hook.
- *
- * e.g.
- * ```
- * import { useSelector } from 'react-redux';
- *
- * // ...
- *
- * const entities = useSelector(selectAllUsers);
- * ```
- *
- * See: https://react-redux.js.org/next/api/hooks#useselector
- */
 
 export const getCanvasApiState = (rootState: { [CANVAS_API_FEATURE_KEY]: CanvasAPIState }): CanvasAPIState => rootState[CANVAS_API_FEATURE_KEY];
 

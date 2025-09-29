@@ -12,6 +12,8 @@
 		"showUserProfile": "Show User Profile",
 		"files": "Files",
 		"canvas": "Canvas",
+		"whiteboard": "Whiteboard",
+
 		"threads": "Threads",
 		"notificationSettings": "Notification Settings",
 		"pinnedMessages": "Pinned Messages",
@@ -53,6 +55,11 @@
 		"emptyTitle": "There are no canvas.",
 		"emptyDescription": "Stay focused on a conversation with a canvas - a temporary text channel.",
 		"createCanvas": "Create Canvas"
+	},
+	"whiteboard": {
+		"emptyTitle": "There are no whiteboards.",
+		"emptyDescription": "Stay focused on a conversation with a whiteboard - a creative block board",
+		"createWhiteboard": "Create Whiteboard"
 	},
 	"files": {
 		"emptyTitle": "There are no files.",

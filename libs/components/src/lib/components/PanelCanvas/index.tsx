@@ -1,7 +1,8 @@
 import { useEscapeKeyClose, useOnClickOutside } from '@mezon/core';
 import { appActions, canvasAPIActions, useAppDispatch } from '@mezon/store';
-import { RefObject, useEffect, useRef, useState } from 'react';
-import { Coords } from '../ChannelLink';
+import type { RefObject } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { Coords } from '../ChannelLink';
 import GroupPanels from '../PanelChannel/GroupPanels';
 import ItemPanel from '../PanelChannel/ItemPanel';
 
@@ -34,7 +35,7 @@ const PanelCanvas: React.FC<IPanelCanvasProps> = ({ coords, channelId, clanId, c
 				clan_id: clanId
 			};
 			const results = await dispatch(canvasAPIActions.deleteCanvas(body));
-			dispatch(canvasAPIActions.removeOneCanvas({ channelId, canvasId: canvasId }));
+			dispatch(canvasAPIActions.removeOneCanvas({ channelId, canvasId }));
 			dispatch(appActions.setIsShowCanvas(false));
 		}
 	};

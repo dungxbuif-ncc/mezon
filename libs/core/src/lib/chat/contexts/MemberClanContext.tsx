@@ -1,5 +1,6 @@
 import { selectAllUserClans } from '@mezon/store';
-import { getNameForPrioritize, IUsersClan, normalizeString } from '@mezon/utils';
+import type { IUsersClan } from '@mezon/utils';
+import { getNameForPrioritize, normalizeString } from '@mezon/utils';
 import { createContext, useContext, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 

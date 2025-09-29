@@ -59,7 +59,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ChannelMedia } from './ChannelMedia';
 import { ChannelMessageBox } from './ChannelMessageBox';
 import { ChannelTyping } from './ChannelTyping';
-
 function useChannelSeen(channelId: string) {
 	const dispatch = useAppDispatch();
 	const currentChannel = useAppSelector((state) => selectChannelById(state, channelId)) || {};
@@ -321,7 +320,11 @@ const ChannelMainContent = ({ channelId }: ChannelMainContentProps) => {
 	const isChannelMezonVoice = currentChannel?.type === ChannelType.CHANNEL_TYPE_MEZON_VOICE;
 	const isChannelApp = currentChannel?.type === ChannelType.CHANNEL_TYPE_APP;
 	const isChannelStream = currentChannel?.type === ChannelType.CHANNEL_TYPE_STREAMING;
-
+	const isDesktop = isWindowsDesktop || isLinuxDesktop;
+	const isRenderAgeRestricted = !isShowCanvas && isShowAgeRestricted && !isChannelMezonVoice && !isChannelStream;
+	const isRenserMemberList = isShowMemberList && !isChannelMezonVoice && !isChannelStream;
+	const isRenderCanvas = isShowCanvas && !isShowAgeRestricted && !isChannelMezonVoice && !isChannelStream;
+	const isRenderMainContentText = !isShowCanvas && !isShowAgeRestricted;
 	return (
 		<div className={`w-full `}>
 			<div
@@ -331,21 +334,21 @@ const ChannelMainContent = ({ channelId }: ChannelMainContentProps) => {
 				onDragEnter={canSendMessage ? handleDragEnter : () => {}}
 			>
 				<div
-					className={`flex flex-row ${closeMenu ? `${isWindowsDesktop || isLinuxDesktop ? 'h-heightTitleBarWithoutTopBarMobile' : 'h-heightWithoutTopBarMobile'}` : `${isWindowsDesktop || isLinuxDesktop ? 'h-heightTitleBarWithoutTopBar' : 'h-heightWithoutTopBar'}`}`}
+					className={`flex flex-row ${closeMenu ? `${isDesktop ? 'h-heightTitleBarWithoutTopBarMobile' : 'h-heightWithoutTopBarMobile'}` : `${isDesktop ? 'h-heightTitleBarWithoutTopBar' : 'h-heightWithoutTopBar'}`}`}
 				>
-					{!isShowCanvas && !isShowAgeRestricted && (
+					{isRenderMainContentText && (
 						<div
-							className={`flex flex-col flex-1 min-w-60 ${isWindowsDesktop || isLinuxDesktop ? 'max-h-titleBarMessageViewChatDM' : 'max-h-messageViewChatDM'} ${isShowMemberList ? 'w-widthMessageViewChat' : isShowCreateThread ? 'w-widthMessageViewChatThread' : isSearchMessage ? 'w-widthSearchMessage' : 'w-widthThumnailAttachment'} h-full ${closeMenu && !statusMenu && isShowMemberList && !isChannelStream && 'hidden'} z-10`}
+							className={`flex flex-col flex-1 min-w-60 ${isDesktop ? 'max-h-titleBarMessageViewChatDM' : 'max-h-messageViewChatDM'} ${isShowMemberList ? 'w-widthMessageViewChat' : isShowCreateThread ? 'w-widthMessageViewChatThread' : isSearchMessage ? 'w-widthSearchMessage' : 'w-widthThumnailAttachment'} h-full ${closeMenu && !statusMenu && isShowMemberList && !isChannelStream && 'hidden'} z-10`}
 						>
 							<div
-								className={`relative overflow-y-auto  ${isWindowsDesktop || isLinuxDesktop ? 'h-heightTitleBarMessageViewChatDM' : 'h-heightMessageViewChatDM'} flex-shrink`}
+								className={`relative overflow-y-auto  ${isDesktop ? 'h-heightTitleBarMessageViewChatDM' : 'h-heightMessageViewChatDM'} flex-shrink`}
 							>
 								<ChannelMedia currentChannel={currentChannel} />
 							</div>
 							<ChannelMainContentText canSendMessage={canSendMessage} channelId={currentChannel?.channel_id as string} />
 						</div>
 					)}
-					{isShowCanvas && !isShowAgeRestricted && !isChannelMezonVoice && !isChannelStream && (
+					{isRenderCanvas && (
 						<div
 							className={`flex flex-1 justify-center thread-scroll overflow-x-hidden scroll-big ${isElectron() ? 'h-[calc(100%_-_23px)]' : ''}`}
 						>
@@ -353,12 +356,12 @@ const ChannelMainContent = ({ channelId }: ChannelMainContentProps) => {
 						</div>
 					)}
 
-					{!isShowCanvas && isShowAgeRestricted && !isChannelMezonVoice && !isChannelStream && (
+					{isRenderAgeRestricted && (
 						<div className={`flex flex-1 justify-center overflow-x-hidden`}>
 							<AgeRestricted closeAgeRestricted={closeAgeRestricted} />
 						</div>
 					)}
-					{isShowMemberList && !isChannelMezonVoice && !isChannelStream && (
+					{isRenserMemberList && (
 						<div
 							onContextMenu={(event) => event.preventDefault()}
 							className={`border-l border-solid border-color-primary text-theme-primary relative overflow-y-scroll hide-scrollbar flex} ${closeMenu && !statusMenu && isShowMemberList ? 'w-full' : 'w-widthMemberList'}`}

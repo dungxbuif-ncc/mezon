@@ -14,7 +14,7 @@ type GroupCanvasProps = {
 	onSelectCanvas: (canvasId: string) => void;
 };
 
-const GroupCanvas = ({ canvas, channelId, clanId, onClose, creatorIdChannel, selectedCanvasId, onSelectCanvas }: GroupCanvasProps) => {
+const GroupCanvas = ({ canvas, channelId, clanId, onClose, creatorIdChannel, onSelectCanvas }: GroupCanvasProps) => {
 	const canvasId = canvas.id;
 	const currentIdCanvas = useSelector(selectIdCanvas);
 	const { userProfile } = useAuth();
@@ -51,7 +51,6 @@ const GroupCanvas = ({ canvas, channelId, clanId, onClose, creatorIdChannel, sel
 		}
 	};
 
-	const isSelected = selectedCanvasId === canvasId && canvasId;
 	const link =
 		canvas.parent_id && canvas.parent_id !== '0'
 			? `/chat/clans/${clanId}/threads/${channelId}/canvas/${canvasId}`

@@ -12,6 +12,7 @@
 		"showUserProfile": "Hiển thị hồ sơ người dùng",
 		"files": "Tệp",
 		"canvas": "Canvas",
+		"whiteboard": "Bảng trắng",
 		"threads": "Chủ đề",
 		"notificationSettings": "Cài đặt thông báo",
 		"pinnedMessages": "Tin nhắn đã ghim",
@@ -53,6 +54,11 @@
 		"emptyTitle": "Không có canvas nào.",
 		"emptyDescription": "Tập trung vào cuộc trò chuyện với canvas - một kênh văn bản tạm thời.",
 		"createCanvas": "Tạo Canvas"
+	},
+	"whiteboard": {
+		"emptyTitle": "Không có bảng trắng nào.",
+		"emptyDescription": "Tập trung vào cuộc trò chuyện với bảng trắng - môt bảng hình khối sáng tạo",
+		"createWhiteboard": "Tạo bảng trắng"
 	},
 	"files": {
 		"emptyTitle": "Không có tệp nào.",

@@ -1,8 +1,14 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 export const CANVAS_FEATURE_KEY = 'canvas';
+enum ECanvasMode {
+	CANVAS = 'canvas',
+	WHITEBOARD = 'whiteboard'
+}
 
 export interface CanvasState {
+	mode: ECanvasMode;
 	title: string;
 	content: string;
 	idCanvas: string | null;
@@ -11,6 +17,7 @@ export interface CanvasState {
 }
 
 const initialState: CanvasState = {
+	mode: ECanvasMode.CANVAS,
 	title: '',
 	content: '',
 	idCanvas: null,
@@ -36,6 +43,9 @@ const canvasSlice = createSlice({
 		},
 		setType: (state, action: PayloadAction<'channel' | 'thread' | null>) => {
 			state.type = action.payload;
+		},
+		setMode: (state, action: PayloadAction<ECanvasMode>) => {
+			state.mode = action.payload;
 		}
 	}
 });
@@ -53,3 +63,5 @@ export const selectTitle = createSelector(getCanvasState, (state) => state.title
 export const selectContent = createSelector(getCanvasState, (state) => state.content);
 
 export const selectIdCanvas = createSelector(getCanvasState, (state) => state.idCanvas);
+
+export const setCanvasMode = createSelector(getCanvasState, (state) => state.mode);

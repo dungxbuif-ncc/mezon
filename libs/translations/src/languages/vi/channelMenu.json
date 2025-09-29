@@ -40,8 +40,8 @@
         "threads": "Chủ đề",
         "searchThreads": "Tìm kiếm tên chủ đề",
         "searchFiles": "Tìm kiếm tệp",
-        "searchCanvas": "Tìm kiếm tên canvas"
-
+        "searchCanvas": "Tìm kiếm tên canvas",
+        "searchWhiteboard": "Tìm kiếm bảng trắng"
       },
       "organizationMenu": {
           "title": "",

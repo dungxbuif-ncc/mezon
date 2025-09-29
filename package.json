@@ -39,6 +39,7 @@
   "private": true,
   "dependencies": {
     "@babel/runtime": "^7.27.3",
+    "@excalidraw/excalidraw": "^0.18.0",
     "@floating-ui/react": "^0.27.16",
     "@hookform/resolvers": "^3.3.4",
     "@livekit/components-react": "^2.9.13",

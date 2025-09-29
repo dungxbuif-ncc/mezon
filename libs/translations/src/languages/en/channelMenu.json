@@ -40,7 +40,8 @@
           "threads": "Threads",
           "searchThreads": "Search for Thread Name",
           "searchFiles": "Search Files",
-          "searchCanvas": "Search for Canvas Name"
+          "searchCanvas": "Search for Canvas Name",
+          "searchWhiteboard": "Search for Whiteboard Name"
         },
         "organizationMenu": {
             "title": "",
